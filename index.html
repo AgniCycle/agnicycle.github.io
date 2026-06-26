@@ -77,76 +77,159 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
 /* ──────────────────────────────────────────────
    NAV
 ────────────────────────────────────────────── */
+/* ── NAV ── */
 .nav {
   position: fixed; top: 38px; left: 0; right: 0; z-index: 100;
-  display: flex; align-items: center; gap: 0;
-  padding: 0 32px;
+  display: flex; align-items: center;
+  padding: 0 40px;
   height: 60px;
-  background: rgba(7,9,15,0.92);
-  backdrop-filter: blur(20px);
+  background: rgba(7,9,15,0.85);
+  backdrop-filter: blur(24px) saturate(180%);
   border-bottom: 1px solid var(--border);
-  transition: background 0.3s;
+  transition: box-shadow 0.3s, background 0.3s;
+}
+.nav.scrolled {
+  box-shadow: 0 1px 40px rgba(0,0,0,0.5);
+  background: rgba(7,9,15,0.97);
 }
 .nav-brand {
   display: flex; align-items: center; gap: 10px;
   text-decoration: none; color: var(--text);
   font-family: 'Sora', sans-serif; font-weight: 700; font-size: 18px;
-  flex-shrink: 0;
+  flex-shrink: 0; margin-right: 32px;
 }
 .nav-brand:hover { text-decoration: none; }
 .nav-logo-mark {
-  width: 36px; height: 36px; border-radius: 10px;
+  width: 34px; height: 34px; border-radius: 9px;
   background: #0B2536;
   border: 1.5px solid #0ea5b7;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 0 16px rgba(14,165,183,0.35);
+  box-shadow: 0 0 14px rgba(14,165,183,0.3);
 }
-.nav-logo-mark svg { width: 22px; height: 22px; }
+.nav-logo-mark svg { width: 20px; height: 20px; }
 .nav-brand span { letter-spacing: -0.3px; }
 .nav-brand em { color: var(--fire); font-style: normal; }
+
+/* center group */
 .nav-links {
+  display: flex; align-items: center; gap: 2px;
+  list-style: none; flex: 1;
+}
+.nav-links > li { position: relative; }
+.nav-links a, .nav-links button.nav-dd-trigger {
+  color: var(--text2); font-size: 13.5px; font-weight: 500;
+  padding: 6px 11px; border-radius: 8px;
+  transition: color 0.18s, background 0.18s;
+  text-decoration: none; cursor: pointer;
+  background: none; border: none; font-family: inherit; line-height: 1;
   display: flex; align-items: center; gap: 4px;
+  white-space: nowrap;
+}
+.nav-links a:hover,
+.nav-links button.nav-dd-trigger:hover { color: var(--text); background: var(--surface2); }
+.nav-links a.nav-active { color: var(--text); }
+.nav-links a.nav-active::after {
+  content: ''; position: absolute; bottom: -2px; left: 11px; right: 11px;
+  height: 2px; border-radius: 2px;
+  background: var(--fire);
+}
+
+/* chevron icon in dropdown trigger */
+.nav-dd-trigger svg { transition: transform 0.2s; }
+.nav-links > li.open .nav-dd-trigger svg { transform: rotate(180deg); }
+
+/* dropdown panel */
+.nav-dropdown {
+  position: absolute; top: calc(100% + 10px); left: 50%;
+  transform: translateX(-50%);
+  min-width: 230px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 8px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+  opacity: 0; pointer-events: none;
+  transform: translateX(-50%) translateY(-6px);
+  transition: opacity 0.18s, transform 0.18s;
+}
+.nav-links > li.open .nav-dropdown {
+  opacity: 1; pointer-events: all;
+  transform: translateX(-50%) translateY(0);
+}
+.nav-dropdown a {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 9px;
+  color: var(--text2); font-size: 13.5px; font-weight: 500;
+  text-decoration: none; transition: background 0.15s, color 0.15s;
+  background: none;
+}
+.nav-dropdown a:hover { background: var(--surface2); color: var(--text); }
+.nav-dd-icon {
+  width: 30px; height: 30px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.nav-dd-icon.fire { background: rgba(249,115,22,0.12); color: var(--fire); }
+.nav-dd-icon.teal { background: rgba(14,165,183,0.12); color: var(--teal); }
+.nav-dd-icon.gold { background: rgba(251,191,36,0.12); color: var(--gold); }
+.nav-dd-meta { display: flex; flex-direction: column; gap: 1px; }
+.nav-dd-meta strong { color: var(--text); font-size: 13px; font-weight: 600; }
+.nav-dd-meta span { color: var(--text3); font-size: 11.5px; }
+.nav-dd-divider { height: 1px; background: var(--border); margin: 6px 4px; }
+
+/* right side */
+.nav-right {
+  display: flex; align-items: center; gap: 6px;
   margin-left: auto;
-  list-style: none;
 }
-.nav-links a {
-  color: var(--text2); font-size: 14px; font-weight: 500;
-  padding: 6px 12px; border-radius: 8px;
-  transition: color 0.2s, background 0.2s;
-  text-decoration: none;
-}
-.nav-links a:hover { color: var(--text); background: var(--surface2); }
 .nav-cta {
-  margin-left: 8px;
-  background: var(--fire) !important;
-  color: #fff !important;
-  padding: 8px 18px !important;
-  border-radius: 10px !important;
-  font-weight: 600 !important;
-  font-size: 14px !important;
-  transition: opacity 0.2s, box-shadow 0.2s !important;
+  background: var(--fire);
+  color: #fff;
+  padding: 7px 16px;
+  border-radius: 9px;
+  font-weight: 600;
+  font-size: 13.5px;
+  border: none; cursor: pointer; font-family: inherit;
+  transition: opacity 0.2s, box-shadow 0.2s;
+  text-decoration: none; white-space: nowrap;
 }
-.nav-cta:hover { opacity: 0.9 !important; box-shadow: var(--shadow-fire) !important; background: var(--fire) !important; }
+.nav-cta:hover { opacity: 0.88; box-shadow: var(--shadow-fire); }
+
+/* hamburger */
 .nav-hamburger {
   display: none; background: none; border: none;
   color: var(--text); cursor: pointer; padding: 8px;
-  margin-left: auto;
-}
-.nav-mobile {
-  display: none; position: fixed; top: 98px; left: 0; right: 0; bottom: 0; z-index: 99;
-  background: var(--bg2); padding: 24px;
-  flex-direction: column; gap: 8px;
-  border-top: 1px solid var(--border);
-}
-.nav-mobile a {
-  color: var(--text); font-size: 16px; font-weight: 500;
-  padding: 12px 16px; border-radius: 10px;
-  text-decoration: none;
+  margin-left: auto; border-radius: 8px;
   transition: background 0.2s;
 }
-.nav-mobile a:hover { background: var(--surface2); }
+.nav-hamburger:hover { background: var(--surface2); }
+
+/* mobile drawer */
+.nav-mobile {
+  display: none; position: fixed; top: 98px; left: 0; right: 0; bottom: 0; z-index: 99;
+  background: var(--bg); padding: 20px 20px 40px;
+  flex-direction: column; gap: 4px;
+  border-top: 1px solid var(--border);
+  overflow-y: auto;
+}
 .nav-mobile.open { display: flex; }
+.nav-mobile-section {
+  font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em;
+  color: var(--text3); text-transform: uppercase;
+  padding: 12px 14px 6px; margin-top: 8px;
+}
+.nav-mobile a {
+  color: var(--text); font-size: 15px; font-weight: 500;
+  padding: 11px 14px; border-radius: 10px;
+  text-decoration: none; display: flex; align-items: center; gap: 10px;
+  transition: background 0.15s;
+}
+.nav-mobile a:hover { background: var(--surface2); }
+.nav-mobile-cta {
+  margin-top: 16px; padding: 13px 14px; border-radius: 12px;
+  background: var(--fire); color: #fff;
+  font-weight: 600; font-size: 15px; text-align: center;
+  text-decoration: none; display: block;
+}
 
 /* ──────────────────────────────────────────────
    HERO
@@ -640,6 +723,7 @@ footer {
 @media (max-width: 900px) {
   .roadmap-grid { grid-template-columns: 1fr; }
   .nav-links { display: none; }
+  .nav-right { display: none; }
   .nav-hamburger { display: block; }
   .product { grid-template-columns: 1fr; gap: 40px; }
   .product.reverse .product-visual { order: -1; }
@@ -685,14 +769,55 @@ footer {
     </div>
     <span>Agni<em>Cycle</em></span>
   </a>
+
   <ul class="nav-links">
-    <li><a href="#simulator">Simulator</a></li>
-    <li><a href="#spray">Spray Calc</a></li>
-    <li><a href="#cfd">CFD Training</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#signup" class="nav-cta">Get Early Access</a></li>
+    <!-- Products dropdown -->
+    <li id="dd-products">
+      <button class="nav-dd-trigger" onclick="toggleDropdown('dd-products')">
+        Products
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="nav-dropdown">
+        <a href="#simulator" onclick="closeDropdowns()">
+          <div class="nav-dd-icon fire">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C9 8 6 11 6 14a6 6 0 0012 0c0-3-3-6-6-12z"/></svg>
+          </div>
+          <div class="nav-dd-meta">
+            <strong>IC Engine Simulator</strong>
+            <span>Zero-D thermodynamic cycle model</span>
+          </div>
+        </a>
+        <a href="#spray" onclick="closeDropdowns()">
+          <div class="nav-dd-icon teal">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M2 12h4M18 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          </div>
+          <div class="nav-dd-meta">
+            <strong>Fuel Spray Calculator</strong>
+            <span>Injection &amp; atomization physics</span>
+          </div>
+        </a>
+        <div class="nav-dd-divider"></div>
+        <a href="#cfd" onclick="closeDropdowns()">
+          <div class="nav-dd-icon gold">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          </div>
+          <div class="nav-dd-meta">
+            <strong>CFD Training</strong>
+            <span>CONVERGE · GT-Power consulting</span>
+          </div>
+        </a>
+      </div>
+    </li>
+
+    <li><a href="#roadmap" data-section="roadmap">Roadmap</a></li>
+    <li><a href="#team" data-section="team">Team</a></li>
+    <li><a href="#about" data-section="about">About</a></li>
   </ul>
+
+  <div class="nav-right">
+    <a href="#signup" class="nav-cta">Get Early Access</a>
+  </div>
+
   <button class="nav-hamburger" id="hamburger" aria-label="Menu" onclick="toggleNav()">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
       <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
@@ -701,11 +826,21 @@ footer {
 </nav>
 
 <div class="nav-mobile" id="nav-mobile">
-  <a href="#simulator" onclick="closeNav()">Zero-D Simulator</a>
-  <a href="#spray" onclick="closeNav()">Spray Calculator</a>
-  <a href="#cfd" onclick="closeNav()">CFD Training</a>
+  <div class="nav-mobile-section">Products</div>
+  <a href="#simulator" onclick="closeNav()">
+    <span style="color:var(--fire)">⚙</span> IC Engine Simulator
+  </a>
+  <a href="#spray" onclick="closeNav()">
+    <span style="color:var(--teal)">💧</span> Fuel Spray Calculator
+  </a>
+  <a href="#cfd" onclick="closeNav()">
+    <span style="color:var(--gold)">📊</span> CFD Training &amp; Consulting
+  </a>
+  <div class="nav-mobile-section">Company</div>
+  <a href="#roadmap" onclick="closeNav()">Roadmap</a>
+  <a href="#team" onclick="closeNav()">Team</a>
   <a href="#about" onclick="closeNav()">About</a>
-  <a href="#signup" onclick="closeNav()" style="color:var(--fire);font-weight:600">Get Early Access →</a>
+  <a href="#signup" onclick="closeNav()" class="nav-mobile-cta">Get Early Access →</a>
 </div>
 
 <!-- HERO -->
@@ -1362,6 +1497,32 @@ function closeNav() {
   document.getElementById('nav-mobile').classList.remove('open');
 }
 
+/* ── Dropdown ── */
+function toggleDropdown(id) {
+  const li = document.getElementById(id);
+  const isOpen = li.classList.contains('open');
+  closeDropdowns();
+  if (!isOpen) li.classList.add('open');
+}
+function closeDropdowns() {
+  document.querySelectorAll('.nav-links > li.open').forEach(el => el.classList.remove('open'));
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.nav-links > li')) closeDropdowns();
+});
+
+/* ── Nav scroll shadow ── */
+window.addEventListener('scroll', function() {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 10);
+}, { passive: true });
+
+/* ── Active nav link highlight ── */
+function setActiveNav(id) {
+  document.querySelectorAll('.nav-links a[data-section]').forEach(a => {
+    a.classList.toggle('nav-active', a.dataset.section === id);
+  });
+}
+
 /* ── Section slug → clean URL path mapping ── */
 const SECTION_PATHS = {
   hero:       '/',
@@ -1381,7 +1542,9 @@ function scrollToSection(id) {
   window.scrollTo({ top: offset, behavior: 'smooth' });
   const path = SECTION_PATHS[id] || '/';
   history.pushState({ section: id }, '', path);
+  setActiveNav(id);
   closeNav();
+  closeDropdowns();
 }
 
 /* ── Intercept anchor clicks — use clean paths ── */
@@ -1402,6 +1565,7 @@ const scrollObs = new IntersectionObserver(entries => {
       const id = e.target.id;
       const path = SECTION_PATHS[id] || '/';
       history.replaceState({ section: id }, '', path);
+      setActiveNav(id);
     }
   });
 }, { threshold: 0.3 });
