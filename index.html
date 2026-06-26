@@ -1362,6 +1362,21 @@ function closeNav() {
   document.getElementById('nav-mobile').classList.remove('open');
 }
 
+/* ── Intercept all anchor clicks — scroll without adding # to URL ── */
+document.addEventListener('click', function(e) {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a) return;
+  const id = a.getAttribute('href').slice(1);
+  if (!id) return;
+  const target = document.getElementById(id);
+  if (!target) return;
+  e.preventDefault();
+  const offset = target.getBoundingClientRect().top + window.scrollY - 98;
+  window.scrollTo({ top: offset, behavior: 'smooth' });
+  history.replaceState(null, '', window.location.pathname);
+  closeNav();
+});
+
 /* ──────────────────────────────────────────────
    HERO CANVAS — combustion particle field
 ────────────────────────────────────────────── */
