@@ -20,6 +20,13 @@
 <!-- Indexing -->
 <meta name="robots" content="index, follow"/>
 <meta name="google-site-verification" content="VzaYjo1S8pdKO92ttRZ0vEZAdTkZrowbh9tXBjv9KM4"/>
+<meta name="theme-color" content="#f97316"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="AgniCycle"/>
+<link rel="manifest" href="/manifest.json"/>
+<link rel="apple-touch-icon" href="/icon-192.png"/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='92' fill='%230B2536'/><circle cx='256' cy='256' r='184' fill='%231B4A63' stroke='%230EA5B7' stroke-width='3'/><path d='M213 150 C250 200 265 240 248 268 C234 291 208 299 187 289 C165 279 159 258 169 242 C173 252 183 259 191 253 C183 234 187 200 213 150 Z' fill='url(%23fg)'/><defs><radialGradient id='fg' cx='50%25' cy='68%25' r='62%25'><stop offset='0%25' stop-color='%23FFF06B'/><stop offset='68%25' stop-color='%23F97316'/><stop offset='100%25' stop-color='%23F0500F'/></radialGradient></defs></svg>" type="image/svg+xml"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -208,6 +215,17 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
   text-decoration: none; white-space: nowrap;
 }
 .nav-cta:hover { opacity: 0.88; box-shadow: var(--shadow-fire); }
+.nav-icon-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 8px;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text3); cursor: pointer;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+.nav-icon-btn:hover { color: var(--text); background: var(--surface3); border-color: rgba(255,255,255,0.12); }
+.nav-icon-btn.install-btn { display: none; }
+.nav-icon-btn.install-btn.visible { display: flex; }
 
 /* hamburger */
 .nav-hamburger {
@@ -1176,6 +1194,25 @@ footer {
   </ul>
 
   <div class="nav-right">
+    <!-- Install PWA -->
+    <button class="nav-icon-btn install-btn" id="install-btn" aria-label="Install app" title="Install AgniCycle app">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+    </button>
+    <!-- Fullscreen -->
+    <button class="nav-icon-btn" id="fullscreen-btn" aria-label="Toggle fullscreen" title="Fullscreen">
+      <svg id="fs-expand" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+        <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+      </svg>
+      <svg id="fs-shrink" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none">
+        <polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/>
+        <line x1="10" y1="14" x2="3" y2="21"/><line x1="21" y1="3" x2="14" y2="10"/>
+      </svg>
+    </button>
     <a href="#signup" class="nav-cta">Stay Updated</a>
   </div>
 
@@ -2459,6 +2496,59 @@ function closeApp() {
 }
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeApp(); });
+</script>
+
+<script>
+/* ──────────────────────────────────────────────
+   PWA INSTALL
+────────────────────────────────────────────── */
+(function() {
+  var deferredPrompt = null;
+  var btn = document.getElementById('install-btn');
+  window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    deferredPrompt = e;
+    btn.classList.add('visible');
+  });
+  btn.addEventListener('click', function() {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(result) {
+      if (result.outcome === 'accepted') btn.classList.remove('visible');
+      deferredPrompt = null;
+    });
+  });
+  window.addEventListener('appinstalled', function() {
+    btn.classList.remove('visible');
+    deferredPrompt = null;
+  });
+  // Register service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+  }
+})();
+
+/* ──────────────────────────────────────────────
+   FULLSCREEN TOGGLE
+────────────────────────────────────────────── */
+(function() {
+  var btn = document.getElementById('fullscreen-btn');
+  var expand = document.getElementById('fs-expand');
+  var shrink = document.getElementById('fs-shrink');
+  function updateIcon() {
+    var full = !!document.fullscreenElement;
+    expand.style.display = full ? 'none' : '';
+    shrink.style.display = full ? '' : 'none';
+  }
+  btn.addEventListener('click', function() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  });
+  document.addEventListener('fullscreenchange', updateIcon);
+})();
 </script>
 </body>
 </html>
