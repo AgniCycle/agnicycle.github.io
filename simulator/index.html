@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>IC Engine Simulator — AgniCycle</title>
+<meta name="description" content="Zero-D thermodynamic IC engine cycle simulator. Real-time pressure traces, P-V diagrams, heat release, and knock prediction — browser-native, no install."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #07090f;
+    --surface: #0d1117;
+    --surface2: #161b22;
+    --border: rgba(255,255,255,0.08);
+    --text: #f0f6ff;
+    --text2: #8b9ab0;
+    --text3: #556070;
+    --fire: #f97316;
+    --teal: #0ea5b7;
+    --gold: #fbbf24;
+  }
+  html, body { height: 100%; overflow: hidden; background: var(--bg); }
+
+  /* ── App shell ── */
+  .app-shell {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  /* ── Top bar ── */
+  .app-bar {
+    height: 52px;
+    background: rgba(7,9,15,0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 0;
+    flex-shrink: 0;
+    z-index: 10;
+  }
+
+  /* brand */
+  .app-bar-brand {
+    display: flex; align-items: center; gap: 8px;
+    text-decoration: none; color: var(--text);
+    font-family: 'Sora', sans-serif; font-weight: 700; font-size: 15px;
+    flex-shrink: 0;
+  }
+  .app-bar-brand:hover { opacity: 0.8; }
+  .app-bar-logo {
+    width: 28px; height: 28px; border-radius: 7px;
+    background: #0B2536; border: 1.5px solid #0ea5b7;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 10px rgba(14,165,183,0.25);
+  }
+  .app-bar-logo svg { width: 16px; height: 16px; }
+  .app-bar-brand em { color: var(--fire); font-style: normal; }
+
+  .app-bar-divider {
+    width: 1px; height: 22px;
+    background: var(--border);
+    margin: 0 14px;
+    flex-shrink: 0;
+  }
+
+  /* app title area */
+  .app-bar-title {
+    display: flex; align-items: center; gap: 10px;
+    flex: 1; min-width: 0;
+  }
+  .app-bar-name {
+    font-family: 'Sora', sans-serif; font-weight: 600; font-size: 14px;
+    color: var(--text); white-space: nowrap;
+  }
+  .app-bar-version {
+    display: flex; align-items: center; gap: 5px;
+    background: rgba(249,115,22,0.12);
+    border: 1px solid rgba(249,115,22,0.25);
+    border-radius: 20px;
+    padding: 2px 9px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px; font-weight: 500;
+    color: var(--fire);
+    white-space: nowrap;
+  }
+  .app-bar-version-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--fire);
+    box-shadow: 0 0 6px var(--fire);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* right side actions */
+  .app-bar-actions {
+    display: flex; align-items: center; gap: 6px;
+    flex-shrink: 0;
+  }
+  .app-bar-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border-radius: 7px;
+    font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 500;
+    color: var(--text2); text-decoration: none;
+    border: 1px solid transparent;
+    transition: color 0.15s, background 0.15s, border-color 0.15s;
+    cursor: pointer; background: none;
+    white-space: nowrap;
+  }
+  .app-bar-btn:hover {
+    color: var(--text);
+    background: var(--surface2);
+    border-color: var(--border);
+  }
+  .app-bar-btn svg { flex-shrink: 0; }
+  .app-bar-btn-primary {
+    background: var(--fire);
+    color: #fff;
+    border-color: transparent;
+  }
+  .app-bar-btn-primary:hover {
+    background: #ea6c0a;
+    color: #fff;
+    border-color: transparent;
+  }
+
+  /* ── iframe ── */
+  .app-frame {
+    flex: 1;
+    border: none;
+    width: 100%;
+    display: block;
+    background: var(--bg);
+  }
+
+  /* ── Loading overlay ── */
+  .app-loading {
+    position: absolute; inset: 52px 0 0 0;
+    background: var(--bg);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 16px;
+    pointer-events: none;
+    transition: opacity 0.4s;
+  }
+  .app-loading.hidden { opacity: 0; }
+  .loading-spinner {
+    width: 36px; height: 36px;
+    border: 2px solid var(--surface2);
+    border-top-color: var(--fire);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--text3);
+  }
+
+  @media (max-width: 600px) {
+    .app-bar-name { display: none; }
+    .hide-mobile { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <div class="app-bar">
+    <a class="app-bar-brand" href="/">
+      <div class="app-bar-logo">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="ng" cx="50%" cy="68%" r="62%">
+              <stop offset="0%" stop-color="#FFF06B"/>
+              <stop offset="60%" stop-color="#F97316"/>
+              <stop offset="100%" stop-color="#F0500F"/>
+            </radialGradient>
+          </defs>
+          <path d="M50 8 C68 32 75 52 66 68 C59 80 43 86 31 78 C19 70 16 54 25 42 C29 52 37 58 43 52 C37 40 41 22 50 8 Z" fill="url(#ng)"/>
+        </svg>
+      </div>
+      <span>Agni<em>Cycle</em></span>
+    </a>
+
+    <div class="app-bar-divider"></div>
+
+    <div class="app-bar-title">
+      <span class="app-bar-name">IC Engine Simulator</span>
+      <span class="app-bar-version">
+        <span class="app-bar-version-dot"></span>
+        Live · v1.3
+      </span>
+    </div>
+
+    <div class="app-bar-actions">
+      <a class="app-bar-btn hide-mobile" href="/#about">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Docs
+      </a>
+      <a class="app-bar-btn hide-mobile" href="/spray">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M2 12h4M18 12h4"/></svg>
+        Spray Calc
+      </a>
+      <a class="app-bar-btn app-bar-btn-primary" href="/">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to site
+      </a>
+    </div>
+  </div>
+
+  <div class="app-loading" id="loading">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Starting engine simulator…</div>
+  </div>
+
+  <iframe
+    class="app-frame"
+    id="app-frame"
+    src="https://agnicycle-865384871824.us-west2.run.app"
+    title="AgniCycle IC Engine Simulator"
+    allow="fullscreen"
+    onload="document.getElementById('loading').classList.add('hidden')"
+  ></iframe>
+
+</div>
+</body>
+</html>
