@@ -1362,20 +1362,68 @@ function closeNav() {
   document.getElementById('nav-mobile').classList.remove('open');
 }
 
-/* ── Intercept all anchor clicks — scroll without adding # to URL ── */
+/* ── Section slug → clean URL path mapping ── */
+const SECTION_PATHS = {
+  hero:       '/',
+  simulator:  '/simulator',
+  spray:      '/spray',
+  cfd:        '/cfd',
+  about:      '/about',
+  team:       '/team',
+  roadmap:    '/roadmap',
+  signup:     '/early-access',
+};
+
+function scrollToSection(id) {
+  const target = document.getElementById(id);
+  if (!target) return;
+  const offset = target.getBoundingClientRect().top + window.scrollY - 98;
+  window.scrollTo({ top: offset, behavior: 'smooth' });
+  const path = SECTION_PATHS[id] || '/';
+  history.pushState({ section: id }, '', path);
+  closeNav();
+}
+
+/* ── Intercept anchor clicks — use clean paths ── */
 document.addEventListener('click', function(e) {
   const a = e.target.closest('a[href^="#"]');
   if (!a) return;
   const id = a.getAttribute('href').slice(1);
   if (!id) return;
-  const target = document.getElementById(id);
-  if (!target) return;
   e.preventDefault();
-  const offset = target.getBoundingClientRect().top + window.scrollY - 98;
-  window.scrollTo({ top: offset, behavior: 'smooth' });
-  history.replaceState(null, '', window.location.pathname);
-  closeNav();
+  scrollToSection(id);
 });
+
+/* ── Update URL on scroll via IntersectionObserver ── */
+const sections = ['hero','simulator','spray','cfd','about','team','roadmap','signup'];
+const scrollObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting && e.intersectionRatio >= 0.3) {
+      const id = e.target.id;
+      const path = SECTION_PATHS[id] || '/';
+      history.replaceState({ section: id }, '', path);
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) scrollObs.observe(el);
+});
+
+/* ── Handle direct URL loads (e.g. agnicycle.github.io/simulator) ── */
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const qSection = params.get('section');
+  const path = window.location.pathname.replace(/\/$/, '');
+  const reverse = Object.entries(SECTION_PATHS).find(([,p]) => p === path);
+  const targetId = qSection || (reverse && reverse[0] !== 'hero' ? reverse[0] : null);
+  if (targetId) {
+    window.addEventListener('load', () => setTimeout(() => {
+      scrollToSection(targetId);
+      history.replaceState({ section: targetId }, '', SECTION_PATHS[targetId] || '/');
+    }, 300));
+  }
+})();
 
 /* ──────────────────────────────────────────────
    HERO CANVAS — combustion particle field

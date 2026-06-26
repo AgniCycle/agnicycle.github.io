@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script>
+  // Redirect /simulator → /?section=simulator so the SPA can scroll to it
+  var path = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
+  if (path) {
+    window.location.replace('/?section=' + encodeURIComponent(path));
+  } else {
+    window.location.replace('/');
+  }
+</script>
+</head>
+<body></body>
+</html>
