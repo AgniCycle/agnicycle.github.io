@@ -640,6 +640,7 @@ footer {
 ────────────────────────────────────────────── */
 .status-badge {
   display: inline-flex; align-items: center; gap: 6px;
+  align-self: flex-start;
   font-size: 11px; font-weight: 700; letter-spacing: 0.8px;
   text-transform: uppercase; padding: 4px 10px; border-radius: 999px;
   margin-bottom: 12px;
@@ -695,26 +696,104 @@ footer {
 /* ──────────────────────────────────────────────
    RESPONSIVE
 ────────────────────────────────────────────── */
+/* ── Tablet ── */
 @media (max-width: 900px) {
   .roadmap-grid { grid-template-columns: 1fr; }
   .nav-links { display: none; }
   .nav-right { display: none; }
   .nav-hamburger { display: block; }
-  .product { grid-template-columns: 1fr; gap: 40px; }
+  .product { grid-template-columns: 1fr; gap: 32px; }
   .product.reverse .product-visual { order: -1; }
   .features-grid { grid-template-columns: 1fr 1fr; }
   .audience-grid { grid-template-columns: 1fr 1fr; }
   .stat-bar-inner { grid-template-columns: repeat(2, 1fr); }
   .divider-inner { grid-template-columns: 1fr; gap: 40px; }
   .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .sim-video-layout { height: 260px; }
 }
+
+/* ── Mobile ── */
 @media (max-width: 600px) {
+  /* Prevent horizontal scroll globally */
+  html, body { overflow-x: hidden; }
+
+  /* Announcement bar — single line */
+  .announce-desc { display: none; }
+  .announce-bar { padding: 9px 14px; gap: 8px; font-size: 12.5px; }
+
+  /* Nav */
+  .nav { padding: 0 16px; }
+
+  /* Hero */
+  .hero { padding: 120px 16px 56px; }
+  .hero-title { font-size: clamp(34px, 10vw, 52px); }
+  .hero-sub { font-size: 13px; }
+  .hero-ctas { flex-direction: column; align-items: stretch; }
+  .btn-primary, .btn-secondary { justify-content: center; width: 100%; }
+
+  /* Sections — tighter padding */
+  section { padding-left: 0; padding-right: 0; }
+  .product { padding: 48px 20px; overflow: hidden; }
+  .product-text { padding: 0; }
+
+  /* Product CTAs — full width */
+  .product-ctas { flex-direction: column; gap: 10px; }
+  .product-ctas a, .product-ctas button {
+    width: 100%; justify-content: center; text-align: center;
+    box-sizing: border-box;
+  }
+
+  /* Feature list — prevent text overflow */
+  .product-features { max-width: 100%; overflow: hidden; }
+  .product-features li {
+    min-width: 0; word-break: break-word;
+    overflow-wrap: break-word; font-size: 14px;
+  }
+  .product-desc { font-size: 15px; }
+
+  /* Status badge — auto width (not full-width) */
+  .status-badge { display: inline-flex; }
+
+  /* Videos — hide side cylinder video, compact height */
+  .sim-video-side { display: none; }
+  .sim-video-layout { height: 200px; }
+  .spray-video { max-height: 220px; }
+
+  /* Panel header title — truncate */
+  .panel-title {
+    overflow: hidden; white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: calc(100vw - 90px);
+  }
+
+  /* Section headlines */
+  .section-headline { font-size: clamp(26px, 7vw, 38px); }
+
+  /* Stat bar */
+  .stat-bar-inner { grid-template-columns: repeat(2, 1fr); }
+  .stat-value { font-size: 32px; }
+
+  /* Grids */
   .features-grid { grid-template-columns: 1fr; }
   .audience-grid { grid-template-columns: 1fr; }
-  .stat-bar-inner { grid-template-columns: 1fr 1fr; }
   .footer-inner { grid-template-columns: 1fr; }
-  .hero-ctas { flex-direction: column; align-items: stretch; text-align: center; }
-  .btn-primary, .btn-secondary { justify-content: center; }
+
+  /* Roadmap cards */
+  .roadmap-grid { grid-template-columns: 1fr; gap: 16px; }
+
+  /* Team divider */
+  .divider-inner { grid-template-columns: 1fr; gap: 32px; }
+
+  /* Signup form */
+  .signup-form { flex-direction: column; gap: 10px; }
+  .signup-form .btn-primary { width: 100%; justify-content: center; }
+
+  /* Tech strip — smaller text */
+  .tech-item { font-size: 11px; padding: 6px 10px; }
+
+  /* Footer */
+  .footer-inner { grid-template-columns: 1fr; gap: 28px; }
+  .footer { padding: 48px 20px 32px; }
 }
 </style>
 </head>
@@ -723,7 +802,8 @@ footer {
 <!-- ANNOUNCEMENT BAR -->
 <div class="announce-bar">
   <div class="announce-dot"></div>
-  <strong>Now in Public Beta</strong> — AgniCycle IC Engine Simulator & Spray Calculator are live and free.
+  <strong>Now in Public Beta</strong>
+  <span class="announce-desc"> — AgniCycle IC Engine Simulator &amp; Spray Calculator are live and free.</span>
   <a href="/simulator">Start for free →</a>
 </div>
 
