@@ -710,6 +710,8 @@ footer {
   .divider-inner { grid-template-columns: 1fr; gap: 40px; }
   .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
   .sim-video-layout { height: 260px; }
+  .team-quote { display: none; }
+  .team-body { grid-template-columns: 1fr !important; gap: 28px !important; }
 }
 
 /* ── Mobile ── */
@@ -783,6 +785,7 @@ footer {
 
   /* Team divider */
   .divider-inner { grid-template-columns: 1fr; gap: 32px; }
+  .team-body { padding: 20px !important; gap: 20px !important; }
 
   /* Signup form */
   .signup-form { flex-direction: column; gap: 10px; }
@@ -1149,82 +1152,99 @@ footer {
 
 <!-- TEAM -->
 <div class="section-full" style="background:var(--bg2);border-top:1px solid var(--border);padding:100px 24px" id="team">
-  <div style="max-width:1100px;margin:0 auto">
-    <div class="section-center reveal" style="margin-bottom:52px">
+  <div style="max-width:960px;margin:0 auto">
+    <div class="section-center reveal" style="margin-bottom:48px">
       <div class="eyebrow">The Team</div>
       <h2 class="section-headline">Built by an active researcher,<br/>not a software house</h2>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
-      <!-- Developer card -->
-      <div class="reveal" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
-        <div style="background:linear-gradient(135deg,#0d1a2e 0%,#0B2536 60%,#0f2235 100%);padding:32px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:20px">
-          <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#3b4fc8,#5b6ef5);display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:800;font-size:20px;color:#fff;flex-shrink:0;box-shadow:0 4px 20px rgba(91,110,245,0.4)">DK</div>
-          <div>
-            <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">Founder & Developer</div>
-            <div style="font-size:22px;font-weight:800;color:#fff;font-family:'Sora',sans-serif;margin-bottom:4px">Dr. Dhananjay Kumar</div>
-            <div style="display:inline-block;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:var(--text2);font-size:11px;font-weight:600;letter-spacing:0.5px;padding:3px 10px;border-radius:6px">Postdoctoral Research Associate</div>
+
+    <!-- Full-width founder card -->
+    <div class="reveal" style="background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden">
+
+      <!-- Header banner -->
+      <div style="background:linear-gradient(135deg,#09152a 0%,#0d1f38 55%,#071420 100%);padding:36px 40px;border-bottom:1px solid var(--border);position:relative;overflow:hidden">
+        <div style="position:absolute;inset:0;opacity:0.035;background-image:radial-gradient(var(--teal) 1px,transparent 1px);background-size:22px 22px;pointer-events:none"></div>
+        <div style="display:flex;align-items:flex-start;gap:24px;position:relative;flex-wrap:wrap">
+          <!-- Avatar -->
+          <div style="width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,#1a2fa8,#3b4fc8,#5b6ef5);display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:800;font-size:24px;color:#fff;flex-shrink:0;box-shadow:0 0 0 3px rgba(91,110,245,0.25),0 0 0 6px rgba(91,110,245,0.08),0 8px 28px rgba(59,79,200,0.45)">DK</div>
+          <!-- Name + role -->
+          <div style="flex:1;min-width:200px">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--teal);margin-bottom:8px">Founder &amp; Developer</div>
+            <div style="font-size:26px;font-weight:800;color:#fff;font-family:'Sora',sans-serif;margin-bottom:10px;line-height:1.1">Dr. Dhananjay Kumar</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.11);color:rgba(255,255,255,0.6);font-size:12px;font-weight:500;padding:4px 12px;border-radius:7px">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                Postdoctoral Research Associate
+              </span>
+              <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(14,165,183,0.1);border:1px solid rgba(14,165,183,0.22);color:var(--teal);font-size:12px;font-weight:600;padding:4px 12px;border-radius:7px">Engine Research Center · UW–Madison</span>
+            </div>
+          </div>
+          <!-- Quote — hidden on mobile -->
+          <div style="max-width:260px;flex-shrink:0" class="team-quote">
+            <div style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.75;font-style:italic;border-left:2px solid var(--fire);padding-left:14px">
+              "Every research group deserves access to production-quality combustion tools — not just the ones with GT-Suite licenses."
+            </div>
           </div>
         </div>
-        <div style="padding:28px">
-          <div style="font-size:14px;font-weight:700;color:var(--teal);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:10px">Engine Research Center · UW–Madison</div>
-          <p style="font-size:15px;color:var(--text2);line-height:1.75;margin-bottom:18px">
-            AgniCycle is developed and maintained by Dr. Dhananjay Kumar — an active researcher at one of the world's foremost internal combustion engine laboratories. Every tool in the platform is grounded in his day-to-day research practice.
+      </div>
+
+      <!-- Body -->
+      <div style="padding:32px 40px;display:grid;grid-template-columns:1fr 220px;gap:40px" class="team-body">
+        <!-- Left: bio + tags + links -->
+        <div>
+          <p style="font-size:15px;color:var(--text2);line-height:1.8;margin-bottom:14px">
+            AgniCycle is built and maintained by Dr. Kumar — an active combustion researcher at one of the world's foremost IC engine laboratories. Every tool is grounded in his daily research practice, not abstracted from it.
           </p>
-          <p style="font-size:15px;color:var(--text2);line-height:1.75;margin-bottom:24px">
-            His work spans <strong style="color:var(--text)">hydrogen combustion</strong>, <strong style="color:var(--text)">alternative fuels</strong>, <strong style="color:var(--text)">spray characterization</strong>, and <strong style="color:var(--text)">computational engine-cycle modeling</strong> — the exact physics encoded in these tools.
+          <p style="font-size:15px;color:var(--text2);line-height:1.8;margin-bottom:22px">
+            His work spans <strong style="color:var(--text)">hydrogen &amp; alternative fuel combustion</strong>, <strong style="color:var(--text)">fuel spray characterization</strong>, <strong style="color:var(--text)">in-cylinder CFD</strong>, and <strong style="color:var(--text)">zero-D engine cycle modeling</strong> — the exact physics encoded in these tools.
           </p>
+
+          <!-- Research area tags -->
+          <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:28px">
+            <span style="font-size:11.5px;padding:4px 10px;border-radius:6px;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.22);color:var(--fire);font-weight:600">H₂ Combustion</span>
+            <span style="font-size:11.5px;padding:4px 10px;border-radius:6px;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.22);color:var(--fire);font-weight:600">NH₃ &amp; DME</span>
+            <span style="font-size:11.5px;padding:4px 10px;border-radius:6px;background:rgba(14,165,183,0.1);border:1px solid rgba(14,165,183,0.22);color:var(--teal);font-weight:600">Spray Physics</span>
+            <span style="font-size:11.5px;padding:4px 10px;border-radius:6px;background:rgba(14,165,183,0.1);border:1px solid rgba(14,165,183,0.22);color:var(--teal);font-weight:600">0-D Thermodynamics</span>
+            <span style="font-size:11.5px;padding:4px 10px;border-radius:6px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.22);color:var(--gold);font-weight:600">CONVERGE CFD</span>
+            <span style="font-size:11.5px;padding:4px 10px;border-radius:6px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.22);color:var(--gold);font-weight:600">Knock Prediction</span>
+            <span style="font-size:11.5px;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text2);font-weight:500">GT-Power</span>
+            <span style="font-size:11.5px;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text2);font-weight:500">OpenFOAM</span>
+          </div>
+
+          <!-- Links -->
           <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <a href="mailto:dkumar39@wisc.edu" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);padding:7px 14px;border-radius:8px;text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>
+            <a href="mailto:dkumar39@wisc.edu" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text2);background:var(--surface2);border:1px solid var(--border);padding:7px 14px;border-radius:8px;text-decoration:none;transition:color 0.15s,background 0.15s" onmouseover="this.style.color='var(--text)';this.style.background='#1e2530'" onmouseout="this.style.color='var(--text2)';this.style.background='var(--surface2)'">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>
               dkumar39@wisc.edu
             </a>
-            <a href="https://www.linkedin.com/in/dhkrnl" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);padding:7px 14px;border-radius:8px;text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            <a href="https://www.linkedin.com/in/dhkrnl" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text2);background:var(--surface2);border:1px solid var(--border);padding:7px 14px;border-radius:8px;text-decoration:none;transition:color 0.15s,background 0.15s" onmouseover="this.style.color='var(--text)';this.style.background='#1e2530'" onmouseout="this.style.color='var(--text2)';this.style.background='var(--surface2)'">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
               LinkedIn
             </a>
-            <a href="https://scholar.google.com/citations?user=kYDGsMAAAAAJ" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);padding:7px 14px;border-radius:8px;text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            <a href="https://scholar.google.com/citations?user=kYDGsMAAAAAJ" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text2);background:var(--surface2);border:1px solid var(--border);padding:7px 14px;border-radius:8px;text-decoration:none;transition:color 0.15s,background 0.15s" onmouseover="this.style.color='var(--text)';this.style.background='#1e2530'" onmouseout="this.style.color='var(--text2)';this.style.background='var(--surface2)'">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
               Google Scholar
             </a>
           </div>
         </div>
-      </div>
-      <!-- Right column: theory model + research metrics -->
-      <div style="display:flex;flex-direction:column;gap:20px">
-        <!-- Theory model card -->
-        <div class="reveal reveal-delay-1" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-            <span style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal)">Physics Foundation</span>
+
+        <!-- Right: research metrics -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start">
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center">
+            <div style="font-size:30px;font-weight:800;color:var(--fire);font-family:'Sora',sans-serif;line-height:1">40+</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:5px;line-height:1.4">Peer-reviewed papers</div>
           </div>
-          <p style="font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:14px">
-            The Zero-D simulator implements formulations from <em style="color:var(--text);font-style:normal;font-weight:600">Internal Combustion Engine Fundamentals</em> (2nd ed.) by John B. Heywood — the canonical reference in the field — covering in-cylinder pressure evolution, slider-crank kinematics, and indicated performance metrics.
-          </p>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--teal);background:var(--bg2);padding:12px 16px;border-radius:8px;border:1px solid var(--border);line-height:1.8">
-            <span style="color:var(--text3);font-size:10px;display:block;margin-bottom:4px">// Cylinder pressure solver — 1st Law of Thermodynamics</span>
-            dp/dθ = [(γ−1)(dQ<sub style="font-size:9px">ch</sub>/dθ − dQ<sub style="font-size:9px">ht</sub>/dθ) − γ·p·dV/dθ] / V
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center">
+            <div style="font-size:30px;font-weight:800;color:var(--teal);font-family:'Sora',sans-serif;line-height:1">403+</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:5px;line-height:1.4">Citations</div>
           </div>
-        </div>
-        <!-- Research metrics -->
-        <div class="reveal reveal-delay-2" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px">
-          <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:18px">Research Credentials</div>
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px">
-            <div style="background:var(--bg2);border-radius:10px;padding:16px">
-              <div style="font-size:28px;font-weight:800;color:var(--fire);font-family:'Sora',sans-serif;line-height:1">40+</div>
-              <div style="font-size:12px;color:var(--text2);margin-top:4px">Peer-reviewed papers</div>
-            </div>
-            <div style="background:var(--bg2);border-radius:10px;padding:16px">
-              <div style="font-size:28px;font-weight:800;color:var(--teal);font-family:'Sora',sans-serif;line-height:1">403+</div>
-              <div style="font-size:12px;color:var(--text2);margin-top:4px">Citations</div>
-            </div>
-            <div style="background:var(--bg2);border-radius:10px;padding:16px">
-              <div style="font-size:28px;font-weight:800;color:var(--gold);font-family:'Sora',sans-serif;line-height:1">11</div>
-              <div style="font-size:12px;color:var(--text2);margin-top:4px">h-index</div>
-            </div>
-            <div style="background:var(--bg2);border-radius:10px;padding:16px">
-              <div style="font-size:28px;font-weight:800;color:var(--green);font-family:'Sora',sans-serif;line-height:1">10+</div>
-              <div style="font-size:12px;color:var(--text2);margin-top:4px">Years in combustion R&D</div>
-            </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center">
+            <div style="font-size:30px;font-weight:800;color:var(--gold);font-family:'Sora',sans-serif;line-height:1">11</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:5px;line-height:1.4">h-index</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center">
+            <div style="font-size:30px;font-weight:800;color:var(--green,#4ade80);font-family:'Sora',sans-serif;line-height:1">10+</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:5px;line-height:1.4">Years combustion R&D</div>
           </div>
         </div>
       </div>
