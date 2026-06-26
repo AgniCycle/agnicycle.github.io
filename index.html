@@ -962,8 +962,8 @@ footer {
       <div class="stat-label">Years active in combustion R&D</div>
     </div>
     <div class="stat-item reveal reveal-delay-3">
-      <div class="stat-num" data-suffix="x">0</div>
-      <div class="stat-label">Faster than MATLAB setup</div>
+      <div class="stat-num" data-target="12" data-suffix="+">0</div>
+      <div class="stat-label">Calibrated fuel models</div>
     </div>
   </div>
 </div>
@@ -982,11 +982,11 @@ footer {
       </p>
       <ul class="product-features">
         <li>Full 720° CA sweep (−360° to +360°) covering intake, compression, power, and exhaust</li>
+        <li>Three-Zone partitioning: unburned reactants, flame front, and burned products zones</li>
         <li>Double-Wiebe mixed kinetics: premixed spark-ignition flame + diffusion spray combustion</li>
         <li>First-Law energy partition: Q<sub>fuel</sub> = W<sub>ind</sub> + Q<sub>wall</sub> + Q<sub>exh</sub> + Q<sub>inc</sub> solved each step</li>
-        <li>Polytropic non-firing strokes + Ideal Gas integration with dissociation species tracking</li>
-        <li>Chemical NOx/soot kinetic freezing and knock boundary modeling</li>
-        <li>Procedural dP/dθ sound engine — crankshaft knock resonance via FM synthesis</li>
+        <li>12+ calibrated fuel models: H₂, NH₃, DME, iso-octane, diesel, biodiesel, E85, and more</li>
+        <li>Livengood-Wu knock integral + Extended Zeldovich thermal NO<sub>x</sub> — cycle-accurate emissions</li>
       </ul>
       <div class="product-ctas">
         <a href="/simulator" class="btn-primary">
@@ -1200,8 +1200,9 @@ footer {
           <p style="font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:14px">
             The Zero-D simulator implements formulations from <em style="color:var(--text);font-style:normal;font-weight:600">Internal Combustion Engine Fundamentals</em> (2nd ed.) by John B. Heywood — the canonical reference in the field — covering in-cylinder pressure evolution, slider-crank kinematics, and indicated performance metrics.
           </p>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);background:var(--bg2);padding:10px 14px;border-radius:8px;border:1px solid var(--border)">
-            Zero-Dimensional (0-D) Thermodynamic Engine Cycle Model
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--teal);background:var(--bg2);padding:12px 16px;border-radius:8px;border:1px solid var(--border);line-height:1.8">
+            <span style="color:var(--text3);font-size:10px;display:block;margin-bottom:4px">// Cylinder pressure solver — 1st Law of Thermodynamics</span>
+            dp/dθ = [(γ−1)(dQ<sub style="font-size:9px">ch</sub>/dθ − dQ<sub style="font-size:9px">ht</sub>/dθ) − γ·p·dV/dθ] / V
           </div>
         </div>
         <!-- Research metrics -->
@@ -1270,6 +1271,47 @@ footer {
         <div class="feat-title">Cloud-Native Architecture</div>
         <div class="feat-body">Containerized on Google Cloud Run. Auto-scales to demand, zero cold-boot friction, and always on the latest version.</div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- VS GT-POWER -->
+<div class="section-full" style="background:var(--bg);border-top:1px solid var(--border)">
+  <div class="section" style="padding-top:80px;padding-bottom:80px">
+    <div class="section-center reveal" style="margin-bottom:48px">
+      <div class="eyebrow" style="color:var(--gold)">How it stacks up</div>
+      <h2 class="section-headline">AgniCycle vs. GT-Power</h2>
+      <p class="section-sub">AgniCycle is the rapid-prototype layer before GT-Suite. Map the entire parameter space in seconds — then commit to 1-D flow modeling with confidence.</p>
+    </div>
+    <div class="reveal" style="max-width:820px;margin:0 auto;overflow-x:auto">
+      <div style="min-width:560px;border:1px solid var(--border);border-radius:14px;overflow:hidden">
+        <div style="display:grid;grid-template-columns:1.1fr 1.25fr 1.25fr">
+          <div style="padding:12px 20px;background:var(--surface2);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3)">Parameter</div>
+          <div style="padding:12px 20px;background:rgba(249,115,22,0.08);border-left:1px solid var(--border);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--fire)">AgniCycle</div>
+          <div style="padding:12px 20px;background:var(--surface2);border-left:1px solid var(--border);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3)">GT-Power (GT-Suite)</div>
+
+          <div style="padding:14px 20px;border-top:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text2)">Model type</div>
+          <div style="padding:14px 20px;border-top:1px solid var(--border);border-left:1px solid var(--border);background:rgba(249,115,22,0.04);font-size:13px;color:var(--text)">0-D Multi-Zone thermodynamic</div>
+          <div style="padding:14px 20px;border-top:1px solid var(--border);border-left:1px solid var(--border);font-size:13px;color:var(--text2)">1-D Navier-Stokes gas flow</div>
+
+          <div style="padding:14px 20px;border-top:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text2)">Solve time</div>
+          <div style="padding:14px 20px;border-top:1px solid var(--border);border-left:1px solid var(--border);background:rgba(249,115,22,0.04);font-size:13px;color:var(--teal);font-weight:600">&lt; 20ms · browser client-side</div>
+          <div style="padding:14px 20px;border-top:1px solid var(--border);border-left:1px solid var(--border);font-size:13px;color:var(--text2)">Minutes on desktop CPU</div>
+
+          <div style="padding:14px 20px;border-top:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text2)">Access &amp; cost</div>
+          <div style="padding:14px 20px;border-top:1px solid var(--border);border-left:1px solid var(--border);background:rgba(249,115,22,0.04);font-size:13px;color:var(--teal);font-weight:600">Free · no install · any browser</div>
+          <div style="padding:14px 20px;border-top:1px solid var(--border);border-left:1px solid var(--border);font-size:13px;color:var(--text2)">Per-seat license + license server</div>
+
+          <div style="padding:14px 20px;border-top:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text2)">Fuel library</div>
+          <div style="padding:14px 20px;border-top:1px solid var(--border);border-left:1px solid var(--border);background:rgba(249,115,22,0.04);font-size:13px;color:var(--text)">12+ models: H₂, NH₃, DME, gasoline, diesel, E85…</div>
+          <div style="padding:14px 20px;border-top:1px solid var(--border);border-left:1px solid var(--border);font-size:13px;color:var(--text2)">Requires calibration maps</div>
+
+          <div style="padding:14px 20px;border-top:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text2)">Best for</div>
+          <div style="padding:14px 20px;border-top:1px solid var(--border);border-left:1px solid var(--border);background:rgba(249,115,22,0.04);font-size:13px;color:var(--text)">Rapid concept sweeps, teaching, alt-fuel research</div>
+          <div style="padding:14px 20px;border-top:1px solid var(--border);border-left:1px solid var(--border);font-size:13px;color:var(--text2)">Production 1-D engine pipeline</div>
+        </div>
+      </div>
+      <p style="text-align:center;font-size:13px;color:var(--text3);margin-top:16px">Use AgniCycle to explore the parameter landscape — then lock in your best candidates for high-fidelity GT-Power validation.</p>
     </div>
   </div>
 </div>
