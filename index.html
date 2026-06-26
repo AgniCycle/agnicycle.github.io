@@ -256,8 +256,35 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
   position: absolute; top: 30%; left: 50%;
   transform: translate(-50%, -50%);
   width: 600px; height: 400px;
-  background: radial-gradient(ellipse, rgba(249,115,22,0.12) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(249,115,22,0.08) 0%, transparent 70%);
   pointer-events: none;
+}
+.hero-orb {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  will-change: transform;
+}
+.hero-orb-fire {
+  width: 800px; height: 600px; top: 8%; left: 50%;
+  transform: translate(-50%, -10%);
+  background: radial-gradient(ellipse at center, rgba(249,115,22,0.16) 0%, rgba(234,88,12,0.06) 40%, transparent 70%);
+  filter: blur(40px);
+  animation: orb-fire 14s ease-in-out infinite;
+}
+.hero-orb-teal {
+  width: 560px; height: 420px; bottom: 10%; right: 5%;
+  background: radial-gradient(ellipse at center, rgba(14,165,183,0.13) 0%, transparent 70%);
+  filter: blur(50px);
+  animation: orb-teal 18s ease-in-out infinite 2s;
+}
+@keyframes orb-fire {
+  0%, 100% { transform: translate(-50%,-10%) scale(1); opacity:0.9; }
+  33% { transform: translate(-47%,-15%) scale(1.1); opacity:1; }
+  66% { transform: translate(-53%,-7%) scale(0.93); opacity:0.75; }
+}
+@keyframes orb-teal {
+  0%, 100% { transform: scale(1) translate(0,0); opacity:0.8; }
+  40% { transform: scale(1.15) translate(-4%,-6%); opacity:1; }
+  70% { transform: scale(0.9) translate(5%,4%); opacity:0.65; }
 }
 .hero-inner {
   position: relative; z-index: 1;
@@ -281,8 +308,21 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
   line-height: 1.05;
   color: #fff;
 }
-.hero h1 .fire-word { color: var(--fire); }
-.hero h1 .teal-word { color: var(--teal); }
+.hero h1 .fire-word {
+  background: linear-gradient(90deg, #f97316 0%, #fbbf24 45%, #f97316 90%);
+  background-size: 200% auto;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-flow 3.5s linear infinite;
+}
+.hero h1 .teal-word {
+  background: linear-gradient(90deg, #0ea5b7 0%, #22d3ee 45%, #0ea5b7 90%);
+  background-size: 200% auto;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-flow 5s linear infinite reverse;
+}
+@keyframes gradient-flow { to { background-position: 200% center; } }
 .hero-sub {
   font-size: clamp(16px, 2vw, 20px);
   color: var(--text2); max-width: 620px;
@@ -684,14 +724,178 @@ footer {
    SCROLL-REVEAL
 ────────────────────────────────────────────── */
 .reveal {
-  opacity: 0; transform: translateY(24px);
-  transition: opacity 0.65s ease, transform 0.65s ease;
+  opacity: 0; transform: translateY(32px) scale(0.97);
+  transition: opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1);
 }
-.reveal.visible { opacity: 1; transform: none; }
+.reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
 .reveal-delay-1 { transition-delay: 0.1s; }
-.reveal-delay-2 { transition-delay: 0.2s; }
-.reveal-delay-3 { transition-delay: 0.3s; }
-.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-2 { transition-delay: 0.22s; }
+.reveal-delay-3 { transition-delay: 0.34s; }
+.reveal-delay-4 { transition-delay: 0.46s; }
+
+/* ── Glow effects ── */
+.nav-logo-mark { animation: logo-pulse 3.5s ease-in-out infinite; }
+@keyframes logo-pulse {
+  0%,100% { box-shadow: 0 0 14px rgba(14,165,183,0.3); }
+  50%      { box-shadow: 0 0 32px rgba(14,165,183,0.65), 0 0 60px rgba(14,165,183,0.15); }
+}
+
+.stat-num { text-shadow: 0 0 40px rgba(249,115,22,0.5); }
+
+.feat-card { transition: border-color 0.3s, transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s; }
+.feat-card:hover {
+  border-color: rgba(249,115,22,0.35); transform: translateY(-7px);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(249,115,22,0.12), 0 0 40px rgba(249,115,22,0.07);
+}
+.feat-icon { transition: box-shadow 0.3s; }
+.feat-card:hover .feat-icon.orange { box-shadow: 0 0 24px rgba(249,115,22,0.45); }
+.feat-card:hover .feat-icon.teal   { box-shadow: 0 0 24px rgba(14,165,183,0.45); }
+.feat-card:hover .feat-icon.gold   { box-shadow: 0 0 24px rgba(251,191,36,0.45); }
+.feat-card:hover .feat-icon.green  { box-shadow: 0 0 24px rgba(34,197,94,0.45); }
+.feat-card:hover .feat-icon.purple { box-shadow: 0 0 24px rgba(168,85,247,0.45); }
+.feat-card:hover .feat-icon.blue   { box-shadow: 0 0 24px rgba(59,130,246,0.45); }
+
+.audience-card::before { box-shadow: 0 2px 18px rgba(249,115,22,0.5); }
+.audience-card.teal::before { box-shadow: 0 2px 18px rgba(14,165,183,0.5); }
+.audience-card.gold::before { box-shadow: 0 2px 18px rgba(251,191,36,0.5); }
+
+.roadmap-card.active::before {
+  background: linear-gradient(90deg, var(--fire) 0%, var(--teal) 50%, var(--fire) 100%);
+  background-size: 200% 100%;
+  animation: gradient-flow 3s linear infinite;
+}
+
+/* ── Button shimmer ── */
+.btn-primary { position: relative; overflow: hidden; }
+.btn-primary::after {
+  content: ''; position: absolute;
+  top: 0; left: -100%; width: 55%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+  transform: skewX(-15deg);
+}
+.btn-primary:hover::after { left: 160%; transition: left 0.55s ease; }
+
+/* ── Product visual float + glow ── */
+#simulator .product-visual {
+  border-top: 2px solid rgba(249,115,22,0.75);
+  animation: visual-float 6s ease-in-out infinite;
+  transition: box-shadow 0.4s;
+}
+#simulator .product-visual:hover { box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 60px rgba(249,115,22,0.14); }
+#spray .product-visual {
+  border-top: 2px solid rgba(14,165,183,0.75);
+  animation: visual-float 7.5s ease-in-out infinite 1.5s;
+  transition: box-shadow 0.4s;
+}
+#spray .product-visual:hover { box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 60px rgba(14,165,183,0.14); }
+#cfd .product-visual { border-top: 2px solid rgba(251,191,36,0.75); }
+@keyframes visual-float {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-7px); }
+}
+
+/* ── CTA section ambient glow ── */
+.cta-section {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% -10%, rgba(249,115,22,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 20% 80%, rgba(14,165,183,0.07) 0%, transparent 60%),
+    var(--bg2);
+}
+
+/* ── Announce bar animated gradient ── */
+.announce-bar {
+  background: linear-gradient(90deg, #7c2d12 0%, #9a3412 25%, #c2410c 50%, #9a3412 75%, #7c2d12 100%);
+  background-size: 200% auto;
+  animation: gradient-flow 8s linear infinite;
+}
+
+/* ── Section ambient radial glows ── */
+#simulator { position: relative; }
+#simulator::before {
+  content: ''; position: absolute; pointer-events: none;
+  width: 600px; height: 400px; top: 40%; right: -100px;
+  background: radial-gradient(ellipse, rgba(249,115,22,0.06) 0%, transparent 70%);
+  filter: blur(40px);
+}
+#spray { position: relative; }
+#spray::before {
+  content: ''; position: absolute; pointer-events: none;
+  width: 600px; height: 400px; top: 30%; left: -100px;
+  background: radial-gradient(ellipse, rgba(14,165,183,0.06) 0%, transparent 70%);
+  filter: blur(40px);
+}
+#features { position: relative; }
+#features::before {
+  content: ''; position: absolute; pointer-events: none;
+  width: 700px; height: 300px; top: 0; left: 50%; transform: translateX(-50%);
+  background: radial-gradient(ellipse, rgba(14,165,183,0.05) 0%, transparent 70%);
+  filter: blur(60px);
+}
+
+/* ── Hero h1 subtle glow ── */
+.hero h1 { filter: drop-shadow(0 0 40px rgba(249,115,22,0.12)); }
+
+/* ── Hero badge shimmer ── */
+.hero-badge {
+  animation: badge-glow 4s ease-in-out infinite;
+}
+.hero-badge:nth-child(2) { animation-delay: 1.3s; }
+.hero-badge:nth-child(3) { animation-delay: 2.6s; }
+@keyframes badge-glow {
+  0%,80%,100% { border-color: rgba(255,255,255,0.1); }
+  40%         { border-color: rgba(249,115,22,0.35); box-shadow: 0 0 14px rgba(249,115,22,0.1); }
+}
+
+/* ── Animated glow ring on primary CTA ── */
+.btn-primary {
+  box-shadow: 0 0 0 0 rgba(249,115,22,0);
+}
+.btn-primary:hover {
+  box-shadow: 0 0 0 4px rgba(249,115,22,0.2), 0 8px 30px rgba(249,115,22,0.3);
+  transform: translateY(-1px);
+}
+.btn-primary { transition: transform 0.2s, box-shadow 0.3s, background 0.2s; }
+
+/* ── Product number gradient ── */
+.product-number {
+  background: linear-gradient(90deg, var(--fire), var(--teal));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+}
+
+/* ── Eyebrow animated line ── */
+.reveal.visible .eyebrow::before {
+  animation: line-in 0.5s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes line-in {
+  from { width: 0; opacity: 0; }
+  to   { width: 24px; opacity: 1; }
+}
+
+/* ── Stat bar glow sweep ── */
+.stat-bar {
+  position: relative; overflow: hidden;
+}
+.stat-bar::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, transparent 0%, rgba(249,115,22,0.04) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer-sweep 6s ease-in-out infinite;
+}
+@keyframes shimmer-sweep {
+  0%   { background-position: -100% 0; }
+  100% { background-position: 300% 0; }
+}
+
+/* ── Prefers reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .hero h1 .fire-word { animation: none; background: none; -webkit-text-fill-color: var(--fire); color: var(--fire); }
+  .hero h1 .teal-word { animation: none; background: none; -webkit-text-fill-color: var(--teal); color: var(--teal); }
+  .hero-orb-fire, .hero-orb-teal, .nav-logo-mark,
+  #simulator .product-visual, #spray .product-visual,
+  .roadmap-card.active::before, .announce-bar { animation: none; }
+}
 
 /* ──────────────────────────────────────────────
    RESPONSIVE
@@ -906,6 +1110,8 @@ footer {
   <canvas id="hero-canvas"></canvas>
   <div class="hero-grid"></div>
   <div class="hero-glow"></div>
+  <div class="hero-orb hero-orb-fire" id="orb-fire"></div>
+  <div class="hero-orb hero-orb-teal" id="orb-teal"></div>
   <div class="hero-inner">
     <div class="hero-eyebrow">
       <span></span> Research-Grade Combustion Engineering Tools
@@ -1927,6 +2133,36 @@ function handleSignup(e) {
    FOOTER YEAR
 ────────────────────────────────────────────── */
 document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+/* ──────────────────────────────────────────────
+   HERO MOUSE PARALLAX
+────────────────────────────────────────────── */
+(function() {
+  const fire = document.getElementById('orb-fire');
+  const teal = document.getElementById('orb-teal');
+  if (!fire || !teal) return;
+  let tx1 = 0, ty1 = 0, cx1 = 0, cy1 = 0;
+  let tx2 = 0, ty2 = 0, cx2 = 0, cy2 = 0;
+  let raf = null;
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function tick() {
+    cx1 = lerp(cx1, tx1, 0.05); cy1 = lerp(cy1, ty1, 0.05);
+    cx2 = lerp(cx2, tx2, 0.04); cy2 = lerp(cy2, ty2, 0.04);
+    fire.style.transform = `translate(calc(-50% + ${cx1}px), calc(-10% + ${cy1}px))`;
+    teal.style.transform = `translate(${cx2}px, ${cy2}px)`;
+    raf = requestAnimationFrame(tick);
+  }
+  document.addEventListener('mousemove', function(e) {
+    const ox = (e.clientX - window.innerWidth  / 2) / window.innerWidth;
+    const oy = (e.clientY - window.innerHeight / 2) / window.innerHeight;
+    tx1 = ox * 38;  ty1 = oy * 26;
+    tx2 = ox * -24; ty2 = oy * -18;
+    if (!raf) raf = requestAnimationFrame(tick);
+  }, { passive: true });
+  document.addEventListener('mouseleave', function() {
+    tx1 = ty1 = tx2 = ty2 = 0;
+  });
+})();
 </script>
 <!-- APP OVERLAY -->
 <div id="app-overlay" style="display:none;position:fixed;inset:0;z-index:999;flex-direction:column;background:#07090f">
