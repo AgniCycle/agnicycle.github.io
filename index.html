@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>AgniCycle — Combustion Engineering Tools for Research</title>
+<meta name="description" content="AgniCycle delivers research-grade combustion simulation tools: Zero-D engine cycle simulator, spray calculator, and expert CFD training services."/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='92' fill='%230B2536'/><circle cx='256' cy='256' r='184' fill='%231B4A63' stroke='%230EA5B7' stroke-width='3'/><path d='M213 150 C250 200 265 240 248 268 C234 291 208 299 187 289 C165 279 159 258 169 242 C173 252 183 259 191 253 C183 234 187 200 213 150 Z' fill='url(%23fg)'/><defs><radialGradient id='fg' cx='50%25' cy='68%25' r='62%25'><stop offset='0%25' stop-color='%23FFF06B'/><stop offset='68%25' stop-color='%23F97316'/><stop offset='100%25' stop-color='%23F0500F'/></radialGradient></defs></svg>" type="image/svg+xml"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ──────────────────────────────────────────────
+   RESET & TOKENS
+────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:        #07090f;
+  --bg2:       #0d1320;
+  --surface:   #111827;
+  --surface2:  #1a2235;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.12);
+  --text:      #e2e8f0;
+  --text2:     #94a3b8;
+  --muted:     #64748b;
+  --fire:      #f97316;
+  --fire-dim:  #ea580c;
+  --fire-glow: rgba(249,115,22,0.18);
+  --teal:      #0ea5b7;
+  --teal-dim:  rgba(14,165,183,0.15);
+  --gold:      #fbbf24;
+  --green:     #22c55e;
+  --radius:    14px;
+  --radius-lg: 20px;
+  --shadow:    0 4px 24px rgba(0,0,0,0.5);
+  --shadow-fire: 0 0 40px rgba(249,115,22,0.3);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+h1,h2,h3,h4 { font-family: 'Sora', sans-serif; line-height: 1.2; }
+a { color: var(--fire); text-decoration: none; }
+a:hover { text-decoration: underline; }
+img { max-width: 100%; display: block; }
+code, .mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ──────────────────────────────────────────────
+   SCROLLBAR
+────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+
+/* ──────────────────────────────────────────────
+   NAV
+────────────────────────────────────────────── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; gap: 0;
+  padding: 0 32px;
+  height: 64px;
+  background: rgba(7,9,15,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.3s;
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; color: var(--text);
+  font-family: 'Sora', sans-serif; font-weight: 700; font-size: 18px;
+  flex-shrink: 0;
+}
+.nav-brand:hover { text-decoration: none; }
+.nav-logo-mark {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: #0B2536;
+  border: 1.5px solid #0ea5b7;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 16px rgba(14,165,183,0.35);
+}
+.nav-logo-mark svg { width: 22px; height: 22px; }
+.nav-brand span { letter-spacing: -0.3px; }
+.nav-brand em { color: var(--fire); font-style: normal; }
+.nav-links {
+  display: flex; align-items: center; gap: 4px;
+  margin-left: auto;
+  list-style: none;
+}
+.nav-links a {
+  color: var(--text2); font-size: 14px; font-weight: 500;
+  padding: 6px 12px; border-radius: 8px;
+  transition: color 0.2s, background 0.2s;
+  text-decoration: none;
+}
+.nav-links a:hover { color: var(--text); background: var(--surface2); }
+.nav-cta {
+  margin-left: 8px;
+  background: var(--fire) !important;
+  color: #fff !important;
+  padding: 8px 18px !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  transition: opacity 0.2s, box-shadow 0.2s !important;
+}
+.nav-cta:hover { opacity: 0.9 !important; box-shadow: var(--shadow-fire) !important; background: var(--fire) !important; }
+.nav-hamburger {
+  display: none; background: none; border: none;
+  color: var(--text); cursor: pointer; padding: 8px;
+  margin-left: auto;
+}
+.nav-mobile {
+  display: none; position: fixed; inset: 64px 0 0 0; z-index: 99;
+  background: var(--bg2); padding: 24px;
+  flex-direction: column; gap: 8px;
+  border-top: 1px solid var(--border);
+}
+.nav-mobile a {
+  color: var(--text); font-size: 16px; font-weight: 500;
+  padding: 12px 16px; border-radius: 10px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.nav-mobile a:hover { background: var(--surface2); }
+.nav-mobile.open { display: flex; }
+
+/* ──────────────────────────────────────────────
+   HERO
+────────────────────────────────────────────── */
+.hero {
+  position: relative; min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 120px 24px 80px;
+  overflow: hidden;
+}
+#hero-canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none;
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(14,165,183,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14,165,183,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 20%, transparent 100%);
+}
+.hero-glow {
+  position: absolute; top: 30%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px; height: 400px;
+  background: radial-gradient(ellipse, rgba(249,115,22,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-inner {
+  position: relative; z-index: 1;
+  max-width: 820px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 28px;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(249,115,22,0.1);
+  border: 1px solid rgba(249,115,22,0.25);
+  color: var(--fire); font-size: 13px; font-weight: 600;
+  padding: 6px 16px; border-radius: 999px;
+  letter-spacing: 0.5px;
+}
+.hero-eyebrow span { width: 6px; height: 6px; background: var(--fire); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(1.4); } }
+.hero h1 {
+  font-size: clamp(42px, 7vw, 78px);
+  font-weight: 800;
+  letter-spacing: -2px;
+  line-height: 1.05;
+  color: #fff;
+}
+.hero h1 .fire-word { color: var(--fire); }
+.hero h1 .teal-word { color: var(--teal); }
+.hero-sub {
+  font-size: clamp(16px, 2vw, 20px);
+  color: var(--text2); max-width: 620px;
+  font-weight: 400; line-height: 1.7;
+}
+.hero-sub strong { color: var(--text); font-weight: 600; }
+.hero-ctas {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center;
+}
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--fire); color: #fff;
+  font-size: 15px; font-weight: 600;
+  padding: 14px 28px; border-radius: 12px; border: none; cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s, box-shadow 0.2s, transform 0.15s;
+  box-shadow: 0 4px 20px rgba(249,115,22,0.4);
+}
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 8px 32px rgba(249,115,22,0.5); text-decoration: none; }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--surface2); color: var(--text);
+  font-size: 15px; font-weight: 500;
+  padding: 13px 24px; border-radius: 12px;
+  border: 1px solid var(--border2); cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-secondary:hover { background: var(--surface); transform: translateY(-1px); text-decoration: none; }
+.hero-badges {
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: center;
+  margin-top: 8px;
+}
+.hero-badge {
+  display: flex; align-items: center; gap: 6px;
+  color: var(--text2); font-size: 13px; font-weight: 500;
+}
+.hero-badge svg { color: var(--green); flex-shrink: 0; }
+.hero-scroll {
+  position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  color: var(--muted); font-size: 12px;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(6px); } }
+.scroll-arrow { width: 20px; height: 20px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); }
+
+/* ──────────────────────────────────────────────
+   STAT BAR
+────────────────────────────────────────────── */
+.stat-bar {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 32px 24px;
+}
+.stat-bar-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+}
+.stat-item { text-align: center; }
+.stat-num {
+  font-family: 'Sora', sans-serif;
+  font-size: 38px; font-weight: 800;
+  color: var(--fire); line-height: 1;
+  letter-spacing: -1px;
+}
+.stat-label { font-size: 14px; color: var(--text2); margin-top: 4px; }
+
+/* ──────────────────────────────────────────────
+   SECTIONS
+────────────────────────────────────────────── */
+.section {
+  padding: 100px 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.section-full {
+  padding: 100px 24px;
+}
+.section-center { text-align: center; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--teal);
+  margin-bottom: 14px;
+}
+.eyebrow::before {
+  content: ''; width: 24px; height: 2px;
+  background: var(--teal); border-radius: 1px;
+}
+.section-headline {
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800; letter-spacing: -1px;
+  color: #fff; margin-bottom: 18px;
+}
+.section-sub {
+  font-size: 17px; color: var(--text2);
+  max-width: 600px; margin: 0 auto 60px;
+  line-height: 1.7;
+}
+
+/* ──────────────────────────────────────────────
+   PRODUCT SECTIONS
+────────────────────────────────────────────── */
+.product {
+  max-width: 1100px; margin: 0 auto;
+  padding: 80px 24px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+}
+.product.reverse { }
+.product-text { display: flex; flex-direction: column; gap: 20px; }
+.product-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 500; color: var(--muted);
+  letter-spacing: 2px;
+}
+.product-title {
+  font-size: clamp(26px, 3.5vw, 36px); font-weight: 800;
+  letter-spacing: -0.8px; color: #fff; line-height: 1.15;
+}
+.product-title em { color: var(--fire); font-style: normal; }
+.product-desc {
+  font-size: 16px; color: var(--text2); line-height: 1.75;
+}
+.product-features {
+  display: flex; flex-direction: column; gap: 10px;
+  list-style: none;
+}
+.product-features li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 15px; color: var(--text2);
+}
+.product-features li::before {
+  content: ''; flex-shrink: 0;
+  width: 18px; height: 18px; margin-top: 2px;
+  border-radius: 50%;
+  background: rgba(249,115,22,0.15);
+  border: 1.5px solid rgba(249,115,22,0.4);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3 8l3.5 3.5L13 4.5' stroke='%23f97316' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size: 14px 14px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.product-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+
+/* Product visual panels */
+.product-visual {
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  position: relative;
+}
+.panel-header {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.panel-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+}
+.panel-dot.red { background: #ff5f57; }
+.panel-dot.yellow { background: #febc2e; }
+.panel-dot.green { background: #28c840; }
+.panel-title { font-size: 12px; color: var(--text2); margin-left: 4px; font-family: 'JetBrains Mono', monospace; }
+.panel-body { padding: 20px; }
+
+/* ── Zero-D simulator visual ── */
+.sim-chart { position: relative; }
+.sim-axes {
+  position: relative; width: 100%; height: 200px;
+  border-left: 2px solid rgba(255,255,255,0.15);
+  border-bottom: 2px solid rgba(255,255,255,0.15);
+  margin-bottom: 8px;
+}
+.sim-axis-label {
+  position: absolute; font-size: 10px; color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+.sim-axis-label.y { left: -32px; top: 50%; transform: translateY(-50%) rotate(-90deg); }
+.sim-axis-label.x { bottom: -20px; right: 0; }
+.sim-pv-curve {
+  position: absolute; inset: 0;
+}
+.sim-params {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px;
+}
+.sim-param {
+  background: var(--bg2); border-radius: 8px; padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.sim-param-label { font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 0.5px; }
+.sim-param-value { font-size: 18px; font-weight: 700; color: var(--fire); font-family: 'Sora', sans-serif; }
+.sim-param-unit { font-size: 10px; color: var(--text2); }
+
+/* ── Spray visual ── */
+.spray-visual {
+  position: relative; height: 220px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+#spray-canvas { width: 100%; height: 100%; }
+.spray-metrics {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px;
+}
+.spray-metric {
+  background: var(--bg2); border-radius: 8px; padding: 10px;
+  text-align: center;
+}
+.spray-metric-val { font-size: 16px; font-weight: 700; color: var(--teal); font-family: 'Sora', sans-serif; }
+.spray-metric-label { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+/* ── CFD visual ── */
+.cfd-visual {
+  position: relative; height: 200px; overflow: hidden; border-radius: 8px;
+  background: linear-gradient(135deg, #030812 0%, #0d1525 100%);
+}
+#cfd-canvas { width: 100%; height: 100%; }
+.cfd-tags {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px;
+}
+.cfd-tag {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  font-size: 12px; font-family: 'JetBrains Mono', monospace;
+  padding: 5px 10px; border-radius: 6px;
+}
+.cfd-tag.hi { color: var(--teal); border-color: rgba(14,165,183,0.3); }
+
+/* ──────────────────────────────────────────────
+   FEATURES GRID
+────────────────────────────────────────────── */
+.features-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+}
+.feat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.feat-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.feat-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+  font-size: 22px;
+}
+.feat-icon.orange { background: rgba(249,115,22,0.12); }
+.feat-icon.teal   { background: rgba(14,165,183,0.12); }
+.feat-icon.gold   { background: rgba(251,191,36,0.12); }
+.feat-icon.green  { background: rgba(34,197,94,0.12); }
+.feat-icon.purple { background: rgba(168,85,247,0.12); }
+.feat-icon.blue   { background: rgba(59,130,246,0.12); }
+.feat-title { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.feat-body { font-size: 14px; color: var(--text2); line-height: 1.65; }
+
+/* ──────────────────────────────────────────────
+   AUDIENCE
+────────────────────────────────────────────── */
+.audience-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+}
+.audience-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  position: relative; overflow: hidden;
+}
+.audience-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--fire);
+}
+.audience-card.teal::before { background: var(--teal); }
+.audience-card.gold::before { background: var(--gold); }
+.audience-emoji { font-size: 32px; margin-bottom: 14px; }
+.audience-role { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.audience-body { font-size: 14px; color: var(--text2); line-height: 1.65; }
+
+/* ──────────────────────────────────────────────
+   DIVIDER SECTION
+────────────────────────────────────────────── */
+.divider-section {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 80px 24px;
+}
+.divider-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+}
+
+/* ──────────────────────────────────────────────
+   SIGNUP / CTA SECTION
+────────────────────────────────────────────── */
+.cta-section {
+  background: radial-gradient(ellipse 100% 120% at 50% 0%, rgba(249,115,22,0.08) 0%, transparent 60%),
+              var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 100px 24px;
+  text-align: center;
+}
+.cta-box {
+  max-width: 560px; margin: 0 auto;
+  display: flex; flex-direction: column; align-items: center; gap: 24px;
+}
+.signup-form {
+  display: flex; gap: 10px; width: 100%; max-width: 440px; flex-wrap: wrap;
+}
+.signup-input {
+  flex: 1; min-width: 200px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-size: 15px; font-family: 'Inter', sans-serif;
+  padding: 13px 16px; border-radius: 10px;
+  outline: none; transition: border-color 0.2s;
+}
+.signup-input::placeholder { color: var(--muted); }
+.signup-input:focus { border-color: var(--fire); }
+.signup-note { font-size: 12px; color: var(--muted); }
+
+/* ──────────────────────────────────────────────
+   TECH STRIP
+────────────────────────────────────────────── */
+.tech-strip {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 28px 24px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; flex-wrap: wrap;
+}
+.tech-label { font-size: 12px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 1px; margin-right: 8px; }
+.tech-chip {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text2); font-size: 13px;
+  padding: 6px 14px; border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ──────────────────────────────────────────────
+   FOOTER
+────────────────────────────────────────────── */
+footer {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 48px 24px;
+}
+.footer-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px;
+}
+.footer-brand { display: flex; flex-direction: column; gap: 14px; }
+.footer-brand-logo { display: flex; align-items: center; gap: 10px; }
+.footer-brand-logo span { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 18px; color: #fff; }
+.footer-tagline { font-size: 14px; color: var(--text2); line-height: 1.65; max-width: 280px; }
+.footer-col h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 14px; letter-spacing: 0.5px; text-transform: uppercase; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col ul a { font-size: 14px; color: var(--text2); text-decoration: none; transition: color 0.2s; }
+.footer-col ul a:hover { color: var(--fire); }
+.footer-bottom {
+  max-width: 1100px; margin: 40px auto 0;
+  padding-top: 24px; border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 13px; color: var(--muted); flex-wrap: wrap; gap: 12px;
+}
+.footer-bottom a { color: var(--muted); }
+.footer-bottom a:hover { color: var(--text); }
+
+/* ──────────────────────────────────────────────
+   SCROLL-REVEAL
+────────────────────────────────────────────── */
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.reveal.visible { opacity: 1; transform: none; }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ──────────────────────────────────────────────
+   RESPONSIVE
+────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .nav-hamburger { display: block; }
+  .product { grid-template-columns: 1fr; gap: 40px; }
+  .product.reverse .product-visual { order: -1; }
+  .features-grid { grid-template-columns: 1fr 1fr; }
+  .audience-grid { grid-template-columns: 1fr 1fr; }
+  .stat-bar-inner { grid-template-columns: repeat(2, 1fr); }
+  .divider-inner { grid-template-columns: 1fr; gap: 40px; }
+  .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
+}
+@media (max-width: 600px) {
+  .features-grid { grid-template-columns: 1fr; }
+  .audience-grid { grid-template-columns: 1fr; }
+  .stat-bar-inner { grid-template-columns: 1fr 1fr; }
+  .footer-inner { grid-template-columns: 1fr; }
+  .hero-ctas { flex-direction: column; align-items: stretch; text-align: center; }
+  .btn-primary, .btn-secondary { justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a class="nav-brand" href="#">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="ng" cx="50%" cy="68%" r="62%">
+            <stop offset="0%" stop-color="#FFF06B"/>
+            <stop offset="60%" stop-color="#F97316"/>
+            <stop offset="100%" stop-color="#F0500F"/>
+          </radialGradient>
+        </defs>
+        <path d="M50 8 C68 32 75 52 66 68 C59 80 43 86 31 78 C19 70 16 54 25 42 C29 52 37 58 43 52 C37 40 41 22 50 8 Z" fill="url(#ng)"/>
+      </svg>
+    </div>
+    <span>Agni<em>Cycle</em></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#simulator">Simulator</a></li>
+    <li><a href="#spray">Spray Calc</a></li>
+    <li><a href="#cfd">CFD Training</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#signup" class="nav-cta">Get Early Access</a></li>
+  </ul>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu" onclick="toggleNav()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  </button>
+</nav>
+
+<div class="nav-mobile" id="nav-mobile">
+  <a href="#simulator" onclick="closeNav()">Zero-D Simulator</a>
+  <a href="#spray" onclick="closeNav()">Spray Calculator</a>
+  <a href="#cfd" onclick="closeNav()">CFD Training</a>
+  <a href="#about" onclick="closeNav()">About</a>
+  <a href="#signup" onclick="closeNav()" style="color:var(--fire);font-weight:600">Get Early Access →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span></span> Research-Grade Combustion Engineering Tools
+    </div>
+    <h1>
+      The Engine for<br/>
+      <span class="fire-word">Combustion</span> <span class="teal-word">Research</span>
+    </h1>
+    <p class="hero-sub">
+      <strong>Propulsion Engineering · Zero-Emission Simulation · Thermodynamic Research</strong><br/>
+      A high-fidelity engine simulation suite that demystifies fluid dynamics, fuel chemistry, and combustion mathematics into real-time, browser-native interactive experiences.
+    </p>
+    <div class="hero-ctas">
+      <a href="#signup" class="btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        Get Early Access
+      </a>
+      <a href="https://agnicycle-865384871824.us-west2.run.app" target="_blank" rel="noopener" class="btn-secondary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+        Try AgniCycle™
+      </a>
+    </div>
+    <div class="hero-badges">
+      <div class="hero-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        No installation required
+      </div>
+      <div class="hero-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Built by combustion researchers
+      </div>
+      <div class="hero-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Peer-validated thermodynamics
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll to explore</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- STAT BAR -->
+<div class="stat-bar">
+  <div class="stat-bar-inner">
+    <div class="stat-item reveal">
+      <div class="stat-num" data-target="40">0</div>
+      <div class="stat-label">Published combustion papers</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-1">
+      <div class="stat-num" data-target="403">0</div>
+      <div class="stat-label">Research citations</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-2">
+      <div class="stat-num" data-target="10">0</div>
+      <div class="stat-label">Years active in combustion R&D</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-3">
+      <div class="stat-num" data-suffix="x">0</div>
+      <div class="stat-label">Faster than MATLAB setup</div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT 1: ZERO-D SIMULATOR -->
+<section id="simulator">
+  <div class="product reveal">
+    <div class="product-text">
+      <div class="product-number">// 01 — SIMULATION ENGINE</div>
+      <h2 class="product-title">
+        AgniCycle™ <em>Propulsion</em><br/>Simulator
+      </h2>
+      <p class="product-desc">
+        An advanced transient 0D solver resolving temperature, pressure, cylinder volume, and exhaust emissions at <strong style="color:var(--text)">0.25° crank-angle intervals</strong> across all four strokes — exactly 2,881 discrete equations per cylinder, finishing in under 20 ms in your browser. No server. No compile. No wait.
+      </p>
+      <ul class="product-features">
+        <li>Full 720° CA sweep (−360° to +360°) covering intake, compression, power, and exhaust</li>
+        <li>Double-Wiebe mixed kinetics: premixed spark-ignition flame + diffusion spray combustion</li>
+        <li>First-Law energy partition: Q<sub>fuel</sub> = W<sub>ind</sub> + Q<sub>wall</sub> + Q<sub>exh</sub> + Q<sub>inc</sub> solved each step</li>
+        <li>Polytropic non-firing strokes + Ideal Gas integration with dissociation species tracking</li>
+        <li>Chemical NOx/soot kinetic freezing and knock boundary modeling</li>
+        <li>Procedural dP/dθ sound engine — crankshaft knock resonance via FM synthesis</li>
+      </ul>
+      <div class="product-ctas">
+        <a href="https://agnicycle-865384871824.us-west2.run.app" target="_blank" rel="noopener" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none"/></svg>
+          Launch Simulator
+        </a>
+        <a href="#about" class="btn-secondary">Learn the science</a>
+      </div>
+    </div>
+    <div class="product-visual reveal reveal-delay-2">
+      <div class="panel-header">
+        <div class="panel-dot red"></div>
+        <div class="panel-dot yellow"></div>
+        <div class="panel-dot green"></div>
+        <span class="panel-title">agnicycle · cycle_simulator.py</span>
+      </div>
+      <div class="panel-body">
+        <div class="sim-chart">
+          <div class="sim-axes">
+            <span class="sim-axis-label y">Pressure [MPa]</span>
+            <span class="sim-axis-label x">Volume [cm³]</span>
+            <svg class="sim-pv-curve" viewBox="0 0 300 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Grid lines -->
+              <line x1="0" y1="50" x2="300" y2="50" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+              <line x1="0" y1="100" x2="300" y2="100" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+              <line x1="0" y1="150" x2="300" y2="150" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+              <line x1="75" y1="0" x2="75" y2="200" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+              <line x1="150" y1="0" x2="150" y2="200" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+              <line x1="225" y1="0" x2="225" y2="200" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+              <!-- Dual cycle path -->
+              <!-- 1→2 Adiabatic compression -->
+              <path d="M 260 175 C 240 165 200 140 160 100 C 130 72 100 52 80 38" stroke="#0ea5b7" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <!-- 2→3 Isochoric heat add -->
+              <path d="M 80 38 L 80 18" stroke="#fbbf24" stroke-width="2" fill="none"/>
+              <!-- 3→4 Isobaric heat add -->
+              <path d="M 80 18 L 100 18" stroke="#fbbf24" stroke-width="2" fill="none"/>
+              <!-- 4→5 Adiabatic expansion -->
+              <path d="M 100 18 C 130 32 180 72 220 120 C 242 148 255 162 260 175" stroke="#f97316" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <!-- 5→1 Isochoric heat rejection -->
+              <path d="M 260 175 L 260 175" stroke="#64748b" stroke-width="2" fill="none"/>
+              <!-- Fill area -->
+              <path d="M 260 175 C 240 165 200 140 160 100 C 130 72 100 52 80 38 L 80 18 L 100 18 C 130 32 180 72 220 120 C 242 148 255 162 260 175 Z" fill="rgba(249,115,22,0.06)"/>
+              <!-- Point labels -->
+              <circle cx="260" cy="175" r="4" fill="#64748b"/>
+              <text x="266" y="179" fill="#64748b" font-size="10" font-family="JetBrains Mono">1</text>
+              <circle cx="80" cy="38" r="4" fill="#0ea5b7"/>
+              <text x="68" y="36" fill="#0ea5b7" font-size="10" font-family="JetBrains Mono">2</text>
+              <circle cx="80" cy="18" r="4" fill="#fbbf24"/>
+              <text x="68" y="16" fill="#fbbf24" font-size="10" font-family="JetBrains Mono">3</text>
+              <circle cx="100" cy="18" r="4" fill="#fbbf24"/>
+              <text x="102" y="14" fill="#fbbf24" font-size="10" font-family="JetBrains Mono">4</text>
+              <circle cx="260" cy="175" r="3" fill="#f97316"/>
+              <!-- Efficiency label -->
+              <rect x="155" y="105" width="90" height="22" rx="5" fill="rgba(249,115,22,0.12)" stroke="rgba(249,115,22,0.3)" stroke-width="1"/>
+              <text x="200" y="120" fill="#f97316" font-size="11" font-family="JetBrains Mono" text-anchor="middle">η_th = 52.4 %</text>
+            </svg>
+          </div>
+        </div>
+        <div class="sim-params">
+          <div class="sim-param">
+            <span class="sim-param-label">Compression Ratio</span>
+            <span class="sim-param-value">16<span class="sim-param-unit">:1</span></span>
+          </div>
+          <div class="sim-param">
+            <span class="sim-param-label">Fuel</span>
+            <span class="sim-param-value" style="font-size:14px;padding-top:3px">H₂/CNG</span>
+          </div>
+          <div class="sim-param">
+            <span class="sim-param-label">IMEP</span>
+            <span class="sim-param-value">8.3<span class="sim-param-unit"> bar</span></span>
+          </div>
+          <div class="sim-param">
+            <span class="sim-param-label">Peak Pressure</span>
+            <span class="sim-param-value">9.1<span class="sim-param-unit"> MPa</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT 2: SPRAY CALCULATOR -->
+<section id="spray" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="product reverse reveal" style="flex-direction:row-reverse">
+    <div class="product-visual reveal reveal-delay-2">
+      <div class="panel-header">
+        <div class="panel-dot red"></div>
+        <div class="panel-dot yellow"></div>
+        <div class="panel-dot green"></div>
+        <span class="panel-title">agnicycle · spray_calculator</span>
+      </div>
+      <div class="panel-body">
+        <div class="spray-visual">
+          <canvas id="spray-canvas"></canvas>
+        </div>
+        <div class="spray-metrics">
+          <div class="spray-metric">
+            <div class="spray-metric-val">42 μm</div>
+            <div class="spray-metric-label">SMD (D₃₂)</div>
+          </div>
+          <div class="spray-metric">
+            <div class="spray-metric-val">68 mm</div>
+            <div class="spray-metric-label">Penetration</div>
+          </div>
+          <div class="spray-metric">
+            <div class="spray-metric-val">18°</div>
+            <div class="spray-metric-label">Cone Angle</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="product-text">
+      <div class="product-number">// 02 — SPRAY PHYSICS</div>
+      <h2 class="product-title">
+        Fuel <em>Spray</em><br/>Calculator
+      </h2>
+      <p class="product-desc">
+        Characterize fuel injection sprays without a wind tunnel. Compute droplet size distributions, spray penetration, evaporation timescales, and cone angles using empirical correlations validated against high-speed Mie scattering experiments.
+      </p>
+      <ul class="product-features">
+        <li>Sauter Mean Diameter (SMD) via Hiroyasu–Arai and Reitz–Diwakar correlations</li>
+        <li>Liquid jet penetration curves: intact length and tip penetration vs. time</li>
+        <li>Spray cone half-angle as a function of injection pressure and orifice geometry</li>
+        <li>Droplet evaporation model — D² law with fuel vapor pressure correction</li>
+        <li>Multi-component fuel blends: diesel, biodiesel, DME, E10–E85</li>
+        <li>Exportable droplet size distribution histograms (CSV + SVG)</li>
+      </ul>
+      <div class="product-ctas">
+        <a href="https://spray-calculator-865384871824.us-west2.run.app" target="_blank" rel="noopener" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none"/></svg>
+          Launch Calculator
+        </a>
+        <a href="#about" class="btn-secondary">View correlations</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT 3: CFD TRAINING -->
+<section id="cfd">
+  <div class="product reveal">
+    <div class="product-text">
+      <div class="product-number">// 03 — EXPERT SERVICES</div>
+      <h2 class="product-title">
+        <em>CFD Training</em><br/>& Consulting
+      </h2>
+      <p class="product-desc">
+        One-on-one and cohort-based training by an active combustion CFD researcher. From OpenFOAM mesh generation to reacting-flow LES — learn the workflows that power real journal papers, not toy tutorials.
+      </p>
+      <ul class="product-features">
+        <li>CONVERGE CFD: autonomous meshing, spray, ignition, and in-cylinder combustion setup</li>
+        <li>GT-Power: 1D engine system modeling, valve timing, turbocharger matching, fuel path</li>
+        <li>Reacting flow: chemical mechanism reduction, flamelet models, knock prediction</li>
+        <li>Post-processing: Python automation, publication-quality figures, data pipelines</li>
+        <li>HPC job submission: Slurm, PBS, cluster profiling and scaling analysis</li>
+        <li>Live sessions, recorded modules, and async code review on your simulations</li>
+      </ul>
+      <div class="product-ctas">
+        <a href="#signup" class="btn-primary">Book a Session</a>
+        <a href="mailto:dkumar39@wisc.edu" class="btn-secondary">Contact directly</a>
+      </div>
+    </div>
+    <div class="product-visual reveal reveal-delay-2">
+      <div class="panel-header">
+        <div class="panel-dot red"></div>
+        <div class="panel-dot yellow"></div>
+        <div class="panel-dot green"></div>
+        <span class="panel-title">agnicycle · cfd_session · live</span>
+      </div>
+      <div class="panel-body">
+        <div class="cfd-visual">
+          <canvas id="cfd-canvas"></canvas>
+        </div>
+        <div class="cfd-tags">
+          <span class="cfd-tag hi">CONVERGE CFD</span>
+          <span class="cfd-tag hi">GT-Power</span>
+          <span class="cfd-tag">In-cylinder combustion</span>
+          <span class="cfd-tag">Spray modeling</span>
+          <span class="cfd-tag">Knock prediction</span>
+          <span class="cfd-tag">Turbocharger matching</span>
+          <span class="cfd-tag">Python automation</span>
+          <span class="cfd-tag">Slurm / PBS</span>
+          <span class="cfd-tag">Cantera</span>
+          <span class="cfd-tag" style="color:var(--muted)">+ more coming</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT AGNICYCLE -->
+<div class="divider-section" id="about">
+  <div class="divider-inner">
+    <div class="reveal">
+      <div class="eyebrow">About AgniCycle™</div>
+      <h2 class="section-headline" style="margin-bottom:20px">
+        The name, the mission,<br/>the physics
+      </h2>
+      <p style="color:var(--text2);font-size:16px;line-height:1.75;margin-bottom:20px">
+        <em style="color:var(--fire);font-style:normal;font-weight:600">Agni</em> — the classical Sanskrit term for fire and ignition. <em style="color:var(--teal);font-style:normal;font-weight:600">Cycle</em> — continuous thermodynamic closed-loop conversion. Together: a platform designed to model the controlled burn at the heart of every engine.
+      </p>
+      <p style="color:var(--text2);font-size:16px;line-height:1.75;margin-bottom:20px">
+        Our mission is to <strong style="color:var(--text)">accelerate the path to clean propulsion</strong> — allowing researchers to safely push alternative fuels to their thermodynamic boundaries, modeling knocking, thermal wall losses, and nitrogen oxide freezing under real-world operating maps.
+      </p>
+      <p style="color:var(--text2);font-size:16px;line-height:1.75">
+        Where GT-Power and AVL BOOST require local servers and minutes of compile time, AgniCycle's algebraic state solver — fully optimized in client-side TypeScript — completes a full transient <strong style="color:var(--text)">2,881-step run in under 20 ms</strong>, enabling fluid real-time slider sweeps with instant visual feedback.
+      </p>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
+          <div style="font-size:13px;font-weight:700;color:var(--fire);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">⚡ &lt; 20 ms per full run</div>
+          <div style="color:var(--text2);font-size:14px;line-height:1.65">2,881 discrete equations solved client-side. No server round-trip, no compile step — instant feedback on every parameter change.</div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
+          <div style="font-size:13px;font-weight:700;color:var(--teal);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">🧬 Double-Wiebe Mixed Kinetics</div>
+          <div style="color:var(--text2);font-size:14px;line-height:1.65">Models both homogeneous spark-ignition flame propagation and heterogeneous diesel diffusion spray — premixed kinetic and gradual droplet-diffusion phases, simultaneously.</div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
+          <div style="font-size:13px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">🔊 Procedural Sound Engine</div>
+          <div style="color:var(--text2);font-size:14px;line-height:1.65">dP/dθ mapped live to FM oscillators. Crankshaft knock resonance calculated from speed of sound and bore geometry — no static WAV samples.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TEAM -->
+<div class="section-full" style="background:var(--bg2);border-top:1px solid var(--border);padding:100px 24px" id="team">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="section-center reveal" style="margin-bottom:52px">
+      <div class="eyebrow">The Team</div>
+      <h2 class="section-headline">Built by an active researcher,<br/>not a software house</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+      <!-- Developer card -->
+      <div class="reveal" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
+        <div style="background:linear-gradient(135deg,#0d1a2e 0%,#0B2536 60%,#0f2235 100%);padding:32px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:20px">
+          <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#3b4fc8,#5b6ef5);display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:800;font-size:20px;color:#fff;flex-shrink:0;box-shadow:0 4px 20px rgba(91,110,245,0.4)">DK</div>
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:6px">Founder & Developer</div>
+            <div style="font-size:22px;font-weight:800;color:#fff;font-family:'Sora',sans-serif;margin-bottom:4px">Dr. Dhananjay Kumar</div>
+            <div style="display:inline-block;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:var(--text2);font-size:11px;font-weight:600;letter-spacing:0.5px;padding:3px 10px;border-radius:6px">Postdoctoral Research Associate</div>
+          </div>
+        </div>
+        <div style="padding:28px">
+          <div style="font-size:14px;font-weight:700;color:var(--teal);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:10px">Engine Research Center · UW–Madison</div>
+          <p style="font-size:15px;color:var(--text2);line-height:1.75;margin-bottom:18px">
+            AgniCycle is developed and maintained by Dr. Dhananjay Kumar — an active researcher at one of the world's foremost internal combustion engine laboratories. Every tool in the platform is grounded in his day-to-day research practice.
+          </p>
+          <p style="font-size:15px;color:var(--text2);line-height:1.75;margin-bottom:24px">
+            His work spans <strong style="color:var(--text)">hydrogen combustion</strong>, <strong style="color:var(--text)">alternative fuels</strong>, <strong style="color:var(--text)">spray characterization</strong>, and <strong style="color:var(--text)">computational engine-cycle modeling</strong> — the exact physics encoded in these tools.
+          </p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <a href="mailto:dkumar39@wisc.edu" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);padding:7px 14px;border-radius:8px;text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>
+              dkumar39@wisc.edu
+            </a>
+            <a href="https://www.linkedin.com/in/dhkrnl" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);padding:7px 14px;border-radius:8px;text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+              LinkedIn
+            </a>
+            <a href="https://scholar.google.com/citations?user=kYDGsMAAAAAJ" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);padding:7px 14px;border-radius:8px;text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+              Google Scholar
+            </a>
+          </div>
+        </div>
+      </div>
+      <!-- Right column: theory model + research metrics -->
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <!-- Theory model card -->
+        <div class="reveal reveal-delay-1" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            <span style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal)">Physics Foundation</span>
+          </div>
+          <p style="font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:14px">
+            The Zero-D simulator implements formulations from <em style="color:var(--text);font-style:normal;font-weight:600">Internal Combustion Engine Fundamentals</em> (2nd ed.) by John B. Heywood — the canonical reference in the field — covering in-cylinder pressure evolution, slider-crank kinematics, and indicated performance metrics.
+          </p>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);background:var(--bg2);padding:10px 14px;border-radius:8px;border:1px solid var(--border)">
+            Zero-Dimensional (0-D) Thermodynamic Engine Cycle Model
+          </div>
+        </div>
+        <!-- Research metrics -->
+        <div class="reveal reveal-delay-2" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:18px">Research Credentials</div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px">
+            <div style="background:var(--bg2);border-radius:10px;padding:16px">
+              <div style="font-size:28px;font-weight:800;color:var(--fire);font-family:'Sora',sans-serif;line-height:1">40+</div>
+              <div style="font-size:12px;color:var(--text2);margin-top:4px">Peer-reviewed papers</div>
+            </div>
+            <div style="background:var(--bg2);border-radius:10px;padding:16px">
+              <div style="font-size:28px;font-weight:800;color:var(--teal);font-family:'Sora',sans-serif;line-height:1">403+</div>
+              <div style="font-size:12px;color:var(--text2);margin-top:4px">Citations</div>
+            </div>
+            <div style="background:var(--bg2);border-radius:10px;padding:16px">
+              <div style="font-size:28px;font-weight:800;color:var(--gold);font-family:'Sora',sans-serif;line-height:1">11</div>
+              <div style="font-size:12px;color:var(--text2);margin-top:4px">h-index</div>
+            </div>
+            <div style="background:var(--bg2);border-radius:10px;padding:16px">
+              <div style="font-size:28px;font-weight:800;color:var(--green);font-family:'Sora',sans-serif;line-height:1">10+</div>
+              <div style="font-size:12px;color:var(--text2);margin-top:4px">Years in combustion R&D</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES GRID -->
+<div class="section-full" style="background:var(--bg)">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="section-center reveal">
+      <div class="eyebrow">Platform capabilities</div>
+      <h2 class="section-headline">Everything combustion researchers need</h2>
+      <p class="section-sub">Designed for the full research workflow — from back-of-envelope to publication.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card reveal">
+        <div class="feat-icon orange">🔥</div>
+        <div class="feat-title">Real Fuel Thermochemistry</div>
+        <div class="feat-body">JANAF/NASA polynomial fits for H₂, CNG, methanol, ethanol, iso-octane, and custom blend definitions. No hardcoded k values.</div>
+      </div>
+      <div class="feat-card reveal reveal-delay-1">
+        <div class="feat-icon teal">📊</div>
+        <div class="feat-title">Live P-V & T-S Diagrams</div>
+        <div class="feat-body">Interactive, zoomable thermodynamic diagrams that update in real-time as you sweep parameters. Export as SVG or PNG.</div>
+      </div>
+      <div class="feat-card reveal reveal-delay-2">
+        <div class="feat-icon gold">💧</div>
+        <div class="feat-title">Spray Characterization Suite</div>
+        <div class="feat-body">SMD, penetration, evaporation, and cone angle — all in one tool. Compare injection pressures side-by-side.</div>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon green">🧪</div>
+        <div class="feat-title">Parametric Sweep Engine</div>
+        <div class="feat-body">Define ranges for any input variable and generate full sensitivity surfaces — efficiency vs. CR vs. φ — with one click.</div>
+      </div>
+      <div class="feat-card reveal reveal-delay-1">
+        <div class="feat-icon purple">🎓</div>
+        <div class="feat-title">Expert CFD Mentorship</div>
+        <div class="feat-body">Learn by doing: live code reviews of your actual OpenFOAM cases, not generic tutorials. From mesh to publishable results.</div>
+      </div>
+      <div class="feat-card reveal reveal-delay-2">
+        <div class="feat-icon blue">☁️</div>
+        <div class="feat-title">Cloud-Native Architecture</div>
+        <div class="feat-body">Containerized on Google Cloud Run. Auto-scales to demand, zero cold-boot friction, and always on the latest version.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHO IT'S FOR -->
+<div class="section-full" style="background:var(--surface);border-top:1px solid var(--border);padding:100px 24px">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="section-center reveal" style="margin-bottom:48px">
+      <div class="eyebrow">Who it's for</div>
+      <h2 class="section-headline">Built for every corner of combustion R&D</h2>
+      <p class="section-sub">From doctoral candidates running their first cycle analysis to senior engineers validating injection strategies.</p>
+    </div>
+    <div class="audience-grid">
+      <div class="audience-card reveal">
+        <div class="audience-emoji">🔬</div>
+        <div class="audience-role">Graduate Researchers</div>
+        <div class="audience-body">Skip the environment setup. Run thermodynamic cycle models in your browser, export results for your thesis, and share live states with your advisor.</div>
+      </div>
+      <div class="audience-card teal reveal reveal-delay-1">
+        <div class="audience-emoji">🏭</div>
+        <div class="audience-role">Engine Development Engineers</div>
+        <div class="audience-body">Rapid concept screening before committing to expensive GT-Power models. Evaluate fuel alternatives and compression ratios in minutes.</div>
+      </div>
+      <div class="audience-card gold reveal reveal-delay-2">
+        <div class="audience-emoji">👩‍🏫</div>
+        <div class="audience-role">Instructors & Educators</div>
+        <div class="audience-body">Embed live simulations in lectures. Students interact with real P-V diagrams — no MATLAB license, no IT request, no excuses.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TECH STRIP -->
+<div class="tech-strip">
+  <span class="tech-label">Built with</span>
+  <span class="tech-chip">Python</span>
+  <span class="tech-chip">NumPy · SciPy</span>
+  <span class="tech-chip">Cantera</span>
+  <span class="tech-chip">Plotly</span>
+  <span class="tech-chip">FastAPI</span>
+  <span class="tech-chip">Google Cloud Run</span>
+  <span class="tech-chip">Docker</span>
+  <span class="tech-chip">TypeScript</span>
+</div>
+
+<!-- SIGNUP / CTA -->
+<section class="cta-section" id="signup">
+  <div class="cta-box reveal">
+    <div class="eyebrow" style="color:var(--fire)">Early Access</div>
+    <h2 class="section-headline" style="margin-bottom:0">
+      Be first to ignite<br/>your research
+    </h2>
+    <p style="color:var(--text2);font-size:16px;line-height:1.7;max-width:480px">
+      Sign up for early access to the Zero-D simulator and Spray Calculator beta. Researchers who join now get free lifetime access during the launch period.
+    </p>
+    <form class="signup-form" id="signup-form" onsubmit="handleSignup(event)">
+      <input
+        class="signup-input"
+        type="email"
+        id="email-input"
+        placeholder="your@institution.edu"
+        required
+        autocomplete="email"
+      />
+      <button type="submit" class="btn-primary" style="flex-shrink:0">
+        Get Access →
+      </button>
+    </form>
+    <div class="signup-note" id="signup-msg">No spam. Unsubscribe at any time. We'll reach out with a private beta link.</div>
+
+    <div style="display:flex;gap:32px;margin-top:24px;flex-wrap:wrap;justify-content:center">
+      <div style="text-align:center">
+        <div style="font-size:22px;font-weight:800;color:var(--fire);font-family:'Sora',sans-serif">Free</div>
+        <div style="font-size:13px;color:var(--text2)">during beta</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:22px;font-weight:800;color:var(--teal);font-family:'Sora',sans-serif">Instant</div>
+        <div style="font-size:13px;color:var(--text2)">browser access</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:22px;font-weight:800;color:var(--gold);font-family:'Sora',sans-serif">1:1</div>
+        <div style="font-size:13px;color:var(--text2)">onboarding available</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-brand-logo">
+        <div class="nav-logo-mark">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs><radialGradient id="fg2" cx="50%" cy="68%" r="62%"><stop offset="0%" stop-color="#FFF06B"/><stop offset="60%" stop-color="#F97316"/><stop offset="100%" stop-color="#F0500F"/></radialGradient></defs>
+            <path d="M50 8 C68 32 75 52 66 68 C59 80 43 86 31 78 C19 70 16 54 25 42 C29 52 37 58 43 52 C37 40 41 22 50 8 Z" fill="url(#fg2)"/>
+          </svg>
+        </div>
+        <span>AgniCycle</span>
+      </div>
+      <p class="footer-tagline">Research-grade combustion engineering tools — from the Engine Research Center, University of Wisconsin–Madison.</p>
+      <div style="font-size:13px;color:var(--muted)">
+        <a href="mailto:dkumar39@wisc.edu" style="color:var(--muted)">dkumar39@wisc.edu</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Products</h4>
+      <ul>
+        <li><a href="#simulator">Zero-D Simulator</a></li>
+        <li><a href="#spray">Spray Calculator</a></li>
+        <li><a href="#cfd">CFD Training</a></li>
+        <li><a href="#signup">Early Access</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Research</h4>
+      <ul>
+        <li><a href="https://erc.wisc.edu" target="_blank" rel="noopener">Engine Research Center</a></li>
+        <li><a href="https://scholar.google.com/citations?user=kYDGsMAAAAAJ" target="_blank" rel="noopener">Google Scholar</a></li>
+        <li><a href="https://orcid.org/0000-0003-1167-9672" target="_blank" rel="noopener">ORCID</a></li>
+        <li><a href="https://dhkrnl.github.io" target="_blank" rel="noopener">Lab homepage</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <ul>
+        <li><a href="https://www.linkedin.com/in/dhkrnl" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://www.researchgate.net/profile/Dhananjay-Kumar-10" target="_blank" rel="noopener">ResearchGate</a></li>
+        <li><a href="mailto:dkumar39@wisc.edu">Contact us</a></li>
+        <li><a href="#signup">Newsletter</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© <span id="footer-year"></span> AgniCycle · Dhananjay Kumar · Engine Research Center, UW–Madison</span>
+    <span>Made with <span style="color:var(--fire)">🔥</span> in Madison, Wisconsin</span>
+  </div>
+</footer>
+
+<!-- ────────────────────────────────────────────── -->
+<script>
+/* ──────────────────────────────────────────────
+   NAV
+────────────────────────────────────────────── */
+function toggleNav() {
+  document.getElementById('nav-mobile').classList.toggle('open');
+}
+function closeNav() {
+  document.getElementById('nav-mobile').classList.remove('open');
+}
+
+/* ──────────────────────────────────────────────
+   HERO CANVAS — combustion particle field
+────────────────────────────────────────────── */
+(function() {
+  const canvas = document.getElementById('hero-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [], animId;
+
+  function resize() {
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const COLORS = ['#f97316','#fbbf24','#f0500f','#0ea5b7','rgba(249,115,22,0.5)'];
+
+  function Particle() {
+    this.reset();
+  }
+  Particle.prototype.reset = function() {
+    this.x = Math.random() * W;
+    this.y = H + Math.random() * 60;
+    this.vx = (Math.random() - 0.5) * 0.6;
+    this.vy = -(0.4 + Math.random() * 1.2);
+    this.r  = 1 + Math.random() * 2.5;
+    this.alpha = 0.15 + Math.random() * 0.45;
+    this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+    this.life = 0;
+    this.maxLife = 120 + Math.random() * 200;
+  };
+  Particle.prototype.update = function() {
+    this.x += this.vx + Math.sin(this.life * 0.04) * 0.3;
+    this.y += this.vy;
+    this.life++;
+    if (this.life > this.maxLife || this.y < -20) this.reset();
+  };
+  Particle.prototype.draw = function() {
+    const fade = Math.min(1, Math.min(this.life / 30, (this.maxLife - this.life) / 40));
+    ctx.save();
+    ctx.globalAlpha = this.alpha * fade;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+    ctx.restore();
+  };
+
+  for (let i = 0; i < 120; i++) {
+    const p = new Particle();
+    p.life = Math.random() * p.maxLife;
+    p.y = Math.random() * H;
+    particles.push(p);
+  }
+
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => { p.update(); p.draw(); });
+    animId = requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ──────────────────────────────────────────────
+   SPRAY CANVAS
+────────────────────────────────────────────── */
+(function() {
+  const canvas = document.getElementById('spray-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, drops = [], t = 0;
+
+  function resize() {
+    W = canvas.width = canvas.offsetWidth || 300;
+    H = canvas.height = canvas.offsetHeight || 220;
+  }
+  resize();
+
+  function Drop() {
+    this.reset();
+  }
+  Drop.prototype.reset = function() {
+    const halfCone = (Math.PI / 180) * (9 + Math.random() * 9);
+    const speed = 1.5 + Math.random() * 3.5;
+    const angle = Math.PI / 2 + (Math.random() - 0.5) * halfCone * 2;
+    this.x = W * 0.5 + (Math.random() - 0.5) * 6;
+    this.y = 10;
+    this.vx = Math.cos(angle) * speed;
+    this.vy = Math.sin(angle) * speed;
+    this.r = 1 + Math.random() * 3;
+    this.alpha = 0.5 + Math.random() * 0.5;
+    this.alive = true;
+  };
+  Drop.prototype.update = function() {
+    this.vy += 0.04;
+    this.x += this.vx;
+    this.y += this.vy;
+    this.r = Math.max(0.3, this.r - 0.008);
+    this.alpha -= 0.004;
+    if (this.y > H || this.alpha <= 0) this.alive = false;
+  };
+  Drop.prototype.draw = function() {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = '#0ea5b7';
+    ctx.fill();
+    ctx.restore();
+  };
+
+  for (let i = 0; i < 60; i++) {
+    const d = new Drop(); d.y = Math.random() * H; drops.push(d);
+  }
+
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    // injector nozzle
+    ctx.save();
+    ctx.fillStyle = '#1a2235';
+    ctx.strokeStyle = '#0ea5b7';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(W/2 - 8, 0, 16, 14, 3);
+    ctx.fill(); ctx.stroke();
+    ctx.restore();
+    // cone guide lines
+    const coneAngle = 18 * Math.PI / 180;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(14,165,183,0.15)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4,4]);
+    ctx.beginPath();
+    ctx.moveTo(W/2, 14);
+    ctx.lineTo(W/2 + Math.tan(coneAngle) * (H - 14), H);
+    ctx.moveTo(W/2, 14);
+    ctx.lineTo(W/2 - Math.tan(coneAngle) * (H - 14), H);
+    ctx.stroke();
+    ctx.restore();
+
+    if (t % 2 === 0 && drops.length < 200) drops.push(new Drop());
+    drops = drops.filter(d => d.alive);
+    drops.forEach(d => { d.update(); d.draw(); });
+    t++;
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ──────────────────────────────────────────────
+   CFD CANVAS — velocity/temperature field
+────────────────────────────────────────────── */
+(function() {
+  const canvas = document.getElementById('cfd-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, t = 0;
+
+  function resize() {
+    W = canvas.width = canvas.offsetWidth || 400;
+    H = canvas.height = canvas.offsetHeight || 200;
+  }
+  resize();
+
+  function heatColor(v) {
+    const colors = [
+      [14,165,183], [34,197,94], [251,191,36], [249,115,22], [239,68,68]
+    ];
+    v = Math.max(0, Math.min(1, v));
+    const idx = v * (colors.length - 1);
+    const lo = Math.floor(idx), hi = Math.min(lo + 1, colors.length - 1);
+    const f = idx - lo;
+    const c = colors[lo].map((a, i) => Math.round(a + (colors[hi][i] - a) * f));
+    return `rgb(${c[0]},${c[1]},${c[2]})`;
+  }
+
+  const COLS = 32, ROWS = 16;
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    const cw = W / COLS, ch = H / ROWS;
+    for (let row = 0; row < ROWS; row++) {
+      for (let col = 0; col < COLS; col++) {
+        const cx = (col + 0.5) / COLS, cy = (row + 0.5) / ROWS;
+        // flame front simulation
+        const flame = Math.max(0, 1 - Math.abs(cx - 0.35 - Math.sin(t * 0.015 + cy * 3) * 0.06) * 6);
+        const swirl = Math.sin(cx * 8 + t * 0.02) * Math.cos(cy * 5 + t * 0.015) * 0.3;
+        const v = Math.max(0, Math.min(1, flame * 0.8 + swirl * 0.5 + cy * 0.15));
+        ctx.fillStyle = heatColor(v);
+        ctx.globalAlpha = 0.55 + v * 0.35;
+        ctx.fillRect(col * cw, row * ch, cw + 0.5, ch + 0.5);
+      }
+    }
+    // velocity arrows
+    ctx.globalAlpha = 0.7;
+    ctx.strokeStyle = 'rgba(255,255,255,0.45)';
+    ctx.lineWidth = 1;
+    for (let row = 1; row < ROWS - 1; row += 2) {
+      for (let col = 1; col < COLS - 1; col += 3) {
+        const cx = (col + 0.5) / COLS, cy = (row + 0.5) / ROWS;
+        const ux = Math.cos(cy * Math.PI * 2 + t * 0.012) * 0.5 + 0.5;
+        const uy = Math.sin(cx * Math.PI * 3 + t * 0.01) * 0.25;
+        const len = 8 + ux * 6;
+        const ax = col * cw + cw / 2, ay = row * ch + ch / 2;
+        const dx = Math.cos(Math.atan2(uy, ux)) * len;
+        const dy = Math.sin(Math.atan2(uy, ux)) * len;
+        ctx.beginPath();
+        ctx.moveTo(ax, ay);
+        ctx.lineTo(ax + dx, ay + dy);
+        ctx.stroke();
+        // arrowhead
+        const hAngle = Math.atan2(dy, dx);
+        ctx.beginPath();
+        ctx.moveTo(ax + dx, ay + dy);
+        ctx.lineTo(ax + dx - 4 * Math.cos(hAngle - 0.4), ay + dy - 4 * Math.sin(hAngle - 0.4));
+        ctx.lineTo(ax + dx - 4 * Math.cos(hAngle + 0.4), ay + dy - 4 * Math.sin(hAngle + 0.4));
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.fill();
+      }
+    }
+    ctx.globalAlpha = 1;
+    t++;
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ──────────────────────────────────────────────
+   SCROLL REVEAL
+────────────────────────────────────────────── */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }});
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* ──────────────────────────────────────────────
+   COUNTER ANIMATION
+────────────────────────────────────────────── */
+const counterObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    const target = +el.dataset.target;
+    const suffix = el.dataset.suffix || '+';
+    let start = 0;
+    const dur = 1200;
+    const step = timestamp => {
+      if (!start) start = timestamp;
+      const pct = Math.min((timestamp - start) / dur, 1);
+      const ease = 1 - Math.pow(1 - pct, 3);
+      el.textContent = Math.round(ease * target) + (pct === 1 ? suffix : '');
+      if (pct < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+    counterObs.unobserve(el);
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.stat-num[data-target]').forEach(el => counterObs.observe(el));
+
+/* ──────────────────────────────────────────────
+   SIGNUP FORM
+────────────────────────────────────────────── */
+function handleSignup(e) {
+  e.preventDefault();
+  const email = document.getElementById('email-input').value;
+  const btn = e.target.querySelector('button[type=submit]');
+  const msg = document.getElementById('signup-msg');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+  // Build mailto link as fallback (replace with backend endpoint when ready)
+  const subject = encodeURIComponent('AgniCycle Early Access Request');
+  const body = encodeURIComponent(`Hi,\n\nI'd like early access to AgniCycle.\n\nEmail: ${email}\n\nBest,`);
+  setTimeout(() => {
+    btn.textContent = '✓ You\'re on the list!';
+    btn.style.background = 'var(--green)';
+    msg.textContent = `We'll send your beta link to ${email}. Check your inbox within 24 hours.`;
+    msg.style.color = 'var(--green)';
+    document.getElementById('email-input').value = '';
+    // open mailto as soft fallback
+    window.location.href = `mailto:dkumar39@wisc.edu?subject=${subject}&body=${body}`;
+  }, 800);
+}
+
+/* ──────────────────────────────────────────────
+   FOOTER YEAR
+────────────────────────────────────────────── */
+document.getElementById('footer-year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
