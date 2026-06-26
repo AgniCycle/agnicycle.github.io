@@ -888,6 +888,90 @@ footer {
   100% { background-position: 300% 0; }
 }
 
+/* ── Scroll progress bar ── */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 2.5px;
+  z-index: 9999; pointer-events: none;
+  background: linear-gradient(90deg, var(--fire) 0%, var(--gold) 50%, var(--teal) 100%);
+  transform: scaleX(0); transform-origin: left;
+  will-change: transform;
+}
+
+/* ── Cursor glow ── */
+.cursor-glow {
+  position: fixed; pointer-events: none; z-index: 9997;
+  width: 600px; height: 600px;
+  top: -300px; left: -300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(249,115,22,0.06) 0%, transparent 65%);
+  will-change: transform;
+  mix-blend-mode: screen;
+}
+
+/* ── Hero entrance — initial hidden state only (JS drives reveal) ── */
+.hero-enter {
+  opacity: 0 !important;
+  transform: translateY(36px) !important;
+}
+
+/* ── Card hover spotlight ── */
+.feat-card {
+  --mx: -400%; --my: -400%;
+  background: radial-gradient(circle 280px at var(--mx) var(--my), rgba(249,115,22,0.08), transparent 65%), var(--surface);
+}
+.roadmap-card {
+  --mx: -400%; --my: -400%;
+  background: radial-gradient(circle 220px at var(--mx) var(--my), rgba(14,165,183,0.07), transparent 65%), var(--surface);
+}
+.roadmap-card.active {
+  background: radial-gradient(circle 220px at var(--mx) var(--my), rgba(249,115,22,0.07), transparent 65%), linear-gradient(135deg, var(--surface) 0%, rgba(249,115,22,0.04) 100%);
+}
+.audience-card {
+  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s;
+}
+.audience-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+
+/* ── Typewriter cursor blink ── */
+.typer-cursor {
+  display: inline-block; width: 2px; height: 1em;
+  background: var(--fire); margin-left: 2px; vertical-align: text-bottom;
+  animation: blink 0.9s step-end infinite;
+}
+@keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+
+/* ── Number odometer shimmer ── */
+.stat-num {
+  display: inline-block;
+  animation: num-breathe 4s ease-in-out infinite;
+}
+@keyframes num-breathe {
+  0%,100% { text-shadow: 0 0 30px rgba(249,115,22,0.4); }
+  50%     { text-shadow: 0 0 60px rgba(249,115,22,0.8), 0 0 100px rgba(249,115,22,0.3); }
+}
+
+/* ── Section headline accent word ── */
+.hl-accent {
+  background: linear-gradient(90deg, var(--fire) 0%, var(--gold) 50%, var(--fire) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-flow 3s linear infinite;
+}
+
+/* ── Audience card stagger ── */
+.audience-grid .audience-card:nth-child(1) { transition-delay: 0s; }
+.audience-grid .audience-card:nth-child(2) { transition-delay: 0.1s; }
+.audience-grid .audience-card:nth-child(3) { transition-delay: 0.2s; }
+
+/* ── Roadmap card hover ── */
+.roadmap-card {
+  transition: border-color 0.3s, transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s, background 0.2s;
+}
+.roadmap-card:hover { transform: translateY(-5px); box-shadow: 0 16px 50px rgba(0,0,0,0.4); }
+
 /* ── Prefers reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   .hero h1 .fire-word { animation: none; background: none; -webkit-text-fill-color: var(--fire); color: var(--fire); }
@@ -2133,6 +2217,153 @@ function handleSignup(e) {
    FOOTER YEAR
 ────────────────────────────────────────────── */
 document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+/* ──────────────────────────────────────────────
+   SCROLL PROGRESS BAR
+────────────────────────────────────────────── */
+(function() {
+  const bar = document.createElement('div');
+  bar.className = 'scroll-progress';
+  document.body.prepend(bar);
+  window.addEventListener('scroll', function() {
+    const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+    bar.style.transform = 'scaleX(' + Math.min(pct, 1) + ')';
+  }, { passive: true });
+})();
+
+/* ──────────────────────────────────────────────
+   CURSOR GLOW
+────────────────────────────────────────────── */
+(function() {
+  if (window.matchMedia('(pointer: coarse)').matches) return; // skip touch devices
+  const glow = document.createElement('div');
+  glow.className = 'cursor-glow';
+  document.body.appendChild(glow);
+  let tx = 0, ty = 0, cx = 0, cy = 0;
+  document.addEventListener('mousemove', function(e) { tx = e.clientX; ty = e.clientY; }, { passive: true });
+  (function tick() {
+    cx += (tx - cx) * 0.07; cy += (ty - cy) * 0.07;
+    glow.style.transform = 'translate(' + cx + 'px,' + cy + 'px)';
+    requestAnimationFrame(tick);
+  })();
+})();
+
+/* ──────────────────────────────────────────────
+   HERO ENTRANCE
+────────────────────────────────────────────── */
+(function() {
+  var entries = [
+    ['.hero-eyebrow',  100],
+    ['.hero-inner h1', 350],
+    ['.hero-sub',      650],
+    ['.hero-ctas',     850],
+    ['.hero-badges',  1050],
+    ['.hero-scroll',  1250],
+  ];
+  var trans = 'opacity 0.95s cubic-bezier(0.16,1,0.3,1), transform 0.95s cubic-bezier(0.16,1,0.3,1)';
+  // Set initial hidden state
+  entries.forEach(function(e) {
+    var el = document.querySelector(e[0]);
+    if (!el) return;
+    el.style.cssText += ';opacity:0;transform:translateY(36px);transition:' + trans;
+  });
+  // Reveal each element after its delay
+  entries.forEach(function(e) {
+    setTimeout(function() {
+      var el = document.querySelector(e[0]);
+      if (!el) return;
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    }, e[1]);
+  });
+})();
+
+/* ──────────────────────────────────────────────
+   CARD HOVER SPOTLIGHT
+────────────────────────────────────────────── */
+(function() {
+  document.querySelectorAll('.feat-card, .roadmap-card').forEach(function(card) {
+    card.addEventListener('mousemove', function(e) {
+      var r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    }, { passive: true });
+    card.addEventListener('mouseleave', function() {
+      card.style.setProperty('--mx', '-400%');
+      card.style.setProperty('--my', '-400%');
+    });
+  });
+})();
+
+/* ──────────────────────────────────────────────
+   GRID STAGGER — assign delay by card index
+────────────────────────────────────────────── */
+(function() {
+  document.querySelectorAll('.features-grid, .roadmap-grid').forEach(function(grid) {
+    grid.querySelectorAll('.reveal').forEach(function(card, i) {
+      card.style.transitionDelay = (i * 0.07) + 's';
+    });
+  });
+})();
+
+/* ──────────────────────────────────────────────
+   TYPEWRITER — hero eyebrow cycles labels
+────────────────────────────────────────────── */
+(function() {
+  const el = document.querySelector('.hero-eyebrow');
+  if (!el) return;
+  const labels = [
+    'Research-Grade Combustion Engineering Tools',
+    'Zero-D Thermodynamic Cycle Simulation',
+    'Multi-Fuel · H₂ · NH₃ · DME · Gasoline',
+    'Peer-Validated Engine Physics',
+  ];
+  const cursor = document.createElement('span');
+  cursor.className = 'typer-cursor';
+  el.appendChild(cursor);
+  let li = 0, ci = 0, deleting = false;
+  const dot = el.querySelector('span:not(.typer-cursor)');
+
+  function getTextNode() {
+    for (const n of el.childNodes) {
+      if (n.nodeType === 3 && n.textContent.trim()) return n;
+    }
+    return null;
+  }
+
+  function type() {
+    const label = labels[li];
+    let node = getTextNode();
+    if (!node) { node = document.createTextNode(''); el.insertBefore(node, cursor); }
+
+    if (!deleting) {
+      node.textContent = label.slice(0, ++ci);
+      if (ci === label.length) { deleting = true; setTimeout(type, 2200); return; }
+      setTimeout(type, 45);
+    } else {
+      node.textContent = label.slice(0, --ci);
+      if (ci === 0) { deleting = false; li = (li + 1) % labels.length; setTimeout(type, 400); return; }
+      setTimeout(type, 22);
+    }
+  }
+
+  // Start after hero entrance settles
+  setTimeout(function() {
+    const node = getTextNode();
+    if (node) { ci = node.textContent.length; }
+    setTimeout(type, 2000);
+  }, 1800);
+})();
+
+/* ──────────────────────────────────────────────
+   SECTION HEADLINE ACCENT — wrap first word
+────────────────────────────────────────────── */
+(function() {
+  document.querySelectorAll('.section-headline').forEach(function(h) {
+    const txt = h.innerHTML;
+    h.innerHTML = txt.replace(/^(\w+)/, '<span class="hl-accent">$1</span>');
+  });
+})();
 
 /* ──────────────────────────────────────────────
    HERO MOUSE PARALLAX
