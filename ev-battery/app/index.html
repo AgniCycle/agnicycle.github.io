@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>EV Battery Suite — AgniCycle</title>
+<meta name="robots" content="noindex"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='92' fill='%230B2536'/><circle cx='256' cy='256' r='184' fill='%231B4A63' stroke='%230EA5B7' stroke-width='3'/><path d='M213 150 C250 200 265 240 248 268 C234 291 208 299 187 289 C165 279 159 258 169 242 C173 252 183 259 191 253 C183 234 187 200 213 150 Z' fill='url(%23fg)'/><defs><radialGradient id='fg' cx='50%25' cy='68%25' r='62%25'><stop offset='0%25' stop-color='%23FFF06B'/><stop offset='68%25' stop-color='%23F97316'/><stop offset='100%25' stop-color='%23F0500F'/></radialGradient></defs></svg>" type="image/svg+xml"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #07090f; --bg2: #0d1320; --surface: #111827; --surface2: #1a2235;
+  --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.12);
+  --text: #e2e8f0; --text2: #94a3b8; --text3: #64748b;
+  --green: #10b981; --fire: #f97316; --teal: #0ea5b7;
+}
+html, body { height: 100%; overflow: hidden; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; }
+.topbar { display: flex; align-items: center; justify-content: space-between; height: 48px; padding: 0 20px; flex-shrink: 0; background: rgba(7,9,15,0.97); border-bottom: 1px solid var(--border); gap: 12px; }
+.topbar-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.topbar-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text); font-family: 'Sora', sans-serif; font-weight: 700; font-size: 15px; flex-shrink: 0; }
+.topbar-brand:hover { text-decoration: none; }
+.logo-mark { width: 26px; height: 26px; border-radius: 7px; background: #0B2536; border: 1.5px solid var(--teal); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(14,165,183,0.25); flex-shrink: 0; }
+.logo-mark svg { width: 15px; height: 15px; }
+.brand-em { color: var(--fire); }
+.topbar-sep { color: var(--border2); font-size: 18px; font-weight: 200; flex-shrink: 0; }
+.topbar-title { font-size: 13px; font-weight: 600; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.topbar-back { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; color: var(--text3); text-decoration: none; padding: 5px 10px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface2); transition: color 0.15s, border-color 0.15s; white-space: nowrap; }
+.topbar-back:hover { color: var(--text); border-color: var(--border2); text-decoration: none; }
+.topbar-badge { font-size: 11px; font-weight: 600; color: var(--green); background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.22); padding: 3px 10px; border-radius: 100px; white-space: nowrap; }
+.frame-wrap { flex: 1; position: relative; overflow: hidden; }
+.frame-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+.frame-loading { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; background: var(--bg2); font-size: 14px; color: var(--text2); transition: opacity 0.4s; pointer-events: none; }
+.frame-loading.hidden { opacity: 0; }
+.spinner { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border2); border-top-color: var(--green); animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@700;800&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-left">
+    <a class="topbar-brand" href="/">
+      <div class="logo-mark">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <defs><radialGradient id="g" cx="50%" cy="68%" r="62%"><stop offset="0%" stop-color="#FFF06B"/><stop offset="60%" stop-color="#F97316"/><stop offset="100%" stop-color="#F0500F"/></radialGradient></defs>
+          <path d="M50 8 C68 32 75 52 66 68 C59 80 43 86 31 78 C19 70 16 54 25 42 C29 52 37 58 43 52 C37 40 41 22 50 8 Z" fill="url(#g)"/>
+        </svg>
+      </div>
+      <span>Agni<span class="brand-em">Cycle</span></span>
+    </a>
+    <span class="topbar-sep">/</span>
+    <span class="topbar-title">EV Battery Suite</span>
+  </div>
+  <div class="topbar-right">
+    <span class="topbar-badge">EV Tool</span>
+    <a class="topbar-back" href="/ev-battery/">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      About this tool
+    </a>
+  </div>
+</div>
+<div class="frame-wrap">
+  <div class="frame-loading" id="loader">
+    <div class="spinner"></div>
+    <span>Loading EV Battery Suite…</span>
+  </div>
+  <iframe
+    src="https://ev-battery-suite-865384871824.us-west2.run.app"
+    title="EV Battery Suite"
+    loading="eager"
+    onload="document.getElementById('loader').classList.add('hidden')"
+  ></iframe>
+</div>
+</body>
+</html>

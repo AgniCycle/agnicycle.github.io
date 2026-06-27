@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Engine Simulator — AgniCycle</title>
-<meta name="description" content="Browser-native zero-D thermodynamic IC engine cycle simulator. Real-time P-V diagrams, heat release, knock prediction, and emissions. Free account. No install."/>
-<link rel="canonical" href="https://www.agnicycle.com/simulator/"/>
-<meta property="og:title"       content="Engine Simulator — AgniCycle"/>
-<meta property="og:description" content="2,881 equations per cylinder. Under 20ms. Free browser-native engine simulator."/>
-<meta property="og:url"         content="https://www.agnicycle.com/simulator/"/>
+<title>EV Battery Suite — AgniCycle</title>
+<meta name="description" content="Browser-native EV battery simulation suite. Model cell electrochemistry, thermal behavior, SOC/SOH estimation, and pack-level dynamics across 6+ chemistry types."/>
+<link rel="canonical" href="https://www.agnicycle.com/ev-battery/"/>
+<meta property="og:title"       content="EV Battery Suite — AgniCycle"/>
+<meta property="og:description" content="Equivalent circuit modeling, thermal coupling, SOC/SOH estimation, and degradation — all in your browser. Free account."/>
+<meta property="og:url"         content="https://www.agnicycle.com/ev-battery/"/>
 <meta property="og:image"       content="https://www.agnicycle.com/og-image.png"/>
 <meta name="robots" content="index, follow"/>
-<meta name="theme-color" content="#f97316"/>
+<meta name="theme-color" content="#10b981"/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='92' fill='%230B2536'/><circle cx='256' cy='256' r='184' fill='%231B4A63' stroke='%230EA5B7' stroke-width='3'/><path d='M213 150 C250 200 265 240 248 268 C234 291 208 299 187 289 C165 279 159 258 169 242 C173 252 183 259 191 253 C183 234 187 200 213 150 Z' fill='url(%23fg)'/><defs><radialGradient id='fg' cx='50%25' cy='68%25' r='62%25'><stop offset='0%25' stop-color='%23FFF06B'/><stop offset='68%25' stop-color='%23F97316'/><stop offset='100%25' stop-color='%23F0500F'/></radialGradient></defs></svg>" type="image/svg+xml"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -29,20 +29,21 @@
   --text2:     #94a3b8;
   --text3:     #64748b;
   --muted:     #64748b;
+  --ev:        #10b981;
+  --ev-dim:    #059669;
+  --ev-glow:   rgba(16,185,129,0.2);
   --fire:      #f97316;
-  --fire-dim:  #ea580c;
-  --fire-glow: rgba(249,115,22,0.2);
   --teal:      #0ea5b7;
   --gold:      #fbbf24;
   --green:     #22c55e;
   --radius:    14px;
   --radius-lg: 20px;
-  --shadow-fire: 0 0 40px rgba(249,115,22,0.3);
+  --shadow-ev: 0 0 40px rgba(16,185,129,0.3);
 }
 html { scroll-behavior: smooth; }
 body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
 h1,h2,h3,h4 { font-family: 'Sora', sans-serif; line-height: 1.2; }
-a { color: var(--fire); text-decoration: none; }
+a { color: var(--ev); text-decoration: none; }
 a:hover { text-decoration: underline; }
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg2); }
@@ -65,97 +66,108 @@ a:hover { text-decoration: underline; }
 .nav-links { display: flex; align-items: center; gap: 2px; list-style: none; flex: 1; }
 .nav-links a { color: var(--text2); font-size: 13.5px; font-weight: 500; padding: 6px 11px; border-radius: 8px; transition: color 0.18s, background 0.18s; text-decoration: none; white-space: nowrap; }
 .nav-links a:hover { color: var(--text); background: var(--surface2); }
-.nav-links a.active { color: var(--fire); font-weight: 600; }
+.nav-links a.active { color: var(--ev); font-weight: 600; }
 .nav-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
-.btn-launch-nav { background: var(--fire); color: #fff; padding: 7px 16px; border-radius: 9px; font-weight: 600; font-size: 13.5px; text-decoration: none; transition: opacity 0.2s, box-shadow 0.2s; white-space: nowrap; }
-.btn-launch-nav:hover { opacity: 0.88; box-shadow: var(--shadow-fire); text-decoration: none; }
+.btn-launch-nav { background: var(--ev); color: #fff; padding: 7px 16px; border-radius: 9px; font-weight: 600; font-size: 13.5px; text-decoration: none; transition: opacity 0.2s, box-shadow 0.2s; white-space: nowrap; }
+.btn-launch-nav:hover { opacity: 0.88; box-shadow: var(--shadow-ev); text-decoration: none; }
 .nav-hamburger { display: none; background: none; border: none; color: var(--text); cursor: pointer; padding: 8px; margin-left: auto; border-radius: 8px; }
 .nav-mobile { display: none; position: fixed; top: 60px; left: 0; right: 0; bottom: 0; z-index: 99; background: var(--bg); padding: 20px; flex-direction: column; gap: 4px; border-top: 1px solid var(--border); overflow-y: auto; }
 .nav-mobile.open { display: flex; }
 .nav-mobile-section { font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em; color: var(--text3); text-transform: uppercase; padding: 12px 14px 6px; margin-top: 8px; }
 .nav-mobile a { color: var(--text); font-size: 15px; font-weight: 500; padding: 11px 14px; border-radius: 10px; text-decoration: none; transition: background 0.15s; }
 .nav-mobile a:hover { background: var(--surface2); }
-.nav-mobile-cta { margin-top: 16px; padding: 13px 14px; border-radius: 12px; background: var(--fire); color: #fff; font-weight: 600; font-size: 15px; text-align: center; text-decoration: none; display: block; }
+.nav-mobile-cta { margin-top: 16px; padding: 13px 14px; border-radius: 12px; background: var(--ev); color: #fff; font-weight: 600; font-size: 15px; text-align: center; text-decoration: none; display: block; }
 
 /* ── HERO ── */
 .hero {
   min-height: 100vh; display: flex; align-items: center;
   padding: 120px 24px 80px; position: relative; overflow: hidden;
-  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(249,115,22,0.07) 0%, transparent 60%), var(--bg);
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(16,185,129,0.07) 0%, transparent 60%), var(--bg);
 }
 .hero-grid {
   position: absolute; inset: 0;
-  background-image: linear-gradient(rgba(249,115,22,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(249,115,22,0.04) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(16,185,129,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(16,185,129,0.04) 1px, transparent 1px);
   background-size: 56px 56px;
   mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black 20%, transparent 100%);
 }
-.hero-glow { position: absolute; top: 20%; left: 50%; transform: translate(-50%,-50%); width: 700px; height: 400px; background: radial-gradient(ellipse, rgba(249,115,22,0.06) 0%, transparent 70%); pointer-events: none; }
+.hero-glow { position: absolute; top: 20%; left: 50%; transform: translate(-50%,-50%); width: 700px; height: 400px; background: radial-gradient(ellipse, rgba(16,185,129,0.06) 0%, transparent 70%); pointer-events: none; }
 .hero-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; position: relative; z-index: 2; width: 100%; }
-.hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: var(--fire); background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.25); padding: 5px 14px; border-radius: 100px; margin-bottom: 20px; }
-.status-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+.hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: var(--ev); background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); padding: 5px 14px; border-radius: 100px; margin-bottom: 20px; }
+.status-dot { width: 6px; height: 6px; background: var(--ev); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
 @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
 .hero h1 { font-size: clamp(36px, 5vw, 58px); font-weight: 800; color: #fff; letter-spacing: -1.5px; margin-bottom: 20px; }
-.hero h1 em { color: var(--fire); font-style: normal; }
+.hero h1 em { color: var(--ev); font-style: normal; }
 .hero-sub { font-size: 17px; color: var(--text2); line-height: 1.75; margin-bottom: 36px; max-width: 460px; }
 .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 40px; }
-.btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--fire); color: #fff; padding: 13px 26px; border-radius: 11px; font-weight: 700; font-size: 15px; text-decoration: none; transition: opacity 0.2s, box-shadow 0.2s, transform 0.15s; border: none; cursor: pointer; font-family: inherit; }
-.btn-primary:hover { opacity: 0.88; box-shadow: var(--shadow-fire); transform: translateY(-1px); text-decoration: none; }
+.btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--ev); color: #fff; padding: 13px 26px; border-radius: 11px; font-weight: 700; font-size: 15px; text-decoration: none; transition: opacity 0.2s, box-shadow 0.2s, transform 0.15s; border: none; cursor: pointer; font-family: inherit; }
+.btn-primary:hover { opacity: 0.88; box-shadow: var(--shadow-ev); transform: translateY(-1px); text-decoration: none; }
 .btn-secondary { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--text2); padding: 13px 22px; border-radius: 11px; font-weight: 500; font-size: 15px; border: 1px solid var(--border2); text-decoration: none; transition: color 0.2s, background 0.2s; }
 .btn-secondary:hover { color: var(--text); background: var(--surface2); text-decoration: none; }
 .hero-badges { display: flex; gap: 10px; flex-wrap: wrap; }
 .badge { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text2); background: var(--surface); border: 1px solid var(--border); padding: 6px 12px; border-radius: 100px; }
-.badge svg { color: var(--green); flex-shrink: 0; }
+.badge svg { color: var(--ev); flex-shrink: 0; }
 
-/* ── VIDEO PANEL ── */
+/* ── VISUAL PANEL ── */
 .hero-visual { position: relative; }
-.panel { background: #0a0c12; border: 1px solid var(--border2); border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(249,115,22,0.08); }
+.panel { background: #080d10; border: 1px solid var(--border2); border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(16,185,129,0.08); }
 .panel-header { display: flex; align-items: center; gap: 6px; padding: 10px 14px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); }
 .panel-dot { width: 10px; height: 10px; border-radius: 50%; }
 .panel-dot.red    { background: #ff5f57; }
 .panel-dot.yellow { background: #ffbd2e; }
 .panel-dot.green  { background: #28c840; }
 .panel-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text3); margin-left: 4px; }
-.video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
-.video-grid video { width: 100%; display: block; }
-.video-main { grid-column: 1 / -1; }
+.panel-body { padding: 24px; }
+
+/* ── BATTERY SVG VISUAL ── */
+.battery-display { display: flex; flex-direction: column; gap: 16px; }
+.batt-row { display: flex; align-items: center; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+.batt-label { color: var(--text3); width: 80px; flex-shrink: 0; }
+.batt-bar-wrap { flex: 1; height: 10px; background: rgba(255,255,255,0.06); border-radius: 5px; overflow: hidden; }
+.batt-bar { height: 100%; border-radius: 5px; }
+.batt-val { color: var(--text2); width: 52px; text-align: right; flex-shrink: 0; }
+.telemetry-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+.telem-item { background: rgba(16,185,129,0.04); border: 1px solid rgba(16,185,129,0.1); border-radius: 8px; padding: 10px 12px; }
+.telem-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; font-family: 'JetBrains Mono', monospace; }
+.telem-val { font-size: 16px; font-weight: 700; color: var(--ev); font-family: 'Sora', sans-serif; }
+.telem-unit { font-size: 11px; color: var(--text3); font-weight: 400; margin-left: 2px; }
 
 /* ── SPECS STRIP ── */
 .specs-strip { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 28px 24px; }
 .specs-inner { max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0; }
 .spec { text-align: center; padding: 10px 20px; }
-.spec-val { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 800; color: var(--fire); line-height: 1; }
+.spec-val { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 800; color: var(--ev); line-height: 1; }
 .spec-label { font-size: 12px; color: var(--text2); margin-top: 5px; }
 
 /* ── FEATURES ── */
 .features { padding: 80px 24px; background: var(--bg); }
 .features-inner { max-width: 1100px; margin: 0 auto; }
-.section-label { font-size: 11.5px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: var(--fire); margin-bottom: 12px; display: block; }
+.section-label { font-size: 11.5px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: var(--ev); margin-bottom: 12px; display: block; }
 .section-title { font-size: clamp(26px, 4vw, 38px); font-weight: 800; color: #fff; margin-bottom: 12px; letter-spacing: -0.5px; }
 .section-sub { font-size: 16px; color: var(--text2); max-width: 520px; line-height: 1.7; margin-bottom: 52px; }
 .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .feat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; transition: border-color 0.2s, transform 0.2s; }
-.feat-card:hover { border-color: rgba(249,115,22,0.3); transform: translateY(-2px); }
+.feat-card:hover { border-color: rgba(16,185,129,0.3); transform: translateY(-2px); }
 .feat-icon { font-size: 22px; margin-bottom: 14px; }
 .feat-title { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
 .feat-body { font-size: 13.5px; color: var(--text2); line-height: 1.65; }
-.feat-body code { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--fire); background: rgba(249,115,22,0.1); padding: 1px 5px; border-radius: 4px; }
+.feat-body code { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ev); background: rgba(16,185,129,0.1); padding: 1px 5px; border-radius: 4px; }
 
-/* ── FUEL TABLE ── */
-.fuel-section { padding: 0 24px 80px; background: var(--bg); }
-.fuel-inner { max-width: 1100px; margin: 0 auto; }
-.fuel-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
-.fuel-chip { font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 8px; }
-.fuel-chip.alt  { background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.25); color: var(--fire); }
-.fuel-chip.conv { background: rgba(14,165,183,0.08); border: 1px solid rgba(14,165,183,0.2); color: var(--teal); }
-.fuel-chip.bio  { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); color: var(--green); }
+/* ── CHEMISTRY GRID ── */
+.chem-section { padding: 0 24px 80px; background: var(--bg); }
+.chem-inner { max-width: 1100px; margin: 0 auto; }
+.chem-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
+.chem-chip { font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 8px; }
+.chem-chip.li-ion { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); color: var(--ev); }
+.chem-chip.solid  { background: rgba(14,165,183,0.08); border: 1px solid rgba(14,165,183,0.2); color: var(--teal); }
+.chem-chip.future { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text3); }
 
 /* ── LAUNCH CTA ── */
-.launch-cta { padding: 80px 24px; background: linear-gradient(135deg, #09152a 0%, #0d1f38 50%, #071420 100%); border-top: 1px solid var(--border); text-align: center; }
+.launch-cta { padding: 80px 24px; background: linear-gradient(135deg, #050e0a 0%, #071a10 50%, #04100a 100%); border-top: 1px solid var(--border); text-align: center; }
 .launch-cta h2 { font-size: clamp(28px, 4vw, 44px); font-weight: 800; color: #fff; margin-bottom: 14px; }
 .launch-cta p { font-size: 16px; color: var(--text2); max-width: 460px; margin: 0 auto 36px; line-height: 1.7; }
 .launch-pills { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-top: 28px; }
 .launch-pill { font-size: 13px; color: var(--text2); display: flex; align-items: center; gap: 6px; }
-.launch-pill svg { color: var(--green); }
+.launch-pill svg { color: var(--ev); }
 
 /* ── FOOTER ── */
 footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 48px 40px 28px; }
@@ -167,7 +179,7 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
 .footer-col h4 { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 14px; letter-spacing: 0.5px; text-transform: uppercase; }
 .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
 .footer-col ul a { font-size: 14px; color: var(--text2); text-decoration: none; transition: color 0.2s; }
-.footer-col ul a:hover { color: var(--fire); }
+.footer-col ul a:hover { color: var(--ev); }
 .footer-bottom { max-width: 1100px; margin: 0 auto; padding-top: 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); flex-wrap: wrap; gap: 8px; }
 
 /* ── REVEAL ── */
@@ -208,19 +220,18 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
     <span>Agni<span class="brand-em">Cycle</span></span>
   </a>
   <ul class="nav-links">
-    <li><a href="/simulator/" class="active" style="color:var(--fire)">Engine Simulator</a></li>
+    <li><a href="/simulator/" style="color:var(--fire)">Engine Simulator</a></li>
     <li><a href="/spray/" style="color:var(--teal)">Spray Calculator</a></li>
-    <li><a href="/ev-battery/" style="color:#10b981">EV Battery</a></li>
+    <li><a href="/ev-battery/" class="active">EV Battery Suite</a></li>
     <li><a href="/cfd-calculators/" style="color:var(--teal)">CFD Calculators</a></li>
     <li><a href="/#cfd">CFD Training</a></li>
     <li><a href="/#roadmap">Roadmap</a></li>
     <li><a href="/#team">Team</a></li>
-    <li><a href="/#about">About</a></li>
   </ul>
   <div class="nav-right">
-    <a href="/simulator/app/" class="btn-launch-nav">
+    <a href="/ev-battery/app/" class="btn-launch-nav">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="margin-right:2px"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-      Launch Simulator
+      Launch Suite
     </a>
   </div>
   <button class="nav-hamburger" onclick="toggleNav()">
@@ -232,14 +243,14 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
   <div class="nav-mobile-section">Products</div>
   <a href="/simulator/" onclick="closeNav()" style="color:var(--fire)">⚙ Engine Simulator</a>
   <a href="/spray/" onclick="closeNav()" style="color:var(--teal)">💧 Spray Calculator</a>
-  <a href="/ev-battery/" onclick="closeNav()" style="color:#10b981">🔋 EV Battery Suite</a>
+  <a href="/ev-battery/" onclick="closeNav()" style="color:var(--ev)">🔋 EV Battery Suite</a>
   <a href="/cfd-calculators/" onclick="closeNav()" style="color:var(--teal)">📐 CFD Calculators</a>
   <a href="/#cfd" onclick="closeNav()">📊 CFD Training</a>
   <div class="nav-mobile-section">Company</div>
   <a href="/#roadmap" onclick="closeNav()">Roadmap</a>
   <a href="/#team" onclick="closeNav()">Team</a>
   <a href="/#about" onclick="closeNav()">About</a>
-  <a href="/simulator/app/" onclick="closeNav()" class="nav-mobile-cta">Launch Simulator →</a>
+  <a href="/ev-battery/app/" onclick="closeNav()" class="nav-mobile-cta">Launch EV Battery Suite →</a>
 </div>
 
 <!-- HERO -->
@@ -248,37 +259,85 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
   <div class="hero-glow"></div>
   <div class="hero-inner">
     <div>
-      <div class="hero-eyebrow"><div class="status-dot"></div> Live · v1.3</div>
-      <h1>AgniCycle™<br/><em>Engine</em> Simulator</h1>
+      <div class="hero-eyebrow"><div class="status-dot"></div> Live · Beta</div>
+      <h1>AgniCycle™<br/><em>EV Battery</em> Suite</h1>
       <p class="hero-sub">
-        A transient 0-D thermodynamic solver resolving pressure, temperature, and emissions at <strong style="color:var(--text)">0.25° crank-angle resolution</strong> across all four strokes — 2,881 equations per cylinder, finishing in under 20 ms. In your browser.
+        A coupled electrochemical–thermal battery simulator — equivalent circuit modeling, SOC/SOH estimation, CC-CV charge curves, and degradation analysis across <strong style="color:var(--text)">6+ cell chemistries</strong>. In your browser, no install.
       </p>
       <div class="hero-ctas">
-        <a href="/simulator/app/" class="btn-primary">
+        <a href="/ev-battery/app/" class="btn-primary">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          Launch Simulator
+          Launch Suite
         </a>
-        <a href="/#about" class="btn-secondary">Learn the science</a>
+        <a href="#features" class="btn-secondary">View capabilities</a>
       </div>
       <div class="hero-badges">
-        <span class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Free account</span>
-        <span class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>No install</span>
-        <span class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Runs in any browser</span>
+        <div class="badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Free account
+        </div>
+        <div class="badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          No install
+        </div>
+        <div class="badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Export CSV + SVG
+        </div>
       </div>
     </div>
+
+    <!-- LIVE PANEL -->
     <div class="hero-visual reveal reveal-d2">
       <div class="panel">
         <div class="panel-header">
-          <div class="panel-dot red"></div><div class="panel-dot yellow"></div><div class="panel-dot green"></div>
-          <span class="panel-title">agnicycle · cycle_simulator · diesel · 1500 rpm</span>
+          <div class="panel-dot red"></div>
+          <div class="panel-dot yellow"></div>
+          <div class="panel-dot green"></div>
+          <span class="panel-title">agnicycle · ev_battery · NMC-811 · 1C discharge</span>
         </div>
-        <div class="video-grid">
-          <video class="video-main" autoplay loop muted playsinline>
-            <source src="../engine_graph.mp4" type="video/mp4">
-          </video>
-          <video autoplay loop muted playsinline>
-            <source src="../engine_cylinder.mp4" type="video/mp4">
-          </video>
+        <div class="panel-body">
+          <div class="battery-display">
+            <div class="batt-row">
+              <span class="batt-label">SOC</span>
+              <div class="batt-bar-wrap">
+                <div class="batt-bar" style="width:72%;background:linear-gradient(90deg,#10b981,#34d399)"></div>
+              </div>
+              <span class="batt-val" style="color:var(--ev)">72.3%</span>
+            </div>
+            <div class="batt-row">
+              <span class="batt-label">SOH</span>
+              <div class="batt-bar-wrap">
+                <div class="batt-bar" style="width:91%;background:linear-gradient(90deg,#0ea5b7,#38bdf8)"></div>
+              </div>
+              <span class="batt-val" style="color:var(--teal)">91.4%</span>
+            </div>
+            <div class="batt-row">
+              <span class="batt-label">Temp</span>
+              <div class="batt-bar-wrap">
+                <div class="batt-bar" style="width:38%;background:linear-gradient(90deg,#fbbf24,#f97316)"></div>
+              </div>
+              <span class="batt-val" style="color:var(--gold)">32.1°C</span>
+            </div>
+            <div class="telemetry-grid">
+              <div class="telem-item">
+                <div class="telem-label">Voltage</div>
+                <div class="telem-val">3.84<span class="telem-unit">V</span></div>
+              </div>
+              <div class="telem-item">
+                <div class="telem-label">Current</div>
+                <div class="telem-val">−3.2<span class="telem-unit">A</span></div>
+              </div>
+              <div class="telem-item">
+                <div class="telem-label">R<sub>int</sub></div>
+                <div class="telem-val">12.4<span class="telem-unit">mΩ</span></div>
+              </div>
+              <div class="telem-item">
+                <div class="telem-label">Cycle #</div>
+                <div class="telem-val">247</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -289,134 +348,142 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
 <div class="specs-strip">
   <div class="specs-inner">
     <div class="spec reveal">
-      <div class="spec-val">&lt; 20ms</div>
-      <div class="spec-label">Full transient cycle</div>
+      <div class="spec-val">6+</div>
+      <div class="spec-label">Cell chemistries</div>
     </div>
     <div class="spec reveal reveal-d1">
-      <div class="spec-val">2,881</div>
-      <div class="spec-label">Equations per cylinder</div>
+      <div class="spec-val">&lt; 10ms</div>
+      <div class="spec-label">Per full cycle sim</div>
     </div>
     <div class="spec reveal reveal-d1">
-      <div class="spec-val">0.25°</div>
-      <div class="spec-label">Crank-angle resolution</div>
+      <div class="spec-val">ECM</div>
+      <div class="spec-label">Thevenin equivalent circuit</div>
     </div>
     <div class="spec reveal reveal-d2">
-      <div class="spec-val">720°</div>
-      <div class="spec-label">Full CA sweep</div>
+      <div class="spec-val">2-way</div>
+      <div class="spec-label">Thermal–electrical coupling</div>
     </div>
     <div class="spec reveal reveal-d2">
-      <div class="spec-val">12+</div>
-      <div class="spec-label">Calibrated fuel models</div>
+      <div class="spec-val">SOC/SOH</div>
+      <div class="spec-label">Real-time state estimation</div>
     </div>
   </div>
 </div>
 
 <!-- FEATURES -->
-<section class="features">
+<div class="features" id="features">
   <div class="features-inner">
     <div class="reveal">
       <span class="section-label">What it does</span>
-      <h2 class="section-title">Research-grade physics,<br/>zero setup time</h2>
-      <p class="section-sub">Every model is peer-validated. Every parameter is adjustable. No black-box sliders.</p>
+      <h2 class="section-title">Battery physics, not black-box curves</h2>
+      <p class="section-sub">Every model is grounded in peer-validated electrochemistry — OCV lookup tables, Arrhenius degradation rates, and coupled thermal dynamics.</p>
     </div>
     <div class="feat-grid">
       <div class="feat-card reveal">
-        <div class="feat-icon">🔥</div>
-        <div class="feat-title">Double-Wiebe Combustion</div>
-        <div class="feat-body">Mixed premixed + diffusion kinetics. Covers spark-ignition flame propagation and diesel diffusion simultaneously — not a compromise model.</div>
+        <div class="feat-icon">⚡</div>
+        <div class="feat-title">Equivalent Circuit Model (ECM)</div>
+        <div class="feat-body">R₀ internal resistance + R₁–C₁ Thevenin network. OCV–SOC lookup with temperature correction. Captures transient voltage response during pulse loads and regen braking.</div>
       </div>
       <div class="feat-card reveal reveal-d1">
-        <div class="feat-icon">📊</div>
-        <div class="feat-title">Live P-V & T-S Diagrams</div>
-        <div class="feat-body">Interactive diagrams that update in real-time as you sweep parameters. Export as SVG or PNG for publications.</div>
+        <div class="feat-icon">🌡️</div>
+        <div class="feat-title">Coupled Thermal Model</div>
+        <div class="feat-body">Lumped capacitance thermal solver. Joule heating <code>I²R₀</code> + exothermic reaction heat. Convective cooling boundary conditions. Temperature feeds back into ECM parameters.</div>
       </div>
       <div class="feat-card reveal reveal-d2">
-        <div class="feat-icon">⚡</div>
-        <div class="feat-title">Three-Zone Thermodynamics</div>
-        <div class="feat-body">Unburned reactants, flame front, and burned products solved simultaneously. First-Law energy partition at every crank-angle step.</div>
+        <div class="feat-icon">📊</div>
+        <div class="feat-title">SOC & SOH Estimation</div>
+        <div class="feat-body">Coulomb counting with OCV correction for SOC. Capacity fade and internal resistance rise modeled over cycle number. Extended Kalman filter-ready architecture.</div>
       </div>
       <div class="feat-card reveal">
-        <div class="feat-icon">🧪</div>
-        <div class="feat-title">Knock Prediction</div>
-        <div class="feat-body">Livengood-Wu knock integral with fuel-specific auto-ignition chemistry. Identify knock-limited spark advance before building hardware.</div>
+        <div class="feat-icon">🔋</div>
+        <div class="feat-title">CC-CV Charge Simulation</div>
+        <div class="feat-body">Full constant-current / constant-voltage charge protocol. Visualize voltage, current, and SOC vs. time. Compare charge time across C-rates and temperature setpoints.</div>
       </div>
       <div class="feat-card reveal reveal-d1">
-        <div class="feat-icon">🌿</div>
-        <div class="feat-title">NOₓ & Emissions</div>
-        <div class="feat-body">Extended Zeldovich thermal NO<sub>x</sub> — cycle-accurate, not post-processed. Full emissions map across RPM and load.</div>
+        <div class="feat-icon">📉</div>
+        <div class="feat-title">Degradation & Aging</div>
+        <div class="feat-body">SEI layer growth (Arrhenius kinetics), lithium plating risk at low temperatures, calendar aging. Capacity fade and resistance rise vs. cycle count — plot lifetime trajectories.</div>
       </div>
       <div class="feat-card reveal reveal-d2">
-        <div class="feat-icon">🎓</div>
-        <div class="feat-title">Researcher & Instructor Modes</div>
-        <div class="feat-body">Switch between deep research configuration with all parameters exposed, and curriculum-preset layout for teaching thermodynamics.</div>
+        <div class="feat-icon">🏗️</div>
+        <div class="feat-title">Pack Configuration</div>
+        <div class="feat-body">Define series–parallel cell arrangement. Compute pack-level voltage, capacity, energy, and internal resistance. Cell-to-cell variation and imbalance analysis.</div>
       </div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- FUEL MODELS -->
-<section class="fuel-section">
-  <div class="fuel-inner">
+<!-- CHEMISTRY GRID -->
+<div class="chem-section">
+  <div class="chem-inner">
     <div class="reveal">
-      <span class="section-label">Fuel library</span>
-      <h2 class="section-title">12+ calibrated fuel models</h2>
-      <p class="section-sub">JANAF/NASA polynomial thermochemistry — no hardcoded k values, no simplified assumptions.</p>
+      <span class="section-label">Chemistry Library</span>
+      <h2 class="section-title">6+ cell chemistries</h2>
+      <p class="section-sub">OCV curves, capacity, and thermal parameters sourced from experimental datasets — not synthetic averages.</p>
     </div>
-    <div class="fuel-grid reveal">
-      <span class="fuel-chip alt">Hydrogen H₂</span>
-      <span class="fuel-chip alt">Ammonia NH₃</span>
-      <span class="fuel-chip alt">DME</span>
-      <span class="fuel-chip alt">E85</span>
-      <span class="fuel-chip conv">Diesel</span>
-      <span class="fuel-chip conv">Iso-octane</span>
-      <span class="fuel-chip conv">CNG</span>
-      <span class="fuel-chip conv">Gasoline</span>
-      <span class="fuel-chip bio">Biodiesel</span>
-      <span class="fuel-chip bio">Ethanol</span>
-      <span class="fuel-chip bio">Methanol</span>
-      <span class="fuel-chip bio">E10</span>
+    <div class="chem-grid">
+      <span class="chem-chip li-ion">NMC 811</span>
+      <span class="chem-chip li-ion">NMC 622</span>
+      <span class="chem-chip li-ion">LFP</span>
+      <span class="chem-chip li-ion">NCA</span>
+      <span class="chem-chip li-ion">LCO</span>
+      <span class="chem-chip solid">LTO</span>
+      <span class="chem-chip future">Li–S (coming)</span>
+      <span class="chem-chip future">Solid-state (coming)</span>
     </div>
   </div>
-</section>
+</div>
 
 <!-- LAUNCH CTA -->
-<section class="launch-cta">
+<div class="launch-cta">
   <div class="reveal">
-    <h2>Ready to run your first simulation?</h2>
-    <p>Free account. No install. Works on any browser. Your first run takes under 60 seconds from sign-up.</p>
-    <a href="/simulator/app/" class="btn-primary" style="display:inline-flex;font-size:16px;padding:15px 32px">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-      Launch Engine Simulator
+    <h2>Ready to model your battery?</h2>
+    <p>Free account. No install. Works in any browser. Set up your first cell simulation in under 60 seconds.</p>
+    <a href="/ev-battery/app/" class="btn-primary" style="display:inline-flex;margin:0 auto">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Launch EV Battery Suite
     </a>
     <div class="launch-pills">
-      <span class="launch-pill"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Free during beta</span>
-      <span class="launch-pill"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>No credit card</span>
-      <span class="launch-pill"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Instant browser access</span>
+      <div class="launch-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Free during beta
+      </div>
+      <div class="launch-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        No credit card
+      </div>
+      <div class="launch-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Export CSV + SVG
+      </div>
     </div>
   </div>
-</section>
+</div>
 
 <!-- FOOTER -->
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
       <div class="footer-brand-logo">
-        <div class="logo-mark">
-          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <div class="logo-mark" style="width:28px;height:28px;border-radius:7px">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px">
             <defs><radialGradient id="fg2" cx="50%" cy="68%" r="62%"><stop offset="0%" stop-color="#FFF06B"/><stop offset="60%" stop-color="#F97316"/><stop offset="100%" stop-color="#F0500F"/></radialGradient></defs>
             <path d="M50 8 C68 32 75 52 66 68 C59 80 43 86 31 78 C19 70 16 54 25 42 C29 52 37 58 43 52 C37 40 41 22 50 8 Z" fill="url(#fg2)"/>
           </svg>
         </div>
         <span>AgniCycle</span>
       </div>
-      <p class="footer-tagline">Research-grade combustion engineering tools — from the Engine Research Center, University of Wisconsin–Madison.</p>
-      <div style="font-size:13px;color:var(--muted)"><a href="mailto:dkumar39@wisc.edu" style="color:var(--muted)">dkumar39@wisc.edu</a></div>
+      <p class="footer-tagline">Research-grade combustion and electrification tools — from the Engine Research Center, University of Wisconsin–Madison.</p>
+      <div style="font-size:13px;color:var(--muted)">
+        <a href="mailto:dkumar39@wisc.edu" style="color:var(--muted)">dkumar39@wisc.edu</a>
+      </div>
     </div>
     <div class="footer-col">
       <h4>Products</h4>
       <ul>
         <li><a href="/simulator/">Engine Simulator</a></li>
         <li><a href="/spray/">Spray Calculator</a></li>
+        <li><a href="/ev-battery/">EV Battery Suite</a></li>
         <li><a href="/cfd-calculators/">CFD Calculators</a></li>
         <li><a href="/#cfd">CFD Training</a></li>
       </ul>
@@ -440,18 +507,23 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© <span id="yr"></span> AgniCycle · Dhananjay Kumar · Engine Research Center, UW–Madison</span>
-    <span>Made with <span style="color:var(--fire)">🔥</span> in Madison, Wisconsin</span>
+    <span>© <span id="footer-year"></span> AgniCycle · Dhananjay Kumar · Engine Research Center, UW–Madison</span>
+    <span>Made with <span style="color:var(--ev)">🔋</span> in Madison, Wisconsin</span>
   </div>
 </footer>
 
 <script>
+document.getElementById('footer-year').textContent = new Date().getFullYear();
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 10);
+}, { passive: true });
 function toggleNav() { document.getElementById('nav-mobile').classList.toggle('open'); }
-function closeNav()  { document.getElementById('nav-mobile').classList.remove('open'); }
-window.addEventListener('scroll', () => { document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20); }, { passive: true });
-const obs = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+function closeNav() { document.getElementById('nav-mobile').classList.remove('open'); }
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
 </body>
 </html>

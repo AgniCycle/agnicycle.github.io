@@ -1118,7 +1118,7 @@ footer {
 }
 
 /* ── PRODUCTS BENTO ── */
-.products-bento { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.products-bento { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
 .prod-card { background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:28px; display:flex; flex-direction:column; transition:border-color 0.2s,transform 0.2s; }
 .prod-card:hover { border-color:var(--border2); }
 .prod-featured { grid-column:1/-1; padding:0; overflow:hidden; display:grid; grid-template-columns:1fr 1fr; border-radius:18px; box-shadow:0 0 0 1px rgba(249,115,22,0.1); }
@@ -1138,6 +1138,9 @@ footer {
 .btn-sm-card:hover { background:rgba(255,255,255,0.1); color:#fff; text-decoration:none; }
 .btn-sm-link { display:inline-flex; align-items:center; font-size:13px; font-weight:500; color:var(--text3); text-decoration:none; padding:8px 4px; transition:color 0.15s; }
 .btn-sm-link:hover { color:var(--teal); }
+@media (max-width:1100px) {
+  .products-bento { grid-template-columns:1fr 1fr; }
+}
 @media (max-width:900px) {
   .products-bento { grid-template-columns:1fr 1fr; }
   .prod-featured { grid-column:1/-1; grid-template-columns:1fr; }
@@ -1181,11 +1184,11 @@ footer {
   <ul class="nav-links">
     <li><a href="/simulator" style="color:var(--fire);font-weight:600">Engine Simulator</a></li>
     <li><a href="/spray" style="color:var(--teal);font-weight:600">Spray Calculator</a></li>
+    <li><a href="/ev-battery/" style="color:#10b981;font-weight:600">EV Battery</a></li>
     <li><a href="/cfd-calculators/" style="color:var(--teal);font-weight:600">CFD Calculators</a></li>
     <li><a href="#cfd">CFD Training</a></li>
     <li><a href="#roadmap" data-section="roadmap">Roadmap</a></li>
     <li><a href="#team" data-section="team">Team</a></li>
-    <li><a href="#about" data-section="about">About</a></li>
   </ul>
 
   <div class="nav-right">
@@ -1225,6 +1228,9 @@ footer {
   </a>
   <a href="#spray" onclick="closeNav()">
     <span style="color:var(--teal)">💧</span> Spray Calculator
+  </a>
+  <a href="/ev-battery/" onclick="closeNav()">
+    <span style="color:#10b981">🔋</span> EV Battery Suite
   </a>
   <a href="/cfd-calculators/" onclick="closeNav()">
     <span style="color:var(--teal)">📐</span> CFD Calculators
@@ -1344,10 +1350,22 @@ footer {
         </div>
       </div>
 
-      <!-- 03 CFD CALCULATORS -->
+      <!-- 03 EV BATTERY SUITE -->
       <div class="prod-card reveal reveal-delay-1">
-        <div class="status-badge status-live" style="margin-bottom:14px"><div class="status-dot"></div> Free · No Sign-In</div>
+        <div class="status-badge status-live" style="margin-bottom:14px;color:#10b981;background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.22)"><div class="status-dot" style="background:#10b981"></div> Live · Beta</div>
         <div class="prod-num-sm">// 03</div>
+        <h3 class="prod-title-sm"><em style="color:#10b981">EV Battery</em> Suite</h3>
+        <p class="prod-desc-sm">ECM modeling, SOC/SOH estimation, thermal coupling, CC-CV charging, and degradation analysis — 6+ chemistries.</p>
+        <div class="prod-actions-sm">
+          <a href="/ev-battery/app/" class="btn-sm-card">Launch Suite</a>
+          <a href="/ev-battery/" class="btn-sm-link">Details →</a>
+        </div>
+      </div>
+
+      <!-- 04 CFD CALCULATORS -->
+      <div class="prod-card reveal reveal-delay-2">
+        <div class="status-badge status-live" style="margin-bottom:14px"><div class="status-dot"></div> Free · No Sign-In</div>
+        <div class="prod-num-sm">// 04</div>
         <h3 class="prod-title-sm"><em style="color:var(--teal)">CFD</em> Calculators</h3>
         <p class="prod-desc-sm">Reynolds, y⁺, turbulence properties, and non-dimensional numbers — four browser tools, instant results.</p>
         <div class="prod-actions-sm">
@@ -1355,7 +1373,7 @@ footer {
         </div>
       </div>
 
-      <!-- 04 CFD TRAINING -->
+      <!-- 05 CFD TRAINING -->
       <div class="prod-card reveal reveal-delay-2" id="cfd">
         <div class="status-badge status-beta" style="margin-bottom:14px"><div class="status-dot"></div> Booking Open</div>
         <div class="prod-num-sm">// 04</div>
@@ -1615,6 +1633,7 @@ footer {
       <ul>
         <li><a href="/simulator">Engine Simulator</a></li>
         <li><a href="/spray">Spray Calculator</a></li>
+        <li><a href="/ev-battery/">EV Battery Suite</a></li>
         <li><a href="/cfd-calculators/">CFD Calculators</a></li>
         <li><a href="#cfd">CFD Training</a></li>
       </ul>
