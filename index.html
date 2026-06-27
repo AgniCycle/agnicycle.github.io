@@ -1469,36 +1469,55 @@ footer {
 <!-- ABOUT AGNICYCLE -->
 <div class="divider-section" id="about">
   <div class="divider-inner">
+
     <div class="reveal">
       <div class="eyebrow">About AgniCycle™</div>
       <h2 class="section-headline" style="margin-bottom:20px">
         The name, the mission,<br/>the physics
       </h2>
-      <p style="color:var(--text2);font-size:16px;line-height:1.75;margin-bottom:20px">
-        <em style="color:var(--fire);font-style:normal;font-weight:600">Agni</em> — the classical Sanskrit term for fire and ignition. <em style="color:var(--teal);font-style:normal;font-weight:600">Cycle</em> — continuous thermodynamic closed-loop conversion. Together: a platform designed to model the controlled burn at the heart of every engine.
+      <p style="color:var(--text2);font-size:16px;line-height:1.8;margin-bottom:22px">
+        <em style="color:var(--fire);font-style:normal;font-weight:600">Agni</em> — the classical Sanskrit word for fire and ignition. <em style="color:var(--teal);font-style:normal;font-weight:600">Cycle</em> — the continuous thermodynamic loop at the heart of every engine. Together: a platform built to model the controlled burn that powers our world.
       </p>
-      <p style="color:var(--text2);font-size:16px;line-height:1.75;margin-bottom:20px">
-        Our mission is to <strong style="color:var(--text)">accelerate the path to clean propulsion</strong> — allowing researchers to safely push alternative fuels to their thermodynamic boundaries, modeling knocking, thermal wall losses, and nitrogen oxide freezing under real-world operating maps.
+      <p style="color:var(--text2);font-size:16px;line-height:1.8;margin-bottom:22px">
+        Our mission is to <strong style="color:var(--text)">make research-grade simulation accessible</strong> — so every combustion engineer, not just those with institutional software licenses, can push alternative fuels to their thermodynamic limits and accelerate the path to clean propulsion.
       </p>
-      <p style="color:var(--text2);font-size:16px;line-height:1.75">
-        Where GT-Power and AVL BOOST require local servers and minutes of compile time, AgniCycle's algebraic state solver — fully optimized in client-side TypeScript — completes a full transient <strong style="color:var(--text)">2,881-step run in under 20 ms</strong>, enabling fluid real-time slider sweeps with instant visual feedback.
+      <p style="color:var(--text2);font-size:16px;line-height:1.8">
+        AgniCycle tools are built and maintained by an active researcher at UW–Madison's Engine Research Center. The physics you interact with is the same physics used in daily research — not a simplified demo.
       </p>
     </div>
-    <div class="reveal reveal-delay-2">
-      <div style="display:flex;flex-direction:column;gap:16px">
-        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
-          <div style="font-size:13px;font-weight:700;color:var(--fire);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">⚡ &lt; 20 ms per full run</div>
-          <div style="color:var(--text2);font-size:14px;line-height:1.65">2,881 discrete equations solved client-side. No server round-trip, no compile step — instant feedback on every parameter change.</div>
+
+    <div class="reveal reveal-delay-2" style="display:flex;flex-direction:column;gap:14px">
+
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;display:flex;gap:16px;align-items:flex-start">
+        <div style="width:38px;height:38px;border-radius:10px;background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--fire)" stroke-width="2" stroke-linecap="round"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2"/><path d="M12 6v6l4 2"/></svg>
         </div>
-        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
-          <div style="font-size:13px;font-weight:700;color:var(--teal);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">🧬 Double-Wiebe Mixed Kinetics</div>
-          <div style="color:var(--text2);font-size:14px;line-height:1.65">Models both homogeneous spark-ignition flame propagation and heterogeneous diesel diffusion spray — premixed kinetic and gradual droplet-diffusion phases, simultaneously.</div>
-        </div>
-        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
-          <div style="font-size:13px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">🔊 Procedural Sound Engine</div>
-          <div style="color:var(--text2);font-size:14px;line-height:1.65">dP/dθ mapped live to FM oscillators. Crankshaft knock resonance calculated from speed of sound and bore geometry — no static WAV samples.</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px">Founded at UW–Madison ERC</div>
+          <div style="color:var(--text2);font-size:13.5px;line-height:1.65">Born inside one of the world's foremost IC engine laboratories — Madison, Wisconsin. Every tool reflects real research workflow, not academic prototypes.</div>
         </div>
       </div>
+
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;display:flex;gap:16px;align-items:flex-start">
+        <div style="width:38px;height:38px;border-radius:10px;background:rgba(14,165,183,0.12);border:1px solid rgba(14,165,183,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px">Free, no license fees — ever</div>
+          <div style="color:var(--text2);font-size:13.5px;line-height:1.65">Great combustion tools shouldn't require a $50k/yr institutional license. AgniCycle runs entirely in your browser — no install, no subscription, no lock-in.</div>
+        </div>
+      </div>
+
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;display:flex;gap:16px;align-items:flex-start">
+        <div style="width:38px;height:38px;border-radius:10px;background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px">Peer-validated thermodynamics</div>
+          <div style="color:var(--text2);font-size:13.5px;line-height:1.65">Every equation traces to peer-reviewed combustion literature. The same physics used in daily research at UW–Madison — accurate enough to publish with.</div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
