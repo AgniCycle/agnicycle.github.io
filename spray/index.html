@@ -2,227 +2,404 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Fuel Spray Calculator — AgniCycle</title>
-<meta name="description" content="Fuel injection spray characterization — droplet SMD, penetration, cone angle, and evaporation via Hiroyasu–Arai and Reitz–Diwakar correlations. Browser-native, no install."/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Spray Calculator — AgniCycle</title>
+<meta name="description" content="Browser-native fuel spray characterization. Compute droplet SMD, spray penetration, evaporation timescales, and cone angles using peer-validated empirical correlations."/>
+<link rel="canonical" href="https://www.agnicycle.com/spray/"/>
+<meta property="og:title"       content="Fuel Spray Calculator — AgniCycle"/>
+<meta property="og:description" content="Characterize fuel injection sprays without a wind tunnel. SMD, penetration, cone angle, and evaporation — in your browser."/>
+<meta property="og:url"         content="https://www.agnicycle.com/spray/"/>
+<meta property="og:image"       content="https://www.agnicycle.com/og-image.png"/>
+<meta name="robots" content="index, follow"/>
+<meta name="theme-color" content="#0ea5b7"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='92' fill='%230B2536'/><circle cx='256' cy='256' r='184' fill='%231B4A63' stroke='%230EA5B7' stroke-width='3'/><path d='M213 150 C250 200 265 240 248 268 C234 291 208 299 187 289 C165 279 159 258 169 242 C173 252 183 259 191 253 C183 234 187 200 213 150 Z' fill='url(%23fg)'/><defs><radialGradient id='fg' cx='50%25' cy='68%25' r='62%25'><stop offset='0%25' stop-color='%23FFF06B'/><stop offset='68%25' stop-color='%23F97316'/><stop offset='100%25' stop-color='%23F0500F'/></radialGradient></defs></svg>" type="image/svg+xml"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #07090f;
-    --surface: #0d1117;
-    --surface2: #161b22;
-    --border: rgba(255,255,255,0.08);
-    --text: #f0f6ff;
-    --text2: #8b9ab0;
-    --text3: #556070;
-    --fire: #f97316;
-    --teal: #0ea5b7;
-    --gold: #fbbf24;
-  }
-  html, body { height: 100%; overflow: hidden; background: var(--bg); }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #07090f; --bg2: #0d1320; --surface: #111827; --surface2: #1a2235;
+  --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.12);
+  --text: #e2e8f0; --text2: #94a3b8; --text3: #64748b; --muted: #64748b;
+  --fire: #f97316; --teal: #0ea5b7; --teal-glow: rgba(14,165,183,0.25);
+  --gold: #fbbf24; --green: #22c55e;
+  --radius: 14px; --radius-lg: 20px;
+  --shadow-teal: 0 0 40px rgba(14,165,183,0.3);
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+h1,h2,h3,h4 { font-family: 'Sora', sans-serif; line-height: 1.2; }
+a { color: var(--teal); text-decoration: none; }
+a:hover { text-decoration: underline; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
 
-  .app-shell {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  }
+/* ── NAV ── */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; padding: 0 40px; height: 60px; background: rgba(7,9,15,0.9); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); transition: background 0.3s, box-shadow 0.3s; }
+.nav.scrolled { background: rgba(7,9,15,0.98); box-shadow: 0 1px 40px rgba(0,0,0,0.5); }
+.nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); font-family: 'Sora', sans-serif; font-weight: 700; font-size: 18px; flex-shrink: 0; margin-right: 32px; }
+.nav-brand:hover { text-decoration: none; }
+.logo-mark { width: 34px; height: 34px; border-radius: 9px; background: #0B2536; border: 1.5px solid var(--teal); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 14px rgba(14,165,183,0.3); flex-shrink: 0; }
+.logo-mark svg { width: 20px; height: 20px; }
+.brand-em { color: var(--fire); }
+.nav-links { display: flex; align-items: center; gap: 2px; list-style: none; flex: 1; }
+.nav-links a { color: var(--text2); font-size: 13.5px; font-weight: 500; padding: 6px 11px; border-radius: 8px; transition: color 0.18s, background 0.18s; text-decoration: none; white-space: nowrap; }
+.nav-links a:hover { color: var(--text); background: var(--surface2); }
+.nav-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.btn-launch-nav { background: var(--teal); color: #fff; padding: 7px 16px; border-radius: 9px; font-weight: 600; font-size: 13.5px; text-decoration: none; transition: opacity 0.2s, box-shadow 0.2s; white-space: nowrap; }
+.btn-launch-nav:hover { opacity: 0.88; box-shadow: var(--shadow-teal); text-decoration: none; }
+.nav-hamburger { display: none; background: none; border: none; color: var(--text); cursor: pointer; padding: 8px; margin-left: auto; border-radius: 8px; }
+.nav-mobile { display: none; position: fixed; top: 60px; left: 0; right: 0; bottom: 0; z-index: 99; background: var(--bg); padding: 20px; flex-direction: column; gap: 4px; border-top: 1px solid var(--border); overflow-y: auto; }
+.nav-mobile.open { display: flex; }
+.nav-mobile-section { font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em; color: var(--text3); text-transform: uppercase; padding: 12px 14px 6px; margin-top: 8px; }
+.nav-mobile a { color: var(--text); font-size: 15px; font-weight: 500; padding: 11px 14px; border-radius: 10px; text-decoration: none; transition: background 0.15s; }
+.nav-mobile a:hover { background: var(--surface2); }
+.nav-mobile-cta { margin-top: 16px; padding: 13px 14px; border-radius: 12px; background: var(--teal); color: #fff; font-weight: 600; font-size: 15px; text-align: center; text-decoration: none; display: block; }
 
-  .app-bar {
-    height: 52px;
-    background: rgba(7,9,15,0.97);
-    border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(20px);
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    gap: 0;
-    flex-shrink: 0;
-    z-index: 10;
-  }
+/* ── HERO ── */
+.hero { min-height: 100vh; display: flex; align-items: center; padding: 120px 24px 80px; position: relative; overflow: hidden; background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(14,165,183,0.07) 0%, transparent 60%), var(--bg); }
+.hero-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(14,165,183,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,183,0.04) 1px, transparent 1px); background-size: 56px 56px; mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black 20%, transparent 100%); }
+.hero-glow { position: absolute; top: 20%; left: 50%; transform: translate(-50%,-50%); width: 700px; height: 400px; background: radial-gradient(ellipse, rgba(14,165,183,0.06) 0%, transparent 70%); pointer-events: none; }
+.hero-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; position: relative; z-index: 2; width: 100%; }
+.hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: var(--teal); background: rgba(14,165,183,0.1); border: 1px solid rgba(14,165,183,0.25); padding: 5px 14px; border-radius: 100px; margin-bottom: 20px; }
+.status-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
+.hero h1 { font-size: clamp(36px, 5vw, 58px); font-weight: 800; color: #fff; letter-spacing: -1.5px; margin-bottom: 20px; }
+.hero h1 em { color: var(--teal); font-style: normal; }
+.hero-sub { font-size: 17px; color: var(--text2); line-height: 1.75; margin-bottom: 36px; max-width: 460px; }
+.hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 40px; }
+.btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--teal); color: #fff; padding: 13px 26px; border-radius: 11px; font-weight: 700; font-size: 15px; text-decoration: none; transition: opacity 0.2s, box-shadow 0.2s, transform 0.15s; }
+.btn-primary:hover { opacity: 0.88; box-shadow: var(--shadow-teal); transform: translateY(-1px); text-decoration: none; }
+.btn-secondary { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--text2); padding: 13px 22px; border-radius: 11px; font-weight: 500; font-size: 15px; border: 1px solid var(--border2); text-decoration: none; transition: color 0.2s, background 0.2s; }
+.btn-secondary:hover { color: var(--text); background: var(--surface2); text-decoration: none; }
+.hero-badges { display: flex; gap: 10px; flex-wrap: wrap; }
+.badge { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text2); background: var(--surface); border: 1px solid var(--border); padding: 6px 12px; border-radius: 100px; }
+.badge svg { color: var(--green); flex-shrink: 0; }
 
-  .app-bar-brand {
-    display: flex; align-items: center; gap: 8px;
-    text-decoration: none; color: var(--text);
-    font-family: 'Sora', sans-serif; font-weight: 700; font-size: 15px;
-    flex-shrink: 0;
-  }
-  .app-bar-brand:hover { opacity: 0.8; }
-  .app-bar-logo {
-    width: 28px; height: 28px; border-radius: 7px;
-    background: #0B2536; border: 1.5px solid #0ea5b7;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 0 10px rgba(14,165,183,0.25);
-  }
-  .app-bar-logo svg { width: 16px; height: 16px; }
-  .app-bar-brand em { color: var(--fire); font-style: normal; }
+/* ── VIDEO PANEL ── */
+.hero-visual { position: relative; }
+.panel { background: #0a0c12; border: 1px solid var(--border2); border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(14,165,183,0.08); }
+.panel-header { display: flex; align-items: center; gap: 6px; padding: 10px 14px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); }
+.panel-dot { width: 10px; height: 10px; border-radius: 50%; }
+.panel-dot.red { background:#ff5f57; } .panel-dot.yellow { background:#ffbd2e; } .panel-dot.green { background:#28c840; }
+.panel-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text3); margin-left: 4px; }
+.panel video { width: 100%; display: block; }
 
-  .app-bar-divider {
-    width: 1px; height: 22px;
-    background: var(--border);
-    margin: 0 14px;
-    flex-shrink: 0;
-  }
+/* ── SPECS STRIP ── */
+.specs-strip { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 28px 24px; }
+.specs-inner { max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-around; flex-wrap: wrap; }
+.spec { text-align: center; padding: 10px 20px; }
+.spec-val { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 800; color: var(--teal); line-height: 1; }
+.spec-label { font-size: 12px; color: var(--text2); margin-top: 5px; }
 
-  .app-bar-title {
-    display: flex; align-items: center; gap: 10px;
-    flex: 1; min-width: 0;
-  }
-  .app-bar-name {
-    font-family: 'Sora', sans-serif; font-weight: 600; font-size: 14px;
-    color: var(--text); white-space: nowrap;
-  }
-  .app-bar-version {
-    display: flex; align-items: center; gap: 5px;
-    background: rgba(14,165,183,0.12);
-    border: 1px solid rgba(14,165,183,0.25);
-    border-radius: 20px;
-    padding: 2px 9px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px; font-weight: 500;
-    color: var(--teal);
-    white-space: nowrap;
-  }
-  .app-bar-version-dot {
-    width: 5px; height: 5px; border-radius: 50%;
-    background: var(--teal);
-    box-shadow: 0 0 6px var(--teal);
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
+/* ── FEATURES ── */
+.features { padding: 80px 24px; background: var(--bg); }
+.features-inner { max-width: 1100px; margin: 0 auto; }
+.section-label { font-size: 11.5px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: var(--teal); margin-bottom: 12px; display: block; }
+.section-title { font-size: clamp(26px, 4vw, 38px); font-weight: 800; color: #fff; margin-bottom: 12px; letter-spacing: -0.5px; }
+.section-sub { font-size: 16px; color: var(--text2); max-width: 520px; line-height: 1.7; margin-bottom: 52px; }
+.feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.feat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; transition: border-color 0.2s, transform 0.2s; }
+.feat-card:hover { border-color: rgba(14,165,183,0.3); transform: translateY(-2px); }
+.feat-icon { font-size: 22px; margin-bottom: 14px; }
+.feat-title { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.feat-body { font-size: 13.5px; color: var(--text2); line-height: 1.65; }
 
-  .app-bar-actions {
-    display: flex; align-items: center; gap: 6px;
-    flex-shrink: 0;
-  }
-  .app-bar-btn {
-    display: flex; align-items: center; gap: 6px;
-    padding: 5px 12px; border-radius: 7px;
-    font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 500;
-    color: var(--text2); text-decoration: none;
-    border: 1px solid transparent;
-    transition: color 0.15s, background 0.15s, border-color 0.15s;
-    cursor: pointer; background: none;
-    white-space: nowrap;
-  }
-  .app-bar-btn:hover {
-    color: var(--text);
-    background: var(--surface2);
-    border-color: var(--border);
-  }
-  .app-bar-btn svg { flex-shrink: 0; }
-  .app-bar-btn-primary {
-    background: var(--fire);
-    color: #fff;
-    border-color: transparent;
-  }
-  .app-bar-btn-primary:hover {
-    background: #ea6c0a;
-    color: #fff;
-    border-color: transparent;
-  }
+/* ── CORRELATIONS ── */
+.corr-section { padding: 0 24px 80px; background: var(--bg); }
+.corr-inner { max-width: 1100px; margin: 0 auto; }
+.corr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 32px; }
+.corr-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; }
+.corr-name { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; color: var(--teal); margin-bottom: 6px; }
+.corr-desc { font-size: 13px; color: var(--text2); line-height: 1.6; }
 
-  .app-frame {
-    flex: 1;
-    border: none;
-    width: 100%;
-    display: block;
-    background: var(--bg);
-  }
+/* ── LAUNCH CTA ── */
+.launch-cta { padding: 80px 24px; background: linear-gradient(135deg, #071420 0%, #0a1929 50%, #071420 100%); border-top: 1px solid var(--border); text-align: center; }
+.launch-cta h2 { font-size: clamp(28px, 4vw, 44px); font-weight: 800; color: #fff; margin-bottom: 14px; }
+.launch-cta p { font-size: 16px; color: var(--text2); max-width: 460px; margin: 0 auto 36px; line-height: 1.7; }
+.launch-pills { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-top: 28px; }
+.launch-pill { font-size: 13px; color: var(--text2); display: flex; align-items: center; gap: 6px; }
+.launch-pill svg { color: var(--green); }
 
-  .app-loading {
-    position: absolute; inset: 52px 0 0 0;
-    background: var(--bg);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 16px;
-    pointer-events: none;
-    transition: opacity 0.4s;
-  }
-  .app-loading.hidden { opacity: 0; }
-  .loading-spinner {
-    width: 36px; height: 36px;
-    border: 2px solid var(--surface2);
-    border-top-color: var(--teal);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-text {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px; color: var(--text3);
-  }
+/* ── FOOTER ── */
+footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 48px 40px 28px; }
+.footer-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 40px; }
+.footer-brand { display: flex; flex-direction: column; gap: 14px; }
+.footer-brand-logo { display: flex; align-items: center; gap: 10px; }
+.footer-brand-logo span { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 18px; color: #fff; }
+.footer-tagline { font-size: 14px; color: var(--text2); line-height: 1.65; max-width: 280px; }
+.footer-col h4 { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 14px; letter-spacing: 0.5px; text-transform: uppercase; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col ul a { font-size: 14px; color: var(--text2); text-decoration: none; transition: color 0.2s; }
+.footer-col ul a:hover { color: var(--teal); }
+.footer-bottom { max-width: 1100px; margin: 0 auto; padding-top: 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); flex-wrap: wrap; gap: 8px; }
 
-  @media (max-width: 600px) {
-    .app-bar-name { display: none; }
-    .hide-mobile { display: none; }
-  }
+/* ── REVEAL ── */
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+.reveal-d1 { transition-delay: 0.1s; }
+.reveal-d2 { transition-delay: 0.2s; }
+
+@media (max-width: 900px) {
+  .nav-links, .nav-right { display: none; }
+  .nav-hamburger { display: flex; }
+  .nav { padding: 0 20px; }
+  .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+  .hero h1 { font-size: 38px; }
+  .feat-grid { grid-template-columns: 1fr 1fr; }
+  .corr-grid { grid-template-columns: 1fr; }
+  .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
+}
+@media (max-width: 600px) {
+  .hero { padding: 100px 20px 60px; }
+  .feat-grid { grid-template-columns: 1fr; }
+  .footer-inner { grid-template-columns: 1fr; }
+  footer { padding: 40px 20px 24px; }
+}
 </style>
 </head>
 <body>
-<div class="app-shell">
 
-  <div class="app-bar">
-    <a class="app-bar-brand" href="/">
-      <div class="app-bar-logo">
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <radialGradient id="ng" cx="50%" cy="68%" r="62%">
-              <stop offset="0%" stop-color="#FFF06B"/>
-              <stop offset="60%" stop-color="#F97316"/>
-              <stop offset="100%" stop-color="#F0500F"/>
-            </radialGradient>
-          </defs>
-          <path d="M50 8 C68 32 75 52 66 68 C59 80 43 86 31 78 C19 70 16 54 25 42 C29 52 37 58 43 52 C37 40 41 22 50 8 Z" fill="url(#ng)"/>
-        </svg>
-      </div>
-      <span>Agni<em>Cycle</em></span>
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a class="nav-brand" href="/">
+    <div class="logo-mark">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="ng" cx="50%" cy="68%" r="62%"><stop offset="0%" stop-color="#FFF06B"/><stop offset="60%" stop-color="#F97316"/><stop offset="100%" stop-color="#F0500F"/></radialGradient></defs>
+        <path d="M50 8 C68 32 75 52 66 68 C59 80 43 86 31 78 C19 70 16 54 25 42 C29 52 37 58 43 52 C37 40 41 22 50 8 Z" fill="url(#ng)"/>
+      </svg>
+    </div>
+    <span>Agni<span class="brand-em">Cycle</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/simulator/" style="color:var(--fire);font-weight:600">Engine Simulator</a></li>
+    <li><a href="/spray/" style="color:var(--teal);font-weight:600">Spray Calculator</a></li>
+    <li><a href="/cfd-calculators/" style="color:var(--teal);font-weight:600">CFD Calculators</a></li>
+    <li><a href="/#cfd">CFD Training</a></li>
+    <li><a href="/#roadmap">Roadmap</a></li>
+    <li><a href="/#team">Team</a></li>
+    <li><a href="/#about">About</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="/spray/app/" class="btn-launch-nav">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="margin-right:2px"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Launch Calculator
     </a>
-
-    <div class="app-bar-divider"></div>
-
-    <div class="app-bar-title">
-      <span class="app-bar-name">Fuel Spray Calculator</span>
-      <span class="app-bar-version">
-        <span class="app-bar-version-dot"></span>
-        Live · Beta
-      </span>
-    </div>
-
-    <div class="app-bar-actions">
-      <a class="app-bar-btn hide-mobile" href="/#about">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        Docs
-      </a>
-      <a class="app-bar-btn hide-mobile" href="/simulator">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C9 8 6 11 6 14a6 6 0 0012 0c0-3-3-6-6-12z"/></svg>
-        Engine Sim
-      </a>
-      <a class="app-bar-btn app-bar-btn-primary" href="/">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        Back to site
-      </a>
-    </div>
   </div>
+  <button class="nav-hamburger" onclick="toggleNav()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</nav>
 
-  <div class="app-loading" id="loading">
-    <div class="loading-spinner"></div>
-    <div class="loading-text">Loading spray calculator…</div>
-  </div>
-
-  <iframe
-    class="app-frame"
-    id="app-frame"
-    src="https://spray-calculator-865384871824.us-west2.run.app"
-    title="AgniCycle Fuel Spray Calculator"
-    allow="fullscreen"
-    onload="document.getElementById('loading').classList.add('hidden')"
-  ></iframe>
-
+<div class="nav-mobile" id="nav-mobile">
+  <div class="nav-mobile-section">Products</div>
+  <a href="/simulator/" onclick="closeNav()" style="color:var(--fire)">⚙ Engine Simulator</a>
+  <a href="/spray/" onclick="closeNav()" style="color:var(--teal)">💧 Spray Calculator</a>
+  <a href="/cfd-calculators/" onclick="closeNav()" style="color:var(--teal)">📐 CFD Calculators</a>
+  <a href="/#cfd" onclick="closeNav()">📊 CFD Training</a>
+  <div class="nav-mobile-section">Company</div>
+  <a href="/#roadmap" onclick="closeNav()">Roadmap</a>
+  <a href="/#team" onclick="closeNav()">Team</a>
+  <a href="/#about" onclick="closeNav()">About</a>
+  <a href="/spray/app/" onclick="closeNav()" class="nav-mobile-cta">Launch Calculator →</a>
 </div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow"><div class="status-dot"></div> Live · Beta</div>
+      <h1>Fuel <em>Spray</em><br/>Calculator</h1>
+      <p class="hero-sub">
+        Characterize fuel injection sprays without a wind tunnel. Compute droplet size, penetration, evaporation timescales, and cone angles using correlations <strong style="color:var(--text)">validated against high-speed Mie scattering experiments</strong>.
+      </p>
+      <div class="hero-ctas">
+        <a href="/spray/app/" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Launch Calculator
+        </a>
+        <a href="/#about" class="btn-secondary">View correlations</a>
+      </div>
+      <div class="hero-badges">
+        <span class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Free account</span>
+        <span class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>No install</span>
+        <span class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Export CSV + SVG</span>
+      </div>
+    </div>
+    <div class="hero-visual reveal reveal-d2">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-dot red"></div><div class="panel-dot yellow"></div><div class="panel-dot green"></div>
+          <span class="panel-title">agnicycle · spray_calculator · hiroyasu · iso-octane</span>
+        </div>
+        <video autoplay loop muted playsinline>
+          <source src="../spray_animation.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SPECS STRIP -->
+<div class="specs-strip">
+  <div class="specs-inner">
+    <div class="spec reveal"><div class="spec-val">SMD</div><div class="spec-label">Sauter Mean Diameter</div></div>
+    <div class="spec reveal reveal-d1"><div class="spec-val">D²</div><div class="spec-label">Evaporation law</div></div>
+    <div class="spec reveal reveal-d1"><div class="spec-val">CSV</div><div class="spec-label">Exportable results</div></div>
+    <div class="spec reveal reveal-d2"><div class="spec-val">6+</div><div class="spec-label">Fuel blends supported</div></div>
+    <div class="spec reveal reveal-d2"><div class="spec-val">2</div><div class="spec-label">Validated correlations</div></div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="features-inner">
+    <div class="reveal">
+      <span class="section-label">What it does</span>
+      <h2 class="section-title">Spray physics without<br/>the lab equipment</h2>
+      <p class="section-sub">Based on correlations used daily in injection system design and validated in peer-reviewed combustion research.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card reveal">
+        <div class="feat-icon">💧</div>
+        <div class="feat-title">Sauter Mean Diameter (SMD)</div>
+        <div class="feat-body">Hiroyasu–Arai and Reitz–Diwakar correlations. Computes volume-weighted average droplet diameter from injection pressure, orifice size, and fuel properties.</div>
+      </div>
+      <div class="feat-card reveal reveal-d1">
+        <div class="feat-icon">📏</div>
+        <div class="feat-title">Spray Penetration Curves</div>
+        <div class="feat-body">Intact liquid jet length and spray tip penetration vs. time. Covers both the momentum-controlled and drag-controlled regimes.</div>
+      </div>
+      <div class="feat-card reveal reveal-d2">
+        <div class="feat-icon">📐</div>
+        <div class="feat-title">Cone Angle Prediction</div>
+        <div class="feat-body">Spray cone half-angle as a function of injection pressure differential, orifice length-to-diameter ratio, and ambient density.</div>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon">🌡️</div>
+        <div class="feat-title">Droplet Evaporation</div>
+        <div class="feat-body">D² law with fuel vapor pressure correction. Tracks droplet lifetime from injection to complete evaporation across temperature and pressure conditions.</div>
+      </div>
+      <div class="feat-card reveal reveal-d1">
+        <div class="feat-icon">⛽</div>
+        <div class="feat-title">Multi-Component Fuels</div>
+        <div class="feat-body">Diesel, biodiesel, DME, ethanol blends E10–E85. Fuel-specific density, viscosity, and surface tension at injection conditions.</div>
+      </div>
+      <div class="feat-card reveal reveal-d2">
+        <div class="feat-icon">📤</div>
+        <div class="feat-title">Exportable Histograms</div>
+        <div class="feat-body">Droplet size distribution histograms exportable as CSV for post-processing or SVG for direct inclusion in publications and reports.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CORRELATIONS -->
+<section class="corr-section">
+  <div class="corr-inner">
+    <div class="reveal">
+      <span class="section-label">Validated correlations</span>
+      <h2 class="section-title">The physics behind the numbers</h2>
+      <p class="section-sub">Every correlation is from peer-reviewed literature. No black-box outputs.</p>
+    </div>
+    <div class="corr-grid">
+      <div class="corr-card reveal">
+        <div class="corr-name">Hiroyasu–Arai (1990)</div>
+        <div class="corr-desc">SMD from injection pressure drop, orifice diameter, and fuel-air density ratio. Primary correlation for diesel injection systems.</div>
+      </div>
+      <div class="corr-card reveal reveal-d1">
+        <div class="corr-name">Reitz–Diwakar (1987)</div>
+        <div class="corr-desc">Alternative SMD correlation accounting for atomization regime — bag breakup vs. stripping breakup — for GDI and port injection.</div>
+      </div>
+      <div class="corr-card reveal">
+        <div class="corr-name">Hiroyasu Penetration (1980)</div>
+        <div class="corr-desc">Spray tip penetration in two phases: intact jet controlled by injection velocity, then atomized spray controlled by aerodynamic drag.</div>
+      </div>
+      <div class="corr-card reveal reveal-d1">
+        <div class="corr-name">D² Evaporation Law</div>
+        <div class="corr-desc">Classical droplet evaporation model with Spalding mass transfer number correction for high-temperature and high-pressure conditions.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LAUNCH CTA -->
+<section class="launch-cta">
+  <div class="reveal">
+    <h2>Start characterizing your spray</h2>
+    <p>Free account. No wind tunnel needed. Results in seconds, ready to include in your next paper.</p>
+    <a href="/spray/app/" class="btn-primary" style="display:inline-flex;font-size:16px;padding:15px 32px">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Launch Spray Calculator
+    </a>
+    <div class="launch-pills">
+      <span class="launch-pill"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Free during beta</span>
+      <span class="launch-pill"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>No credit card</span>
+      <span class="launch-pill"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Export CSV + SVG</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-brand-logo">
+        <div class="logo-mark">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs><radialGradient id="fg2" cx="50%" cy="68%" r="62%"><stop offset="0%" stop-color="#FFF06B"/><stop offset="60%" stop-color="#F97316"/><stop offset="100%" stop-color="#F0500F"/></radialGradient></defs>
+            <path d="M50 8 C68 32 75 52 66 68 C59 80 43 86 31 78 C19 70 16 54 25 42 C29 52 37 58 43 52 C37 40 41 22 50 8 Z" fill="url(#fg2)"/>
+          </svg>
+        </div>
+        <span>AgniCycle</span>
+      </div>
+      <p class="footer-tagline">Research-grade combustion engineering tools — from the Engine Research Center, University of Wisconsin–Madison.</p>
+      <div style="font-size:13px;color:var(--muted)"><a href="mailto:dkumar39@wisc.edu" style="color:var(--muted)">dkumar39@wisc.edu</a></div>
+    </div>
+    <div class="footer-col">
+      <h4>Products</h4>
+      <ul>
+        <li><a href="/simulator/">Engine Simulator</a></li>
+        <li><a href="/spray/">Spray Calculator</a></li>
+        <li><a href="/cfd-calculators/">CFD Calculators</a></li>
+        <li><a href="/#cfd">CFD Training</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="/#about">About AgniCycle</a></li>
+        <li><a href="/#roadmap">Roadmap</a></li>
+        <li><a href="/#team">Team</a></li>
+        <li><a href="https://erc.wisc.edu" target="_blank" rel="noopener">Engine Research Center</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <ul>
+        <li><a href="https://www.linkedin.com/in/dhkrnl" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="mailto:dkumar39@wisc.edu">Contact us</a></li>
+        <li><a href="/#signup">Newsletter</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© <span id="yr"></span> AgniCycle · Dhananjay Kumar · Engine Research Center, UW–Madison</span>
+    <span>Made with <span style="color:var(--fire)">🔥</span> in Madison, Wisconsin</span>
+  </div>
+</footer>
+
+<script>
+function toggleNav() { document.getElementById('nav-mobile').classList.toggle('open'); }
+function closeNav()  { document.getElementById('nav-mobile').classList.remove('open'); }
+window.addEventListener('scroll', () => { document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20); }, { passive: true });
+const obs = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+document.getElementById('yr').textContent = new Date().getFullYear();
+</script>
 </body>
 </html>
