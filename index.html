@@ -1264,20 +1264,20 @@ footer {
 <div class="stat-bar">
   <div class="stat-bar-inner">
     <div class="stat-item reveal">
-      <div class="stat-num" data-target="40">0</div>
-      <div class="stat-label">Published combustion papers</div>
+      <div class="stat-num">&lt; 20ms</div>
+      <div class="stat-label">Per full engine cycle run</div>
     </div>
     <div class="stat-item reveal reveal-delay-1">
-      <div class="stat-num" data-target="403">0</div>
-      <div class="stat-label">Research citations</div>
+      <div class="stat-num" data-target="2881">0</div>
+      <div class="stat-label">Equations solved per cylinder</div>
     </div>
     <div class="stat-item reveal reveal-delay-2">
-      <div class="stat-num" data-target="10">0</div>
-      <div class="stat-label">Years active in combustion R&D</div>
-    </div>
-    <div class="stat-item reveal reveal-delay-3">
       <div class="stat-num" data-target="12" data-suffix="+">0</div>
       <div class="stat-label">Calibrated fuel models</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-3">
+      <div class="stat-num" data-target="4">0</div>
+      <div class="stat-label">Free CFD calculators</div>
     </div>
   </div>
 </div>
@@ -1501,7 +1501,7 @@ footer {
       </div>
 
       <!-- Body -->
-      <div style="padding:32px 40px;display:grid;grid-template-columns:1fr 220px;gap:40px" class="team-body">
+      <div style="padding:32px 40px" class="team-body">
         <!-- Left: bio + tags + links -->
         <div>
           <p style="font-size:15px;color:var(--text2);line-height:1.8;margin-bottom:14px">
@@ -1533,30 +1533,6 @@ footer {
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
               LinkedIn
             </a>
-            <a href="https://scholar.google.com/citations?user=kYDGsMAAAAAJ" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text2);background:var(--surface2);border:1px solid var(--border);padding:7px 14px;border-radius:8px;text-decoration:none;transition:color 0.15s,background 0.15s" onmouseover="this.style.color='var(--text)';this.style.background='#1e2530'" onmouseout="this.style.color='var(--text2)';this.style.background='var(--surface2)'">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-              Google Scholar
-            </a>
-          </div>
-        </div>
-
-        <!-- Right: research metrics -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start">
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center">
-            <div style="font-size:30px;font-weight:800;color:var(--fire);font-family:'Sora',sans-serif;line-height:1">40+</div>
-            <div style="font-size:11px;color:var(--text2);margin-top:5px;line-height:1.4">Peer-reviewed papers</div>
-          </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center">
-            <div style="font-size:30px;font-weight:800;color:var(--teal);font-family:'Sora',sans-serif;line-height:1">403+</div>
-            <div style="font-size:11px;color:var(--text2);margin-top:5px;line-height:1.4">Citations</div>
-          </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center">
-            <div style="font-size:30px;font-weight:800;color:var(--gold);font-family:'Sora',sans-serif;line-height:1">11</div>
-            <div style="font-size:11px;color:var(--text2);margin-top:5px;line-height:1.4">h-index</div>
-          </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center">
-            <div style="font-size:30px;font-weight:800;color:var(--green,#4ade80);font-family:'Sora',sans-serif;line-height:1">10+</div>
-            <div style="font-size:11px;color:var(--text2);margin-top:5px;line-height:1.4">Years combustion R&D</div>
           </div>
         </div>
       </div>
@@ -1816,26 +1792,25 @@ footer {
     <div class="footer-col">
       <h4>Products</h4>
       <ul>
-        <li><a href="#simulator">Zero-D Simulator</a></li>
-        <li><a href="#spray">Spray Calculator</a></li>
+        <li><a href="/simulator">Engine Simulator</a></li>
+        <li><a href="/spray">Spray Calculator</a></li>
+        <li><a href="/cfd-calculators/">CFD Calculators</a></li>
         <li><a href="#cfd">CFD Training</a></li>
-        <li><a href="#signup">Newsletter</a></li>
       </ul>
     </div>
     <div class="footer-col">
-      <h4>Research</h4>
+      <h4>Company</h4>
       <ul>
+        <li><a href="#about">About AgniCycle</a></li>
+        <li><a href="#roadmap">Roadmap</a></li>
+        <li><a href="#team">Team</a></li>
         <li><a href="https://erc.wisc.edu" target="_blank" rel="noopener">Engine Research Center</a></li>
-        <li><a href="https://scholar.google.com/citations?user=kYDGsMAAAAAJ" target="_blank" rel="noopener">Google Scholar</a></li>
-        <li><a href="https://orcid.org/0000-0003-1167-9672" target="_blank" rel="noopener">ORCID</a></li>
-        <li><a href="https://dhkrnl.github.io" target="_blank" rel="noopener">Lab homepage</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <h4>Connect</h4>
       <ul>
         <li><a href="https://www.linkedin.com/in/dhkrnl" target="_blank" rel="noopener">LinkedIn</a></li>
-        <li><a href="https://www.researchgate.net/profile/Dhananjay-Kumar-10" target="_blank" rel="noopener">ResearchGate</a></li>
         <li><a href="mailto:dkumar39@wisc.edu">Contact us</a></li>
         <li><a href="#signup">Newsletter</a></li>
       </ul>
