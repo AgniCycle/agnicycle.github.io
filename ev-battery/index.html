@@ -52,7 +52,7 @@ a:hover { text-decoration: underline; }
 
 /* ── NAV ── */
 .nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  position: fixed; top: 38px; left: 0; right: 0; z-index: 100;
   display: flex; align-items: center; padding: 0 40px; height: 60px;
   background: rgba(7,9,15,0.9); backdrop-filter: blur(24px);
   border-bottom: 1px solid var(--border);
@@ -205,10 +205,34 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
   .footer-inner { grid-template-columns: 1fr; }
   footer { padding: 40px 20px 24px; }
 }
+
+/* ── ANNOUNCEMENT BAR ── */
+.announce-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 101;
+  background: linear-gradient(90deg, #7c2d12 0%, #9a3412 40%, #7c2d12 100%);
+  border-bottom: 1px solid rgba(249,115,22,0.3);
+  padding: 9px 24px;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  font-size: 13px; font-weight: 500; color: #fed7aa;
+  text-align: center;
+}
+.announce-bar strong { color: #fff; font-weight: 700; }
+.announce-bar a { color: #fdba74; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.announce-bar a:hover { color: #fff; }
+.announce-dot { width: 6px; height: 6px; background: #f97316; border-radius: 50%; animation: pulse 2s ease-in-out infinite; flex-shrink: 0; }
+@media (max-width: 600px) { .announce-desc { display: none; } }
 </style>
 </head>
 <body>
 <canvas id="page-bg-canvas" aria-hidden="true"></canvas>
+
+<!-- ANNOUNCEMENT BAR -->
+<div class="announce-bar">
+  <div class="announce-dot"></div>
+  <strong>Now in Public Beta</strong>
+  <span class="announce-desc"> — Engine Simulator, Spray Calculator &amp; EV Battery Suite. Free access, no credit card.</span>
+  <a href="https://www.agnicycle.com/simulator/app/">Create free account →</a>
+</div>
 
 <!-- NAV -->
 <nav class="nav" id="nav">
