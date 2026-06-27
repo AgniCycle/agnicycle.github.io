@@ -1232,13 +1232,13 @@ footer {
   </a>
 
   <ul class="nav-links">
+    <li><a href="/" class="nav-active">Home</a></li>
     <li><a href="/simulator" style="color:var(--fire);font-weight:600">Engine Simulator</a></li>
     <li><a href="/spray" style="color:var(--teal);font-weight:600">Spray Calculator</a></li>
     <li><a href="/ev-battery/" style="color:#10b981;font-weight:600">EV Battery</a></li>
     <li><a href="/cfd-calculators/" style="color:var(--teal);font-weight:600">CFD Calculators</a></li>
     <li><a href="#cfd">CFD Training</a></li>
-    <li><a href="#roadmap" data-section="roadmap">Roadmap</a></li>
-    <li><a href="#team" data-section="team">Team</a></li>
+    <li><a href="#about">About Us</a></li>
   </ul>
 
   <div class="nav-right">
@@ -1272,6 +1272,7 @@ footer {
 </nav>
 
 <div class="nav-mobile" id="nav-mobile">
+  <a href="/" onclick="closeNav()">🏠 Home</a>
   <div class="nav-mobile-section">Products</div>
   <a href="#simulator" onclick="closeNav()">
     <span style="color:var(--fire)">⚙</span> Engine Simulator
@@ -1289,9 +1290,7 @@ footer {
     <span style="color:var(--gold)">📊</span> CFD Training &amp; Consulting
   </a>
   <div class="nav-mobile-section">Company</div>
-  <a href="#roadmap" onclick="closeNav()">Roadmap</a>
-  <a href="#team" onclick="closeNav()">Team</a>
-  <a href="#about" onclick="closeNav()">About</a>
+  <a href="#about" onclick="closeNav()">About Us</a>
   <a href="#signup" onclick="closeNav()" class="nav-mobile-cta">Stay Updated →</a>
 </div>
 
