@@ -27,8 +27,9 @@
   --radius: 14px; --radius-lg: 20px;
   --shadow-teal: 0 0 40px rgba(14,165,183,0.3);
 }
-html { scroll-behavior: smooth; }
-body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+html { scroll-behavior: smooth; background: var(--bg); }
+body { font-family: 'Inter', sans-serif; background: transparent; color: var(--text); line-height: 1.6; overflow-x: hidden; }
+#page-bg-canvas { position:fixed; inset:0; width:100%; height:100%; z-index:-1; pointer-events:none; }
 h1,h2,h3,h4 { font-family: 'Sora', sans-serif; line-height: 1.2; }
 a { color: var(--teal); text-decoration: none; }
 a:hover { text-decoration: underline; }
@@ -161,6 +162,7 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
 </style>
 </head>
 <body>
+<canvas id="page-bg-canvas" aria-hidden="true"></canvas>
 
 <!-- NAV -->
 <nav class="nav" id="nav">
@@ -400,6 +402,80 @@ window.addEventListener('scroll', () => { document.getElementById('nav').classLi
 const obs = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 document.getElementById('yr').textContent = new Date().getFullYear();
+
+/* ── PAGE BACKGROUND — Spray Atomization Field ── */
+(function() {
+  const canvas = document.getElementById('page-bg-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, t = 0, running = false, animId, rT;
+  const mob = window.innerWidth < 768;
+
+  function resize() {
+    clearTimeout(rT);
+    rT = setTimeout(() => {
+      W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight;
+      nozzles[0].x=W*.22; nozzles[1].x=W*.5; nozzles[2].x=W*.78;
+    }, 100);
+  }
+  W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight;
+  window.addEventListener('resize', resize, {passive:true});
+
+  const nozzles = [{x:W*.22,y:0,cone:20,p:1.0},{x:W*.5,y:0,cone:16,p:1.3},{x:W*.78,y:0,cone:23,p:.85}];
+  const MAX = mob ? 200 : 420;
+  const drops = [];
+
+  function mkDrop(noz, init) {
+    const half=noz.cone*Math.PI/180;
+    const angle=Math.PI/2+(Math.random()-.5)*half*2;
+    const speed=(1.8+Math.random()*3.5)*noz.p;
+    const r=.6+Math.pow(Math.random(),1.7)*3.8;
+    return {x:noz.x+(Math.random()-.5)*6, y:init?Math.random()*H:8,
+      vx:Math.cos(angle)*speed, vy:Math.sin(angle)*speed,
+      r, drag:.997, evap:.0025+Math.random()*.003, alpha:.12+Math.random()*.48, alive:true};
+  }
+  nozzles.forEach(noz=>{for(let i=0;i<40;i++)drops.push(mkDrop(noz,true));});
+
+  function render() {
+    ctx.clearRect(0,0,W,H);
+    /* Nozzle cone guides */
+    nozzles.forEach(noz=>{
+      const cA=noz.cone*Math.PI/180, len=Math.min(H*.65,500);
+      ctx.save();
+      ctx.strokeStyle='rgba(14,165,183,0.07)'; ctx.lineWidth=.8; ctx.setLineDash([3,7]);
+      ctx.beginPath();
+      ctx.moveTo(noz.x,noz.y); ctx.lineTo(noz.x+Math.sin(cA)*len,noz.y+Math.cos(cA)*len);
+      ctx.moveTo(noz.x,noz.y); ctx.lineTo(noz.x-Math.sin(cA)*len,noz.y+Math.cos(cA)*len);
+      ctx.stroke(); ctx.setLineDash([]);
+      ctx.globalAlpha=.28+.18*Math.sin(t*.09);
+      const g=ctx.createRadialGradient(noz.x,noz.y,0,noz.x,noz.y,20);
+      g.addColorStop(0,'#0ea5b7'); g.addColorStop(1,'transparent');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(noz.x,noz.y,20,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    });
+    /* Spawn */
+    if(t%(mob?2:1)===0) nozzles.forEach(noz=>{if(drops.filter(d=>d.alive).length<MAX)drops.push(mkDrop(noz,false));});
+    /* Update & draw */
+    for(let k=drops.length-1;k>=0;k--){
+      const d=drops[k];
+      if(!d.alive){drops.splice(k,1);continue;}
+      d.vx*=d.drag; d.vy+=.035; d.vy*=d.drag;
+      d.x+=d.vx; d.y+=d.vy; d.r-=d.evap; d.alpha-=.0006;
+      if(d.r<.15||d.alpha<=0||d.y>H+8){d.alive=false;continue;}
+      const sf=Math.min(1,d.r/4);
+      ctx.save();
+      ctx.globalAlpha=d.alpha;
+      ctx.fillStyle=`rgb(14,${Math.round(165+sf*55)},${Math.round(183+sf*40)})`;
+      ctx.beginPath(); ctx.arc(d.x,d.y,Math.max(.15,d.r),0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    }
+    t++;
+  }
+  function startLoop(){if(running)return;running=true;(function loop(){if(!running)return;render();animId=requestAnimationFrame(loop);})();}
+  function stopLoop(){running=false;cancelAnimationFrame(animId);}
+  document.addEventListener('visibilitychange',()=>document.hidden?stopLoop():startLoop());
+  startLoop();
+})();
 </script>
 </body>
 </html>

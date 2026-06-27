@@ -40,8 +40,9 @@
   --radius-lg: 20px;
   --shadow-ev: 0 0 40px rgba(16,185,129,0.3);
 }
-html { scroll-behavior: smooth; }
-body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+html { scroll-behavior: smooth; background: var(--bg); }
+body { font-family: 'Inter', sans-serif; background: transparent; color: var(--text); line-height: 1.6; overflow-x: hidden; }
+#page-bg-canvas { position:fixed; inset:0; width:100%; height:100%; z-index:-1; pointer-events:none; }
 h1,h2,h3,h4 { font-family: 'Sora', sans-serif; line-height: 1.2; }
 a { color: var(--ev); text-decoration: none; }
 a:hover { text-decoration: underline; }
@@ -207,6 +208,7 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
 </style>
 </head>
 <body>
+<canvas id="page-bg-canvas" aria-hidden="true"></canvas>
 
 <!-- NAV -->
 <nav class="nav" id="nav">
@@ -523,6 +525,85 @@ const obs = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
 }, { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+/* ── PAGE BACKGROUND — Ion Transport Field ── */
+(function() {
+  const canvas = document.getElementById('page-bg-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, t = 0, running = false, animId, rT;
+  const mob = window.innerWidth < 768;
+  const HR = mob ? 30 : 42;
+  let hexes = [];
+
+  function buildHexes() {
+    W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight;
+    hexes = [];
+    const cw=HR*Math.sqrt(3), rh=HR*1.5;
+    const cols=Math.ceil(W/cw)+2, rows=Math.ceil(H/rh)+2;
+    for(let r=-1;r<rows;r++) for(let c=-1;c<cols;c++)
+      hexes.push({x:c*cw+(r%2===0?0:cw/2),y:r*rh,ph:Math.random()*Math.PI*2,spd:.006+Math.random()*.009,anode:Math.random()>.5});
+  }
+  buildHexes();
+  window.addEventListener('resize',()=>{clearTimeout(rT);rT=setTimeout(buildHexes,120);},{passive:true});
+
+  const ION_N = mob?35:75;
+  const ions = Array.from({length:ION_N},()=>mkIon(true));
+  function mkIon(init) {
+    return {x:Math.random()*W,y:init?Math.random()*H:H+10,
+      vx:(Math.random()-.5)*.5, vy:-.25-Math.random()*.5,
+      r:1.4+Math.random()*1.8, alpha:.25+Math.random()*.45, trail:[],
+      col:Math.random()>.4?'#22c55e':'#0ea5b7'};
+  }
+
+  function hexPath(cx,cy,r) {
+    ctx.beginPath();
+    for(let i=0;i<6;i++){const a=i*Math.PI/3;ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));}
+    ctx.closePath();
+  }
+
+  function render() {
+    ctx.clearRect(0,0,W,H);
+    /* Hex cells */
+    hexes.forEach(h=>{
+      h.ph+=h.spd; const en=.5+.5*Math.sin(h.ph);
+      const col=h.anode?'rgba(34,197,94,':'rgba(14,165,183,';
+      ctx.save();
+      hexPath(h.x,h.y,HR-1);
+      ctx.fillStyle=col+(.025+en*.035)+')'; ctx.fill();
+      ctx.strokeStyle=col+(.045+en*.055)+')'; ctx.lineWidth=.7; ctx.stroke();
+      ctx.restore();
+    });
+    /* Field lines */
+    const FL=mob?6:14;
+    for(let i=0;i<FL;i++){
+      ctx.save(); ctx.strokeStyle='rgba(34,197,94,0.05)'; ctx.lineWidth=.8;
+      ctx.beginPath();
+      for(let y=0;y<=H;y+=4){const x=(i+.5)/FL*W+Math.sin(y*.008+t*.004+i*1.1)*28;y===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+      ctx.stroke(); ctx.restore();
+    }
+    /* Ions */
+    ions.forEach((ion,i)=>{
+      ion.x+=ion.vx+Math.sin(t*.009+ion.y*.006)*.22; ion.y+=ion.vy;
+      ion.trail.push({x:ion.x,y:ion.y}); if(ion.trail.length>14)ion.trail.shift();
+      if(ion.y<-20||ion.x<-20||ion.x>W+20){ions[i]=mkIon(false);ions[i].y=H+10;return;}
+      for(let j=1;j<ion.trail.length;j++){
+        const a=(j/ion.trail.length)*ion.alpha*.38;
+        ctx.save(); ctx.globalAlpha=a; ctx.strokeStyle=ion.col;
+        ctx.lineWidth=ion.r*.9; ctx.lineCap='round';
+        ctx.beginPath(); ctx.moveTo(ion.trail[j-1].x,ion.trail[j-1].y); ctx.lineTo(ion.trail[j].x,ion.trail[j].y); ctx.stroke();
+        ctx.restore();
+      }
+      ctx.save(); ctx.globalAlpha=ion.alpha; ctx.fillStyle=ion.col; ctx.shadowColor=ion.col; ctx.shadowBlur=10;
+      ctx.beginPath(); ctx.arc(ion.x,ion.y,ion.r,0,Math.PI*2); ctx.fill(); ctx.restore();
+    });
+    t++;
+  }
+  function startLoop(){if(running)return;running=true;(function loop(){if(!running)return;render();animId=requestAnimationFrame(loop);})();}
+  function stopLoop(){running=false;cancelAnimationFrame(animId);}
+  document.addEventListener('visibilitychange',()=>document.hidden?stopLoop():startLoop());
+  startLoop();
+})();
 </script>
 </body>
 </html>

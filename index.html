@@ -58,13 +58,69 @@
   --shadow:    0 4px 24px rgba(0,0,0,0.5);
   --shadow-fire: 0 0 40px rgba(249,115,22,0.3);
 }
-html { scroll-behavior: smooth; }
+/* ── LIGHT THEME ── */
+[data-theme="light"] {
+  --bg:        #f5f7fa;
+  --bg2:       #edf1f7;
+  --surface:   #ffffff;
+  --surface2:  #edf2f8;
+  --border:    rgba(0,0,0,0.08);
+  --border2:   rgba(0,0,0,0.13);
+  --text:      #1e293b;
+  --text2:     #475569;
+  --muted:     #64748b;
+  --shadow:    0 4px 24px rgba(0,0,0,0.07);
+  --shadow-fire: 0 0 40px rgba(249,115,22,0.18);
+}
+[data-theme="light"] .nav {
+  background: rgba(245,247,250,0.88);
+  border-bottom-color: rgba(0,0,0,0.07);
+}
+[data-theme="light"] .nav.scrolled {
+  background: rgba(245,247,250,0.97);
+  box-shadow: 0 1px 24px rgba(0,0,0,0.07);
+}
+[data-theme="light"] .hero-grid {
+  background-image:
+    linear-gradient(rgba(14,165,183,0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14,165,183,0.08) 1px, transparent 1px);
+}
+[data-theme="light"] .hero-glow {
+  background: radial-gradient(ellipse, rgba(249,115,22,0.05) 0%, transparent 70%);
+}
+[data-theme="light"] .hero-orb-fire {
+  background: radial-gradient(ellipse at center, rgba(249,115,22,0.1) 0%, transparent 70%);
+}
+[data-theme="light"] .hero-orb-teal {
+  background: radial-gradient(ellipse at center, rgba(14,165,183,0.08) 0%, transparent 70%);
+}
+[data-theme="light"] .nav-mobile { background: var(--bg); border-top-color: var(--border); }
+[data-theme="light"] .nav-mobile a { color: var(--text); }
+[data-theme="light"] .footer-col a { color: var(--text2); }
+[data-theme="light"] .footer-col a:hover { color: var(--fire); text-decoration: none; }
+[data-theme="light"] ::-webkit-scrollbar-track { background: var(--bg2); }
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); }
+[data-theme="light"] .faq-item[open] { border-color: rgba(249,115,22,0.2); }
+[data-theme="light"] .hero-product-panel { box-shadow: 0 16px 48px rgba(0,0,0,0.12); }
+[data-theme="light"] .hero h1 { color: #1e293b; }
+[data-theme="light"] .hero-eyebrow { border-color: rgba(249,115,22,0.3); background: rgba(249,115,22,0.06); }
+[data-theme="light"] .hero-trust span { color: var(--text2); }
+#theme-sun { display: none; }
+[data-theme="light"] #theme-moon { display: none; }
+[data-theme="light"] #theme-sun { display: block; }
+
+html { scroll-behavior: smooth; background: var(--bg); }
 body {
   font-family: 'Inter', sans-serif;
-  background: var(--bg);
+  background: transparent;
   color: var(--text);
   line-height: 1.6;
   overflow-x: hidden;
+}
+#page-bg-canvas {
+  position: fixed; inset: 0;
+  width: 100%; height: 100%;
+  z-index: -1; pointer-events: none;
 }
 
 /* ──────────────────────────────────────────────
@@ -1250,6 +1306,7 @@ details.faq-item[open] .faq-chevron { transform: rotate(180deg); color: var(--fi
 </style>
 </head>
 <body>
+<canvas id="page-bg-canvas" aria-hidden="true"></canvas>
 
 <!-- ANNOUNCEMENT BAR -->
 <div class="announce-bar">
@@ -1296,8 +1353,21 @@ details.faq-item[open] .faq-chevron { transform: rotate(180deg); color: var(--fi
         <line x1="12" y1="15" x2="12" y2="3"/>
       </svg>
     </button>
+    <!-- Theme -->
+    <button class="nav-icon-btn" id="theme-btn" aria-label="Toggle theme" title="Toggle light / dark">
+      <svg id="theme-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+      <svg id="theme-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+    </button>
     <!-- Fullscreen -->
-    <button class="nav-icon-btn" id="fullscreen-btn" aria-label="Toggle fullscreen" title="Fullscreen">
+    <button class="nav-icon-btn" id="fullscreen-btn" aria-label="Toggle fullscreen" title="Fullscreen (F)">
       <svg id="fs-expand" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
         <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
@@ -2019,28 +2089,37 @@ sections.forEach(id => {
 (function() {
   const canvas = document.getElementById('hero-canvas');
   const ctx = canvas.getContext('2d');
-  let W, H, particles = [], animId;
+  let W, H, particles = [], animId, running = false;
 
+  const COUNT = window.innerWidth < 768 ? 55 : 120;
+
+  let resizeTimer;
   function resize() {
-    W = canvas.width = canvas.offsetWidth;
-    H = canvas.height = canvas.offsetHeight;
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+      W = canvas.width  = canvas.offsetWidth;
+      H = canvas.height = canvas.offsetHeight;
+    }, 100);
   }
-  resize();
-  window.addEventListener('resize', resize);
+  W = canvas.width  = canvas.offsetWidth;
+  H = canvas.height = canvas.offsetHeight;
+  window.addEventListener('resize', resize, { passive: true });
 
-  const COLORS = ['#f97316','#fbbf24','#f0500f','#0ea5b7','rgba(249,115,22,0.5)'];
-
-  function Particle() {
-    this.reset();
+  function getColors() {
+    return window.__agniThemeColors ? window.__agniThemeColors()
+      : ['#f97316','#fbbf24','#f0500f','#0ea5b7','rgba(249,115,22,0.5)'];
   }
+
+  function Particle() { this.reset(); }
   Particle.prototype.reset = function() {
+    const cols = getColors();
     this.x = Math.random() * W;
     this.y = H + Math.random() * 60;
     this.vx = (Math.random() - 0.5) * 0.6;
     this.vy = -(0.4 + Math.random() * 1.2);
     this.r  = 1 + Math.random() * 2.5;
     this.alpha = 0.15 + Math.random() * 0.45;
-    this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+    this.color = cols[Math.floor(Math.random() * cols.length)];
     this.life = 0;
     this.maxLife = 120 + Math.random() * 200;
   };
@@ -2061,7 +2140,7 @@ sections.forEach(id => {
     ctx.restore();
   };
 
-  for (let i = 0; i < 120; i++) {
+  for (let i = 0; i < COUNT; i++) {
     const p = new Particle();
     p.life = Math.random() * p.maxLife;
     p.y = Math.random() * H;
@@ -2069,11 +2148,30 @@ sections.forEach(id => {
   }
 
   function loop() {
+    if (!running) return;
     ctx.clearRect(0, 0, W, H);
     particles.forEach(p => { p.update(); p.draw(); });
     animId = requestAnimationFrame(loop);
   }
-  loop();
+  function startLoop() { if (!running) { running = true; loop(); } }
+  function stopLoop()  { running = false; cancelAnimationFrame(animId); }
+
+  /* pause when hero scrolls out of view */
+  new IntersectionObserver(function(entries) {
+    entries[0].isIntersecting ? startLoop() : stopLoop();
+  }, { threshold: 0 }).observe(canvas);
+
+  /* pause when tab is backgrounded */
+  document.addEventListener('visibilitychange', function() {
+    document.hidden ? stopLoop() : startLoop();
+  });
+
+  /* re-pick colors on theme switch */
+  window.addEventListener('agni:themechange', function() {
+    particles.forEach(p => p.reset());
+  });
+
+  startLoop();
 })();
 
 /* ──────────────────────────────────────────────
@@ -2157,9 +2255,15 @@ sections.forEach(id => {
     drops = drops.filter(d => d.alive);
     drops.forEach(d => { d.update(); d.draw(); });
     t++;
-    requestAnimationFrame(loop);
+    if (sprayRunning) requestAnimationFrame(loop);
   }
-  loop();
+  let sprayRunning = false, sprayId;
+  function startSpray() { if (!sprayRunning) { sprayRunning = true; loop(); } }
+  function stopSpray()  { sprayRunning = false; cancelAnimationFrame(sprayId); }
+
+  new IntersectionObserver(function(e) { e[0].isIntersecting ? startSpray() : stopSpray(); }, { threshold: 0 }).observe(canvas);
+  document.addEventListener('visibilitychange', function() { document.hidden ? stopSpray() : startSpray(); });
+  startSpray();
 })();
 
 /* ──────────────────────────────────────────────
@@ -2235,9 +2339,15 @@ sections.forEach(id => {
     }
     ctx.globalAlpha = 1;
     t++;
-    requestAnimationFrame(loop);
+    if (cfdRunning) requestAnimationFrame(loop);
   }
-  loop();
+  let cfdRunning = false;
+  function startCfd() { if (!cfdRunning) { cfdRunning = true; loop(); } }
+  function stopCfd()  { cfdRunning = false; }
+
+  new IntersectionObserver(function(e) { e[0].isIntersecting ? startCfd() : stopCfd(); }, { threshold: 0 }).observe(canvas);
+  document.addEventListener('visibilitychange', function() { document.hidden ? stopCfd() : startCfd(); });
+  startCfd();
 })();
 
 /* ──────────────────────────────────────────────
@@ -2560,7 +2670,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeApp(); 
 })();
 
 /* ──────────────────────────────────────────────
-   FULLSCREEN TOGGLE
+   FULLSCREEN TOGGLE  (click or press F)
 ────────────────────────────────────────────── */
 (function() {
   var btn = document.getElementById('fullscreen-btn');
@@ -2571,14 +2681,216 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeApp(); 
     expand.style.display = full ? 'none' : '';
     shrink.style.display = full ? '' : 'none';
   }
-  btn.addEventListener('click', function() {
+  function toggleFullscreen() {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen();
     } else {
       document.exitFullscreen();
     }
-  });
+  }
+  btn.addEventListener('click', toggleFullscreen);
   document.addEventListener('fullscreenchange', updateIcon);
+  document.addEventListener('keydown', function(e) {
+    if ((e.key === 'f' || e.key === 'F') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      var tag = document.activeElement && document.activeElement.tagName;
+      if (tag !== 'INPUT' && tag !== 'TEXTAREA' && tag !== 'SELECT') {
+        toggleFullscreen();
+      }
+    }
+  });
+})();
+
+/* ──────────────────────────────────────────────
+   THEME TOGGLE  (dark / light, persisted)
+────────────────────────────────────────────── */
+(function() {
+  var DARK_COLORS  = ['#f97316','#fbbf24','#f0500f','#0ea5b7','rgba(249,115,22,0.5)'];
+  var LIGHT_COLORS = ['#ea580c','#d97706','#c2410c','#0891b2','rgba(234,88,12,0.6)'];
+
+  function setTheme(t) {
+    document.documentElement.dataset.theme = t;
+    localStorage.setItem('agni-theme', t);
+    window.dispatchEvent(new CustomEvent('agni:themechange', { detail: t }));
+  }
+
+  var saved = localStorage.getItem('agni-theme');
+  if (saved === 'light' || saved === 'dark') setTheme(saved);
+
+  document.getElementById('theme-btn').addEventListener('click', function() {
+    setTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
+  });
+
+  /* expose helpers so canvas IIFEs can react */
+  window.__agniThemeColors = function() {
+    return document.documentElement.dataset.theme === 'light' ? LIGHT_COLORS : DARK_COLORS;
+  };
+})();
+
+/* ──────────────────────────────────────────────
+   PAGE BACKGROUND — Combustion Plasma Network
+────────────────────────────────────────────── */
+(function() {
+  const canvas = document.getElementById('page-bg-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, t = 0, running = false, animId;
+  const mob = window.innerWidth < 768;
+  const N   = mob ? 28 : 52;
+  const LINK_D = 175;
+
+  let rT;
+  function resize() {
+    clearTimeout(rT);
+    rT = setTimeout(function() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }, 100);
+  }
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  window.addEventListener('resize', resize, {passive:true});
+
+  /* plasma nodes */
+  function mkNode() {
+    return {
+      x: Math.random() * W, y: Math.random() * H,
+      vx: (Math.random()-.5)*.22, vy: (Math.random()-.5)*.16,
+      r: 1.8 + Math.random()*2.2,
+      fire: Math.random() > .35,
+      ph: Math.random()*Math.PI*2,
+      spd: .008+Math.random()*.012,
+      ignTimer: Math.floor(Math.random()*400),
+    };
+  }
+  const nodes = Array.from({length:N}, mkNode);
+
+  /* energy pulses along bonds */
+  const pulses = [];
+  function addPulse(a,b) {
+    pulses.push({a,b,p:0,dur:55+Math.random()*35,col:nodes[a].fire?'#fbbf24':'#22d3ee'});
+  }
+
+  /* rising sparks */
+  const SK = mob ? 30 : 65;
+  function mkSpark(init) {
+    return {
+      x: Math.random()*W, y: init?Math.random()*H:H+8,
+      vx:(Math.random()-.5)*.3, vy:-(0.22+Math.random()*.6),
+      r:.6+Math.random()*1.3,
+      a:0.05+Math.random()*.12,
+      col:['#f97316','#fbbf24','#0ea5b7'][Math.floor(Math.random()*3)],
+      life:init?Math.floor(Math.random()*280):0, maxLife:160+Math.random()*220,
+    };
+  }
+  const sparks = Array.from({length:SK}, ()=>mkSpark(true));
+
+  /* ignition shockwaves */
+  const waves = [];
+
+  function isLight() { return document.documentElement.dataset.theme==='light'; }
+
+  function render() {
+    ctx.clearRect(0,0,W,H);
+    const light = isLight();
+
+    /* bonds */
+    for (let i=0;i<nodes.length;i++) {
+      for (let j=i+1;j<nodes.length;j++) {
+        const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if (d<LINK_D) {
+          const f=(1-d/LINK_D); const a=f*f*(light?.08:.13);
+          ctx.beginPath();
+          ctx.strokeStyle=nodes[i].fire?`rgba(249,115,22,${a})`:`rgba(14,165,183,${a})`;
+          ctx.lineWidth=f*1.1;
+          ctx.moveTo(nodes[i].x,nodes[i].y); ctx.lineTo(nodes[j].x,nodes[j].y);
+          ctx.stroke();
+          if (Math.random()<.00025) addPulse(i,j);
+        }
+      }
+    }
+
+    /* energy pulses */
+    for (let k=pulses.length-1;k>=0;k--) {
+      const p=pulses[k]; p.p++;
+      if (p.p>p.dur){pulses.splice(k,1);continue;}
+      const pr=p.p/p.dur;
+      const ni=nodes[p.a],nj=nodes[p.b];
+      const px=ni.x+(nj.x-ni.x)*pr, py=ni.y+(nj.y-ni.y)*pr;
+      const fade=Math.sin(pr*Math.PI);
+      ctx.save();
+      ctx.globalAlpha=fade*.65;
+      const g=ctx.createRadialGradient(px,py,0,px,py,7);
+      g.addColorStop(0,p.col); g.addColorStop(1,'transparent');
+      ctx.fillStyle=g;
+      ctx.beginPath(); ctx.arc(px,py,7,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    }
+
+    /* nodes */
+    nodes.forEach(n => {
+      n.x += n.vx+Math.sin(t*.007+n.ph)*.1;
+      n.y += n.vy+Math.cos(t*.005+n.ph)*.07;
+      if(n.x<-25)n.x=W+25; if(n.x>W+25)n.x=-25;
+      if(n.y<-25)n.y=H+25; if(n.y>H+25)n.y=-25;
+      n.ph+=n.spd;
+      const pulse=.78+.22*Math.sin(n.ph*2.2);
+      const col=n.fire?'#f97316':'#0ea5b7';
+      const gR=n.r*5*pulse;
+      ctx.save();
+      ctx.globalAlpha=(light?.04:.07)*pulse;
+      const g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,gR*2.8);
+      g.addColorStop(0,col); g.addColorStop(1,'transparent');
+      ctx.fillStyle=g;
+      ctx.beginPath(); ctx.arc(n.x,n.y,gR*2.8,0,Math.PI*2); ctx.fill();
+      ctx.globalAlpha=(light?.35:.5)*pulse;
+      ctx.fillStyle=col;
+      ctx.shadowColor=col; ctx.shadowBlur=10;
+      ctx.beginPath(); ctx.arc(n.x,n.y,n.r*pulse,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+
+      n.ignTimer--;
+      if (n.ignTimer<=0) {
+        waves.push({x:n.x,y:n.y,r:0,maxR:55+Math.random()*45,a:.45,col});
+        n.ignTimer=350+Math.floor(Math.random()*500);
+      }
+    });
+
+    /* shockwaves */
+    for (let k=waves.length-1;k>=0;k--) {
+      const w=waves[k]; w.r+=2.2; w.a-=.011;
+      if(w.a<=0){waves.splice(k,1);continue;}
+      ctx.save();
+      ctx.globalAlpha=w.a*(light?.5:1);
+      ctx.strokeStyle=w.col; ctx.lineWidth=1.2;
+      ctx.beginPath(); ctx.arc(w.x,w.y,w.r,0,Math.PI*2); ctx.stroke();
+      ctx.restore();
+    }
+
+    /* sparks */
+    sparks.forEach((s,i)=>{
+      s.x+=s.vx+Math.sin(t*.011+s.y*.006)*.13;
+      s.y+=s.vy; s.life++;
+      if(s.life>s.maxLife||s.y<-20){sparks[i]=mkSpark(false);return;}
+      const fd=Math.min(1,Math.min(s.life/45,(s.maxLife-s.life)/65));
+      ctx.save();
+      ctx.globalAlpha=s.a*fd*(light?.55:1);
+      ctx.fillStyle=s.col;
+      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    });
+
+    t++;
+  }
+
+  function startLoop() {
+    if (running) return; running=true;
+    (function loop(){if(!running)return; render(); animId=requestAnimationFrame(loop);})();
+  }
+  function stopLoop() { running=false; cancelAnimationFrame(animId); }
+
+  document.addEventListener('visibilitychange', ()=>document.hidden?stopLoop():startLoop());
+  startLoop();
 })();
 </script>
 </body>
