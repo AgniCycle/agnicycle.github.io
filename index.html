@@ -375,25 +375,13 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
 .hero-orb-fire {
   width: 800px; height: 600px; top: 8%; left: 50%;
   transform: translate(-50%, -10%);
-  background: radial-gradient(ellipse at center, rgba(249,115,22,0.16) 0%, rgba(234,88,12,0.06) 40%, transparent 70%);
+  background: radial-gradient(ellipse at center, rgba(249,115,22,0.14) 0%, rgba(234,88,12,0.05) 40%, transparent 70%);
   filter: blur(40px);
-  animation: orb-fire 14s ease-in-out infinite;
 }
 .hero-orb-teal {
   width: 560px; height: 420px; bottom: 10%; right: 5%;
-  background: radial-gradient(ellipse at center, rgba(14,165,183,0.13) 0%, transparent 70%);
+  background: radial-gradient(ellipse at center, rgba(14,165,183,0.11) 0%, transparent 70%);
   filter: blur(50px);
-  animation: orb-teal 18s ease-in-out infinite 2s;
-}
-@keyframes orb-fire {
-  0%, 100% { transform: translate(-50%,-10%) scale(1); opacity:0.9; }
-  33% { transform: translate(-47%,-15%) scale(1.1); opacity:1; }
-  66% { transform: translate(-53%,-7%) scale(0.93); opacity:0.75; }
-}
-@keyframes orb-teal {
-  0%, 100% { transform: scale(1) translate(0,0); opacity:0.8; }
-  40% { transform: scale(1.15) translate(-4%,-6%); opacity:1; }
-  70% { transform: scale(0.9) translate(5%,4%); opacity:0.65; }
 }
 .hero-inner {
   position: relative; z-index: 1;
@@ -847,11 +835,7 @@ footer {
 .reveal-delay-4 { transition-delay: 0.46s; }
 
 /* ── Glow effects ── */
-.nav-logo-mark { animation: logo-pulse 3.5s ease-in-out infinite; }
-@keyframes logo-pulse {
-  0%,100% { box-shadow: 0 0 14px rgba(14,165,183,0.3); }
-  50%      { box-shadow: 0 0 32px rgba(14,165,183,0.65), 0 0 60px rgba(14,165,183,0.15); }
-}
+.nav-logo-mark { box-shadow: 0 0 14px rgba(14,165,183,0.3); }
 
 .stat-num { text-shadow: 0 0 40px rgba(249,115,22,0.5); }
 
@@ -888,24 +872,18 @@ footer {
 }
 .btn-primary:hover::after { left: 160%; transition: left 0.55s ease; }
 
-/* ── Product visual float + glow ── */
+/* ── Product visual glow ── */
 #simulator .product-visual {
   border-top: 2px solid rgba(249,115,22,0.75);
-  animation: visual-float 6s ease-in-out infinite;
   transition: box-shadow 0.4s;
 }
 #simulator .product-visual:hover { box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 60px rgba(249,115,22,0.14); }
 #spray .product-visual {
   border-top: 2px solid rgba(14,165,183,0.75);
-  animation: visual-float 7.5s ease-in-out infinite 1.5s;
   transition: box-shadow 0.4s;
 }
 #spray .product-visual:hover { box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 60px rgba(14,165,183,0.14); }
 #cfd .product-visual { border-top: 2px solid rgba(251,191,36,0.75); }
-@keyframes visual-float {
-  0%,100% { transform: translateY(0); }
-  50%      { transform: translateY(-7px); }
-}
 
 /* ── CTA section ambient glow ── */
 .cta-section {
@@ -948,16 +926,8 @@ footer {
 /* ── Hero h1 subtle glow ── */
 .hero h1 { filter: drop-shadow(0 0 40px rgba(249,115,22,0.12)); }
 
-/* ── Hero badge shimmer ── */
-.hero-badge {
-  animation: badge-glow 4s ease-in-out infinite;
-}
-.hero-badge:nth-child(2) { animation-delay: 1.3s; }
-.hero-badge:nth-child(3) { animation-delay: 2.6s; }
-@keyframes badge-glow {
-  0%,80%,100% { border-color: rgba(255,255,255,0.1); }
-  40%         { border-color: rgba(249,115,22,0.35); box-shadow: 0 0 14px rgba(249,115,22,0.1); }
-}
+/* ── Hero badge ── */
+.hero-badge { border-color: rgba(255,255,255,0.1); }
 
 /* ── Animated glow ring on primary CTA ── */
 .btn-primary {
@@ -986,20 +956,8 @@ footer {
   to   { width: 24px; opacity: 1; }
 }
 
-/* ── Stat bar glow sweep ── */
-.stat-bar {
-  position: relative; overflow: hidden;
-}
-.stat-bar::after {
-  content: ''; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(90deg, transparent 0%, rgba(249,115,22,0.04) 50%, transparent 100%);
-  background-size: 200% 100%;
-  animation: shimmer-sweep 6s ease-in-out infinite;
-}
-@keyframes shimmer-sweep {
-  0%   { background-position: -100% 0; }
-  100% { background-position: 300% 0; }
-}
+/* ── Stat bar ── */
+.stat-bar { position: relative; overflow: hidden; }
 
 /* ── Scroll progress bar ── */
 .scroll-progress {
@@ -1055,15 +1013,8 @@ footer {
 }
 @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
 
-/* ── Number odometer shimmer ── */
-.stat-num {
-  display: inline-block;
-  animation: num-breathe 4s ease-in-out infinite;
-}
-@keyframes num-breathe {
-  0%,100% { text-shadow: 0 0 30px rgba(249,115,22,0.4); }
-  50%     { text-shadow: 0 0 60px rgba(249,115,22,0.8), 0 0 100px rgba(249,115,22,0.3); }
-}
+/* ── Stat numbers ── */
+.stat-num { display: inline-block; text-shadow: 0 0 30px rgba(249,115,22,0.4); }
 
 /* ── Section headline accent word ── */
 .hl-accent {
@@ -2111,7 +2062,7 @@ sections.forEach(id => {
   const ctx = canvas.getContext('2d');
   let W, H, particles = [], animId, running = false;
 
-  const COUNT = window.innerWidth < 768 ? 55 : 120;
+  const COUNT = window.innerWidth < 768 ? 28 : 65;
 
   let resizeTimer;
   function resize() {
@@ -2753,10 +2704,10 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeApp(); 
   const canvas = document.getElementById('page-bg-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  let W, H, t = 0, running = false, animId;
+  let W, H, t = 0, running = false, animId, lastFrame = 0;
   const mob = window.innerWidth < 768;
-  const N   = mob ? 28 : 52;
-  const LINK_D = 175;
+  const N   = mob ? 18 : 32;
+  const LINK_D = 160;
 
   let rT;
   function resize() {
@@ -2791,7 +2742,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeApp(); 
   }
 
   /* rising sparks */
-  const SK = mob ? 30 : 65;
+  const SK = mob ? 18 : 36;
   function mkSpark(init) {
     return {
       x: Math.random()*W, y: init?Math.random()*H:H+8,
@@ -2871,8 +2822,8 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeApp(); 
 
       n.ignTimer--;
       if (n.ignTimer<=0) {
-        waves.push({x:n.x,y:n.y,r:0,maxR:70+Math.random()*60,a:.85,col});
-        n.ignTimer=250+Math.floor(Math.random()*350);
+        waves.push({x:n.x,y:n.y,r:0,maxR:60+Math.random()*50,a:.65,col});
+        n.ignTimer=450+Math.floor(Math.random()*450);
       }
     });
 
@@ -2903,9 +2854,16 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeApp(); 
     t++;
   }
 
+  const FPS = 30, INTERVAL = 1000 / FPS;
   function startLoop() {
     if (running) return; running=true;
-    (function loop(){if(!running)return; render(); animId=requestAnimationFrame(loop);})();
+    (function loop(ts){
+      if(!running)return;
+      animId=requestAnimationFrame(loop);
+      if(ts-lastFrame<INTERVAL)return;
+      lastFrame=ts;
+      render();
+    })(0);
   }
   function stopLoop() { running=false; cancelAnimationFrame(animId); }
 
