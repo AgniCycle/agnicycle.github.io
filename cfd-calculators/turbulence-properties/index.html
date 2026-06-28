@@ -82,6 +82,10 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
       <svg id="theme-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       <svg id="theme-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
     </button>
+    <button class="topbar-icon-btn" id="fullscreen-btn" aria-label="Toggle fullscreen" title="Fullscreen (F)" style="margin-right:4px">
+      <svg id="fs-expand" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+      <svg id="fs-shrink" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="3" y2="21"/><line x1="21" y1="3" x2="14" y2="10"/></svg>
+    </button>
     <span class="topbar-badge">CFD Tool</span>
     <a class="topbar-back" href="/cfd-calculators/">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -102,8 +106,19 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
   ></iframe>
 </div>
 <script>
-(function(){ const t=localStorage.getItem("agni-theme")||"dark"; document.documentElement.setAttribute("data-theme",t); })();
+(function(){ const t=localStorage.getItem("agni-theme")||"light"; document.documentElement.setAttribute("data-theme",t); })();
 function toggleTheme(){ const n=document.documentElement.getAttribute("data-theme")==="light"?"dark":"light"; document.documentElement.setAttribute("data-theme",n); localStorage.setItem("agni-theme",n); }
+(function(){
+  var btn=document.getElementById('fullscreen-btn');
+  if(!btn)return;
+  var expand=document.getElementById('fs-expand');
+  var shrink=document.getElementById('fs-shrink');
+  function updateIcon(){var f=!!document.fullscreenElement;expand.style.display=f?'none':'';shrink.style.display=f?'':'none';}
+  function toggleFS(){if(!document.fullscreenElement){document.documentElement.requestFullscreen().catch(function(){});}else{document.exitFullscreen();}}
+  btn.addEventListener('click',toggleFS);
+  document.addEventListener('fullscreenchange',updateIcon);
+  document.addEventListener('keydown',function(e){if((e.key==='f'||e.key==='F')&&!e.ctrlKey&&!e.metaKey&&!e.altKey){var t=document.activeElement&&document.activeElement.tagName;if(t!=='INPUT'&&t!=='TEXTAREA'&&t!=='SELECT')toggleFS();}});
+})();
 </script>
 </body>
 </html>
