@@ -2363,18 +2363,34 @@ function handleSignup(e) {
   const msg = document.getElementById('signup-msg');
   btn.disabled = true;
   btn.textContent = 'Submitting…';
-  // Build mailto link as fallback (replace with backend endpoint when ready)
-  const subject = encodeURIComponent('AgniCycle Newsletter Signup');
-  const body = encodeURIComponent(`Hi,\n\nPlease add me to the AgniCycle updates list.\n\nEmail: ${email}\n\nBest,`);
-  setTimeout(() => {
-    btn.textContent = '✓ You\'re on the list!';
-    btn.style.background = 'var(--green)';
-    msg.textContent = `We'll send your beta link to ${email}. Check your inbox within 24 hours.`;
-    msg.style.color = 'var(--green)';
-    document.getElementById('email-input').value = '';
-    // open mailto as soft fallback
-    window.location.href = `mailto:dkumar39@wisc.edu?subject=${subject}&body=${body}`;
-  }, 800);
+  fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      access_key: 'feb6af6b-c57b-434f-a4fa-6ad95cb21762',
+      email: email,
+      subject: 'New AgniCycle Signup',
+      from_name: 'AgniCycle Signups',
+    })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (data.success) {
+      btn.textContent = '✓ You\'re on the list!';
+      btn.style.background = 'var(--green)';
+      msg.textContent = 'We\'ll notify you when new tools and features ship.';
+      msg.style.color = 'var(--green)';
+      document.getElementById('email-input').value = '';
+    } else {
+      throw new Error(data.message || 'Submission failed');
+    }
+  })
+  .catch(function() {
+    btn.disabled = false;
+    btn.textContent = 'Notify Me →';
+    msg.textContent = 'Something went wrong — please try again.';
+    msg.style.color = 'var(--fire)';
+  });
 }
 
 /* ──────────────────────────────────────────────
