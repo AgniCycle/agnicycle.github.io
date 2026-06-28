@@ -57,6 +57,8 @@
   --radius-lg: 20px;
   --shadow:    0 4px 24px rgba(0,0,0,0.5);
   --shadow-fire: 0 0 40px rgba(249,115,22,0.3);
+  --text3:     rgba(255,255,255,0.35);
+  --surface3:  rgba(255,255,255,0.08);
 }
 /* ── LIGHT THEME ── */
 [data-theme="light"] {
@@ -71,6 +73,8 @@
   --muted:     #64748b;
   --shadow:    0 4px 24px rgba(0,0,0,0.07);
   --shadow-fire: 0 0 40px rgba(249,115,22,0.18);
+  --text3:     #94a3b8;
+  --surface3:  rgba(0,0,0,0.06);
 }
 [data-theme="light"] .nav {
   background: rgba(245,247,250,0.88);
@@ -108,6 +112,17 @@
 #theme-sun { display: none; }
 [data-theme="light"] #theme-moon { display: none; }
 [data-theme="light"] #theme-sun { display: block; }
+
+/* ── Light mode: fix hardcoded #fff text ── */
+[data-theme="light"] .section-headline { color: #0f172a; }
+[data-theme="light"] .product-title { color: #0f172a; }
+[data-theme="light"] .feat-title { color: #1e293b; }
+[data-theme="light"] .audience-role { color: #1e293b; }
+[data-theme="light"] .footer-brand-logo span { color: #1e293b; }
+[data-theme="light"] .roadmap-title { color: #1e293b; }
+[data-theme="light"] .prod-title-lg { color: #0f172a; }
+[data-theme="light"] .prod-title-sm { color: #1e293b; }
+[data-theme="light"] .btn-sm-card:hover { background: rgba(0,0,0,0.07); color: var(--text); }
 
 html { scroll-behavior: smooth; background: var(--bg); }
 body {
