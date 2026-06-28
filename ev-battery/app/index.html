@@ -35,6 +35,20 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 .frame-loading.hidden { opacity: 0; }
 .spinner { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border2); border-top-color: var(--green); animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── LIGHT THEME ── */
+[data-theme="light"] {
+  --bg: #f5f7fa; --surface: #ffffff; --surface2: #edf2f8;
+  --border: rgba(0,0,0,0.08); --border2: rgba(0,0,0,0.13);
+  --text: #1e293b; --text2: #475569; --text3: #94a3b8;
+}
+[data-theme="light"] .app-bar { background: rgba(245,247,250,0.98); border-bottom-color: rgba(0,0,0,0.07); }
+[data-theme="light"] .app-loading { background: var(--bg); }
+[data-theme="light"] .app-frame { background: var(--bg); }
+#theme-sun { display: none; }
+[data-theme="light"] #theme-moon { display: none; }
+[data-theme="light"] #theme-sun { display: block; }
+.app-bar-icon-btn { display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:7px; background:var(--surface2); border:1px solid var(--border); color:var(--text2); cursor:pointer; transition:color 0.2s,background 0.2s; flex-shrink:0; }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@700;800&display=swap" rel="stylesheet"/>
@@ -74,5 +88,9 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
     onload="document.getElementById('loader').classList.add('hidden')"
   ></iframe>
 </div>
+<script>
+(function(){ const t=localStorage.getItem('agni-theme')||'dark'; document.documentElement.setAttribute('data-theme',t); })();
+function toggleTheme(){ const n=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light'; document.documentElement.setAttribute('data-theme',n); localStorage.setItem('agni-theme',n); }
+</script>
 </body>
 </html>
