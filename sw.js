@@ -1,5 +1,18 @@
-const CACHE = 'agnicycle-v1';
-const PRECACHE = ['/', '/index.html', '/og-image.png', '/icon-192.png', '/icon-512.png'];
+const CACHE = 'agnicycle-v2';
+const PRECACHE = [
+  '/',
+  '/index.html',
+  '/about/',
+  '/cfd-training/',
+  '/simulator/',
+  '/spray/',
+  '/ev-battery/',
+  '/cfd-calculators/',
+  '/og-image.png',
+  '/icon-192.png',
+  '/icon-512.png',
+  '/manifest.json',
+];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(PRECACHE)));

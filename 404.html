@@ -1,16 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<script>
-  // Redirect /simulator → /?section=simulator so the SPA can scroll to it
-  var path = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
-  if (path) {
-    window.location.replace('/?section=' + encodeURIComponent(path));
-  } else {
-    window.location.replace('/');
-  }
-</script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Page Not Found — AgniCycle</title>
+<meta name="robots" content="noindex"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='92' fill='%230B2536'/><circle cx='256' cy='256' r='184' fill='%231B4A63' stroke='%230EA5B7' stroke-width='3'/><path d='M213 150 C250 200 265 240 248 268 C234 291 208 299 187 289 C165 279 159 258 169 242 C173 252 183 259 191 253 C183 234 187 200 213 150 Z' fill='url(%23fg)'/><defs><radialGradient id='fg' cx='50%25' cy='68%25' r='62%25'><stop offset='0%25' stop-color='%23FFF06B'/><stop offset='68%25' stop-color='%23F97316'/><stop offset='100%25' stop-color='%23F0500F'/></radialGradient></defs></svg>" type="image/svg+xml"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --bg: #f5f7fa; --text: #1e293b; --text2: #475569; --teal: #0ea5b7; --fire: #f97316; --border: rgba(0,0,0,0.08); --surface: #fff; }
+html, body { height: 100%; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 40px 24px; text-align: center; }
+.logo-mark { width: 52px; height: 52px; border-radius: 13px; background: #0B2536; border: 2px solid #0ea5b7; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 0 20px rgba(14,165,183,0.25); }
+.logo-mark svg { width: 30px; height: 30px; }
+.code { font-family: 'Sora', sans-serif; font-size: 6rem; font-weight: 800; line-height: 1; color: transparent; background: linear-gradient(135deg, var(--fire), var(--teal)); -webkit-background-clip: text; background-clip: text; margin-bottom: 16px; }
+h1 { font-family: 'Sora', sans-serif; font-size: 1.6rem; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+p { font-size: 1rem; color: var(--text2); max-width: 420px; line-height: 1.65; margin-bottom: 36px; }
+.links { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.btn-primary { background: var(--teal); color: #fff; padding: 11px 24px; border-radius: 10px; font-size: 14px; font-weight: 600; text-decoration: none; transition: opacity 0.2s; }
+.btn-primary:hover { opacity: 0.85; }
+.btn-secondary { background: var(--surface); color: var(--text); padding: 11px 24px; border-radius: 10px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid var(--border); transition: border-color 0.2s; }
+.btn-secondary:hover { border-color: var(--teal); }
+</style>
 </head>
-<body></body>
+<body>
+<div class="logo-mark">
+  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs><radialGradient id="g" cx="50%" cy="68%" r="62%"><stop offset="0%" stop-color="#FFF06B"/><stop offset="60%" stop-color="#F97316"/><stop offset="100%" stop-color="#F0500F"/></radialGradient></defs>
+    <path d="M50 8 C68 32 75 52 66 68 C59 80 43 86 31 78 C19 70 16 54 25 42 C29 52 37 58 43 52 C37 40 41 22 50 8 Z" fill="url(#g)"/>
+  </svg>
+</div>
+<div class="code">404</div>
+<h1>Page not found</h1>
+<p>The page you're looking for doesn't exist or may have moved. Try heading back to the homepage.</p>
+<div class="links">
+  <a class="btn-primary" href="/">Back to Home</a>
+  <a class="btn-secondary" href="/simulator/app/">Launch Simulator</a>
+  <a class="btn-secondary" href="/cfd-calculators/">CFD Calculators</a>
+</div>
+</body>
 </html>

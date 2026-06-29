@@ -1,7 +1,7 @@
 {
   "name": "AgniCycle",
   "short_name": "AgniCycle",
-  "description": "Research-grade combustion engineering tools — IC engine simulator, spray calculator & CFD training.",
+  "description": "Research-grade combustion simulation tools — engine simulator, spray calculator, EV battery suite & CFD calculators. Runs in your browser.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "landscape",
@@ -11,5 +11,11 @@
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
-  "categories": ["education", "productivity", "utilities"]
+  "categories": ["education", "productivity", "utilities"],
+  "shortcuts": [
+    { "name": "Engine Simulator", "url": "/simulator/app/", "description": "Launch IC engine simulator" },
+    { "name": "Spray Calculator", "url": "/spray/app/", "description": "Launch fuel spray calculator" },
+    { "name": "CFD Calculators", "url": "/cfd-calculators/", "description": "Open CFD calculators" },
+    { "name": "EV Battery Suite", "url": "/ev-battery/app/", "description": "Launch EV battery suite" }
+  ]
 }
