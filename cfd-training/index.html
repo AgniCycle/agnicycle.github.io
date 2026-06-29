@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CFD Training — AgniCycle</title>
+<meta name="description" content="Structured CFD training for researchers and engineers. Courses covering OpenFOAM, turbulence modeling, combustion simulation, and meshing. Coming soon."/>
+<link rel="canonical" href="https://www.agnicycle.com/cfd-training/"/>
+<meta property="og:type"        content="website"/>
+<meta property="og:url"         content="https://www.agnicycle.com/cfd-training/"/>
+<meta property="og:title"       content="CFD Training — AgniCycle"/>
+<meta property="og:description" content="Structured CFD training for researchers and engineers. Coming soon."/>
+<meta property="og:image"       content="https://www.agnicycle.com/og-image.png"/>
+<meta name="robots" content="index, follow"/>
+<meta name="theme-color" content="#0ea5b7"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='92' fill='%230B2536'/><circle cx='256' cy='256' r='184' fill='%231B4A63' stroke='%230EA5B7' stroke-width='3'/><path d='M213 150 C250 200 265 240 248 268 C234 291 208 299 187 289 C165 279 159 258 169 242 C173 252 183 259 191 253 C183 234 187 200 213 150 Z' fill='url(%23fg)'/><defs><radialGradient id='fg' cx='50%25' cy='68%25' r='62%25'><stop offset='0%25' stop-color='%23FFF06B'/><stop offset='68%25' stop-color='%23F97316'/><stop offset='100%25' stop-color='%23F0500F'/></radialGradient></defs></svg>" type="image/svg+xml"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:        #07090f;
+  --bg2:       #0d1320;
+  --surface:   #111827;
+  --surface2:  #1a2235;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.12);
+  --text:      #e2e8f0;
+  --text2:     #94a3b8;
+  --text3:     #64748b;
+  --muted:     #64748b;
+  --fire:      #f97316;
+  --teal:      #0ea5b7;
+  --teal-dim:  rgba(14,165,183,0.15);
+  --gold:      #fbbf24;
+  --green:     #22c55e;
+  --radius:    14px;
+  --shadow:    0 4px 24px rgba(0,0,0,0.5);
+}
+[data-theme="light"] {
+  --bg: #f5f7fa; --bg2: #edf1f7; --surface: #ffffff; --surface2: #edf2f8;
+  --border: rgba(0,0,0,0.08); --border2: rgba(0,0,0,0.13);
+  --text: #1e293b; --text2: #475569; --text3: #94a3b8; --muted: #64748b;
+}
+[data-theme="light"] .nav { background: rgba(245,247,250,0.95); border-bottom-color: rgba(0,0,0,0.07); }
+[data-theme="light"] .nav.scrolled { background: rgba(245,247,250,0.98); box-shadow: 0 1px 24px rgba(0,0,0,0.07); }
+[data-theme="light"] h1, [data-theme="light"] h2 { color: #0f172a; }
+[data-theme="light"] .footer-brand-logo span { color: #1e293b; }
+[data-theme="light"] .nav-mobile { background: var(--bg); border-top-color: var(--border); }
+#theme-sun { display: none; }
+[data-theme="light"] #theme-moon { display: none; }
+[data-theme="light"] #theme-sun { display: block; }
+
+html { scroll-behavior: smooth; background: var(--bg); }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+h1,h2,h3,h4 { font-family: 'Sora', sans-serif; line-height: 1.2; }
+a { color: var(--teal); text-decoration: none; }
+a:hover { text-decoration: underline; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+
+/* ── NAV ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center;
+  padding: 0 40px; height: 60px;
+  background: rgba(7,9,15,0.9);
+  backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  transition: box-shadow 0.3s, background 0.3s;
+}
+.nav.scrolled { box-shadow: 0 1px 40px rgba(0,0,0,0.5); background: rgba(7,9,15,0.98); }
+.nav-brand {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; color: var(--text);
+  font-family: 'Sora', sans-serif; font-weight: 700; font-size: 18px;
+  flex-shrink: 0; margin-right: 32px;
+}
+.nav-brand:hover { text-decoration: none; }
+.nav-logo-mark {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: #0B2536; border: 1.5px solid #0ea5b7;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; box-shadow: 0 0 14px rgba(14,165,183,0.3);
+}
+.nav-logo-mark svg { width: 20px; height: 20px; }
+.nav-brand em { color: var(--fire); font-style: normal; }
+.nav-links { display: flex; align-items: center; gap: 2px; list-style: none; flex: 1; }
+.nav-links a {
+  color: var(--text2); font-size: 13.5px; font-weight: 500;
+  padding: 6px 11px; border-radius: 8px;
+  transition: color 0.18s, background 0.18s;
+  text-decoration: none; white-space: nowrap;
+}
+.nav-links a:hover { color: var(--text); background: var(--surface2); }
+.nav-links a.nav-active { color: var(--teal); }
+.nav-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.nav-icon-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 8px;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text2); cursor: pointer;
+  transition: color 0.2s, background 0.2s; flex-shrink: 0;
+}
+.nav-icon-btn:hover { color: var(--text); background: var(--surface); }
+.nav-hamburger { display: none; background: none; border: none; color: var(--text); cursor: pointer; padding: 8px; margin-left: auto; border-radius: 8px; }
+.nav-mobile { display: none; position: fixed; top: 60px; left: 0; right: 0; bottom: 0; z-index: 99; background: var(--bg); padding: 20px; flex-direction: column; gap: 4px; border-top: 1px solid var(--border); overflow-y: auto; }
+.nav-mobile.open { display: flex; }
+.nav-mobile-section { font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em; color: var(--text3); text-transform: uppercase; padding: 12px 14px 6px; margin-top: 8px; }
+.nav-mobile a { color: var(--text); font-size: 15px; font-weight: 500; padding: 11px 14px; border-radius: 10px; text-decoration: none; transition: background 0.15s; }
+.nav-mobile a:hover { background: var(--surface2); }
+.nav-mobile-cta { margin-top: 16px; padding: 13px 14px; border-radius: 12px; background: var(--teal); color: #fff; font-weight: 600; font-size: 15px; text-align: center; text-decoration: none; display: block; }
+@media (max-width: 768px) {
+  .nav-links, .nav-right .nav-icon-btn:not(#theme-btn):not(#fullscreen-btn) { display: none; }
+  .nav-hamburger { display: flex; }
+  .nav { padding: 0 20px; }
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 70vh; display: flex; align-items: center;
+  padding: 100px 24px 80px;
+  background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(14,165,183,0.08) 0%, transparent 60%), var(--bg);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 60px 60px; pointer-events: none;
+}
+[data-theme="light"] .hero::before { background-image: linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px); }
+.hero-inner { max-width: 760px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
+.coming-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.3);
+  color: var(--gold); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 6px 16px; border-radius: 100px; margin-bottom: 28px;
+}
+.coming-badge span { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); display: inline-block; }
+.hero h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 800; color: var(--text); margin-bottom: 20px; }
+.hero h1 .teal-word { color: var(--teal); }
+.hero-sub { font-size: 1.1rem; color: var(--text2); max-width: 580px; margin: 0 auto 40px; line-height: 1.7; }
+
+/* ── NOTIFY FORM ── */
+.notify-form {
+  display: flex; gap: 10px; max-width: 440px; margin: 0 auto 16px;
+  flex-wrap: wrap; justify-content: center;
+}
+.notify-form input {
+  flex: 1; min-width: 220px;
+  background: var(--surface); border: 1px solid var(--border2);
+  color: var(--text); font-size: 15px; font-family: inherit;
+  padding: 12px 18px; border-radius: 10px; outline: none;
+  transition: border-color 0.2s;
+}
+.notify-form input:focus { border-color: var(--teal); }
+.notify-form input::placeholder { color: var(--text3); }
+.notify-form button {
+  background: var(--teal); color: #fff; border: none;
+  font-size: 14px; font-weight: 700; font-family: inherit;
+  padding: 12px 22px; border-radius: 10px; cursor: pointer;
+  transition: opacity 0.2s, background 0.2s; white-space: nowrap;
+}
+.notify-form button:hover { opacity: 0.88; }
+.notify-form button:disabled { cursor: not-allowed; opacity: 0.7; }
+.notify-msg { font-size: 13px; color: var(--text3); min-height: 20px; text-align: center; }
+
+/* ── MODULES ── */
+.section { padding: 80px 24px; }
+.section-inner { max-width: 1100px; margin: 0 auto; }
+.section-label { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 12px; }
+.section-title { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; color: var(--text); margin-bottom: 14px; }
+.section-sub { color: var(--text2); font-size: 1rem; margin-bottom: 48px; max-width: 560px; }
+.modules-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (max-width: 900px) { .modules-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 580px) { .modules-grid { grid-template-columns: 1fr; } }
+.module-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px 24px;
+  position: relative; overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.module-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.module-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--teal-dim) 0%, transparent 60%);
+  opacity: 0; transition: opacity 0.3s;
+}
+.module-card:hover::before { opacity: 1; }
+.module-icon {
+  width: 44px; height: 44px; border-radius: 11px;
+  background: var(--teal-dim); border: 1px solid rgba(14,165,183,0.2);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 18px; position: relative;
+}
+.module-icon svg { color: var(--teal); }
+.module-tag {
+  display: inline-block; font-size: 10.5px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--gold); background: rgba(251,191,36,0.1);
+  border: 1px solid rgba(251,191,36,0.2);
+  padding: 2px 10px; border-radius: 100px; margin-bottom: 12px;
+}
+.module-card h3 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+.module-card p { font-size: 13.5px; color: var(--text2); line-height: 1.65; }
+
+/* ── WHO IT'S FOR ── */
+.audience-section { padding: 0 24px 80px; }
+.audience-inner { max-width: 1100px; margin: 0 auto; }
+.audience-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+@media (max-width: 900px) { .audience-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 580px) { .audience-grid { grid-template-columns: 1fr 1fr; } }
+.audience-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px 18px;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.audience-emoji { font-size: 22px; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+.audience-card h4 { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 4px; font-family: 'Inter', sans-serif; }
+.audience-card p { font-size: 12.5px; color: var(--text2); line-height: 1.55; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--bg2); border-top: 1px solid var(--border);
+  padding: 48px 24px 24px;
+}
+.footer-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
+  padding-bottom: 40px; border-bottom: 1px solid var(--border);
+}
+@media (max-width: 768px) { .footer-inner { grid-template-columns: 1fr 1fr; } }
+.footer-brand-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.footer-brand-logo span { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 18px; color: var(--text); }
+.footer-tagline { font-size: 13.5px; color: var(--text2); line-height: 1.6; margin-bottom: 14px; }
+.footer-col h4 { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 14px; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.footer-col ul li a { font-size: 13.5px; color: var(--text2); transition: color 0.15s; }
+.footer-col ul li a:hover { color: var(--teal); text-decoration: none; }
+.footer-bottom {
+  max-width: 1100px; margin: 0 auto;
+  padding-top: 24px; display: flex; justify-content: space-between;
+  align-items: center; font-size: 12.5px; color: var(--muted);
+  flex-wrap: wrap; gap: 8px;
+}
+</style>
+</head>
+<body>
+<script>(function(){ document.documentElement.setAttribute('data-theme', localStorage.getItem('agni-theme')||'light'); })();</script>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a class="nav-brand" href="/">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="ng" cx="50%" cy="68%" r="62%"><stop offset="0%" stop-color="#FFF06B"/><stop offset="60%" stop-color="#F97316"/><stop offset="100%" stop-color="#F0500F"/></radialGradient></defs>
+        <path d="M50 8 C68 32 75 52 66 68 C59 80 43 86 31 78 C19 70 16 54 25 42 C29 52 37 58 43 52 C37 40 41 22 50 8 Z" fill="url(#ng)"/>
+      </svg>
+    </div>
+    <span>Agni<em>Cycle</em></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/simulator" style="color:var(--fire);font-weight:600">Engine Simulator</a></li>
+    <li><a href="/spray" style="color:var(--teal);font-weight:600">Spray Calculator</a></li>
+    <li><a href="/ev-battery/" style="color:#10b981;font-weight:600">EV Battery</a></li>
+    <li><a href="/cfd-calculators/" style="color:var(--teal);font-weight:600">CFD Calculators</a></li>
+    <li><a href="/cfd-training/" class="nav-active">CFD Training</a></li>
+    <li><a href="/about/">About</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="nav-icon-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle light / dark">
+      <svg id="theme-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg id="theme-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+    <button class="nav-icon-btn" id="fullscreen-btn" aria-label="Toggle fullscreen" title="Fullscreen (F)">
+      <svg id="fs-expand" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+      <svg id="fs-shrink" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="3" y2="21"/><line x1="21" y1="3" x2="14" y2="10"/></svg>
+    </button>
+  </div>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu" onclick="toggleNav()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</nav>
+
+<div class="nav-mobile" id="nav-mobile">
+  <a href="/" onclick="closeNav()">🏠 Home</a>
+  <div class="nav-mobile-section">Products</div>
+  <a href="/simulator" onclick="closeNav()"><span style="color:var(--fire)">⚙</span> Engine Simulator</a>
+  <a href="/spray" onclick="closeNav()"><span style="color:var(--teal)">💧</span> Spray Calculator</a>
+  <a href="/ev-battery/" onclick="closeNav()"><span style="color:#10b981">🔋</span> EV Battery Suite</a>
+  <a href="/cfd-calculators/" onclick="closeNav()"><span style="color:var(--teal)">📐</span> CFD Calculators</a>
+  <div class="nav-mobile-section">Training</div>
+  <a href="/cfd-training/" onclick="closeNav()"><span style="color:var(--gold)">📊</span> CFD Training</a>
+  <div class="nav-mobile-section">Company</div>
+  <a href="/about/" onclick="closeNav()">About AgniCycle</a>
+  <a href="mailto:support@agnicycle.com" onclick="closeNav()">Contact</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="coming-badge"><span></span> Coming Soon</div>
+    <h1>CFD Training for<br/><span class="teal-word">Researchers & Engineers</span></h1>
+    <p class="hero-sub">Structured courses covering turbulence modeling, meshing, OpenFOAM, and combustion simulation — taught by active researchers using real-world cases.</p>
+
+    <form class="notify-form" id="notify-form" onsubmit="handleNotify(event)">
+      <input type="email" id="notify-email" placeholder="your@email.com" required autocomplete="email"/>
+      <button type="submit" id="notify-btn">Notify Me →</button>
+    </form>
+    <p class="notify-msg" id="notify-msg">Be the first to know when courses launch.</p>
+  </div>
+</section>
+
+<!-- MODULES -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-label">Planned Curriculum</div>
+    <h2 class="section-title">What's Coming</h2>
+    <p class="section-sub">Practical, hands-on training built around real simulation workflows — not just theory.</p>
+    <div class="modules-grid">
+      <div class="module-card">
+        <div class="module-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        </div>
+        <div class="module-tag">Module 1</div>
+        <h3>CFD Fundamentals</h3>
+        <p>Governing equations, discretization schemes, boundary conditions, convergence criteria, and turbulence model selection for practical simulations.</p>
+      </div>
+      <div class="module-card">
+        <div class="module-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <div class="module-tag">Module 2</div>
+        <h3>Meshing & Geometry</h3>
+        <p>Structured vs unstructured meshing, y+ requirements, mesh quality metrics, and best practices for complex geometries including engine cylinders.</p>
+      </div>
+      <div class="module-card">
+        <div class="module-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+        </div>
+        <div class="module-tag">Module 3</div>
+        <h3>OpenFOAM for Combustion</h3>
+        <p>Case setup, custom solver configuration, combustion chemistry integration, and post-processing reactive flow simulations in OpenFOAM.</p>
+      </div>
+      <div class="module-card">
+        <div class="module-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <div class="module-tag">Module 4</div>
+        <h3>Turbulence Modeling</h3>
+        <p>k-ε, k-ω SST, LES and DNS — when to use each, calibration strategies, and validation against experimental data.</p>
+      </div>
+      <div class="module-card">
+        <div class="module-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/></svg>
+        </div>
+        <div class="module-tag">Module 5</div>
+        <h3>Spray & Multiphase</h3>
+        <p>Lagrangian particle tracking, droplet breakup models, evaporation, and spray-combustion coupling for direct-injection engines.</p>
+      </div>
+      <div class="module-card">
+        <div class="module-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <div class="module-tag">Module 6</div>
+        <h3>Industry Case Studies</h3>
+        <p>End-to-end simulation walkthroughs: IC engine in-cylinder flow, gas turbine combustor, and aftertreatment systems with real datasets.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section class="audience-section">
+  <div class="audience-inner">
+    <div class="section-label" style="margin-bottom:12px">Who It's For</div>
+    <h2 class="section-title" style="margin-bottom:14px">Built for Every Stage</h2>
+    <p class="section-sub">Whether you're just starting with CFD or looking to specialize in combustion simulation.</p>
+    <div class="audience-grid">
+      <div class="audience-card">
+        <div class="audience-emoji">🎓</div>
+        <div><h4>Graduate Students</h4><p>Build practical CFD skills alongside your coursework and research.</p></div>
+      </div>
+      <div class="audience-card">
+        <div class="audience-emoji">🔬</div>
+        <div><h4>Researchers</h4><p>Go deeper on combustion-specific methods and validation workflows.</p></div>
+      </div>
+      <div class="audience-card">
+        <div class="audience-emoji">⚙️</div>
+        <div><h4>Engineers</h4><p>Apply CFD to real design problems — engines, turbines, thermal systems.</p></div>
+      </div>
+      <div class="audience-card">
+        <div class="audience-emoji">🚀</div>
+        <div><h4>Career Changers</h4><p>Transition into simulation roles with a structured, practical curriculum.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-brand-logo">
+        <div class="nav-logo-mark">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs><radialGradient id="fg2" cx="50%" cy="68%" r="62%"><stop offset="0%" stop-color="#FFF06B"/><stop offset="60%" stop-color="#F97316"/><stop offset="100%" stop-color="#F0500F"/></radialGradient></defs>
+            <path d="M50 8 C68 32 75 52 66 68 C59 80 43 86 31 78 C19 70 16 54 25 42 C29 52 37 58 43 52 C37 40 41 22 50 8 Z" fill="url(#fg2)"/>
+          </svg>
+        </div>
+        <span>AgniCycle</span>
+      </div>
+      <p class="footer-tagline">Research-grade combustion engineering tools for researchers and engineers.</p>
+      <div style="font-size:13px;color:var(--muted)"><a href="mailto:support@agnicycle.com" style="color:var(--muted)">support@agnicycle.com</a></div>
+    </div>
+    <div class="footer-col">
+      <h4>Products</h4>
+      <ul>
+        <li><a href="/simulator">Engine Simulator</a></li>
+        <li><a href="/spray">Spray Calculator</a></li>
+        <li><a href="/ev-battery/">EV Battery Suite</a></li>
+        <li><a href="/cfd-calculators/">CFD Calculators</a></li>
+        <li><a href="/cfd-training/">CFD Training</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="/about/">About AgniCycle</a></li>
+        <li><a href="mailto:support@agnicycle.com">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <ul>
+        <li><a href="https://www.linkedin.com/in/dhkrnl" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="mailto:support@agnicycle.com">support@agnicycle.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© <span id="footer-year"></span> AgniCycle</span>
+    <span>Made with <span style="color:var(--fire)">🔥</span> for engineers</span>
+  </div>
+</footer>
+
+<script>
+document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+function toggleTheme() {
+  const n = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', n);
+  localStorage.setItem('agni-theme', n);
+}
+function toggleNav() { document.getElementById('nav-mobile').classList.toggle('open'); }
+function closeNav() { document.getElementById('nav-mobile').classList.remove('open'); }
+
+window.addEventListener('scroll', function() {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 10);
+});
+
+function handleNotify(e) {
+  e.preventDefault();
+  const email = document.getElementById('notify-email').value;
+  const btn = document.getElementById('notify-btn');
+  const msg = document.getElementById('notify-msg');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+  fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      access_key: 'feb6af6b-c57b-434f-a4fa-6ad95cb21762',
+      email: email,
+      subject: 'CFD Training Waitlist Signup',
+      from_name: 'AgniCycle CFD Training',
+    })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (data.success) {
+      btn.textContent = "✓ You're on the list!";
+      btn.style.background = 'var(--green)';
+      msg.textContent = "We'll notify you when CFD Training launches.";
+      msg.style.color = 'var(--green)';
+      document.getElementById('notify-email').value = '';
+    } else { throw new Error(); }
+  })
+  .catch(function() {
+    btn.disabled = false;
+    btn.textContent = 'Notify Me →';
+    msg.textContent = 'Something went wrong — please try again.';
+    msg.style.color = 'var(--fire)';
+  });
+}
+
+(function(){
+  var btn=document.getElementById('fullscreen-btn');
+  if(!btn)return;
+  var expand=document.getElementById('fs-expand');
+  var shrink=document.getElementById('fs-shrink');
+  function updateIcon(){var f=!!document.fullscreenElement;expand.style.display=f?'none':'';shrink.style.display=f?'':'none';}
+  function toggleFS(){if(!document.fullscreenElement){document.documentElement.requestFullscreen().catch(function(){});}else{document.exitFullscreen();}}
+  btn.addEventListener('click',toggleFS);
+  document.addEventListener('fullscreenchange',updateIcon);
+  document.addEventListener('keydown',function(e){if((e.key==='f'||e.key==='F')&&!e.ctrlKey&&!e.metaKey&&!e.altKey){var t=document.activeElement&&document.activeElement.tagName;if(t!=='INPUT'&&t!=='TEXTAREA'&&t!=='SELECT')toggleFS();}});
+})();
+</script>
+</body>
+</html>
