@@ -217,7 +217,8 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
 
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
-  .nav-links, .nav-right { display: none; }
+  .nav-links { display: none; }
+  .btn-launch-nav, .nav-cta { display: none; }
   .nav-hamburger { display: flex; }
   .nav { padding: 0 20px; }
   .hero-inner { grid-template-columns: 1fr; gap: 48px; }
@@ -226,10 +227,21 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
   .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
 }
 @media (max-width: 600px) {
-  .hero { padding: 100px 20px 60px; }
+  html, body { overflow-x: hidden; }
+  .hero { padding: 100px 16px 56px; }
+  .hero h1 { font-size: clamp(28px, 9vw, 40px); }
+  .hero-sub { font-size: 14px; }
+  .hero-badges { flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .hero-ctas { flex-direction: column; align-items: stretch; }
+  .hero-ctas a, .hero-ctas button { width: 100%; justify-content: center; text-align: center; }
   .feat-grid { grid-template-columns: 1fr; }
-  .footer-inner { grid-template-columns: 1fr; }
-  footer { padding: 40px 20px 24px; }
+  .footer-inner { grid-template-columns: 1fr; gap: 24px; }
+  footer { padding: 40px 16px 24px; }
+  section { padding-left: 0; padding-right: 0; }
+}
+@media (max-width: 400px) {
+  .hero h1 { font-size: clamp(24px, 8vw, 32px); }
+  .nav-icon-btn { width: 38px; height: 38px; }
 }
 
 /* ── ANNOUNCEMENT BAR ── */
@@ -277,8 +289,8 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
     <li><a href="/spray/" style="color:var(--teal)">Spray Calculator</a></li>
     <li><a href="/ev-battery/" class="active">EV Battery</a></li>
     <li><a href="/cfd-calculators/" style="color:var(--teal)">CFD Calculators</a></li>
-    <li><a href="/#cfd">CFD Training</a></li>
-    <li><a href="/#about">About Us</a></li>
+    <li><a href="/cfd-training/">CFD Training</a></li>
+    <li><a href="/about/">About Us</a></li>
   </ul>
   <div class="nav-right">
     <button class="nav-icon-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark">
@@ -306,9 +318,9 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
   <a href="/spray/" onclick="closeNav()" style="color:var(--teal)">💧 Spray Calculator</a>
   <a href="/ev-battery/" onclick="closeNav()" style="color:var(--ev)">🔋 EV Battery</a>
   <a href="/cfd-calculators/" onclick="closeNav()" style="color:var(--teal)">📐 CFD Calculators</a>
-  <a href="/#cfd" onclick="closeNav()">📊 CFD Training</a>
+  <a href="/cfd-training/" onclick="closeNav()">📊 CFD Training</a>
   <div class="nav-mobile-section">Company</div>
-  <a href="/#about" onclick="closeNav()">About Us</a>
+  <a href="/about/" onclick="closeNav()">About Us</a>
   <a href="/ev-battery/app/" onclick="closeNav()" class="nav-mobile-cta">Launch EV Battery Suite →</a>
 </div>
 
@@ -544,13 +556,13 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
         <li><a href="/spray/">Spray Calculator</a></li>
         <li><a href="/ev-battery/">EV Battery Suite</a></li>
         <li><a href="/cfd-calculators/">CFD Calculators</a></li>
-        <li><a href="/#cfd">CFD Training</a></li>
+        <li><a href="/cfd-training/">CFD Training</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <h4>Company</h4>
       <ul>
-        <li><a href="/#about">About AgniCycle</a></li>
+        <li><a href="/about/">About AgniCycle</a></li>
         <li><a href="/#roadmap">Roadmap</a></li>
         <li><a href="/#team">Team</a></li>
               </ul>
