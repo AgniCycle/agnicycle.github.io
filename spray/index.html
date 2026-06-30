@@ -20,6 +20,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -139,6 +141,26 @@ a:hover { text-decoration: underline; }
 .corr-inner { max-width: 1100px; margin: 0 auto; }
 .corr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 32px; }
 .corr-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; }
+
+/* ── EQUATION + PERSONA (shared with other product pages) ── */
+.equation-card { background: var(--surface); border: 1px solid var(--border2); border-radius: 16px; padding: 32px 28px; box-shadow: var(--shadow); margin-top: 40px; }
+.equation-row { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.equation-row > div { min-width: 0; }
+.equation-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 14px; }
+.equation-display { font-size: 17px; color: var(--text); overflow-x: auto; padding: 4px 0; }
+.equation-caption { font-size: 13px; color: var(--text2); margin-top: 10px; line-height: 1.6; }
+@media (max-width: 700px) { .equation-row { grid-template-columns: 1fr; } }
+.persona-section { padding: 80px 24px; background: var(--bg2); border-top: 1px solid var(--border); }
+.persona-inner { max-width: 1100px; margin: 0 auto; }
+.persona-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 32px; }
+@media (max-width: 860px) { .persona-grid { grid-template-columns: 1fr; } }
+.persona-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 26px 22px; position: relative; overflow: hidden; }
+.persona-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--fire); }
+.persona-card.teal::before { background: var(--teal); }
+.persona-card.gold::before { background: var(--gold); }
+.persona-emoji { font-size: 28px; margin-bottom: 12px; }
+.persona-role { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.persona-body { font-size: 13.5px; color: var(--text2); line-height: 1.6; }
 .corr-name { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; color: var(--teal); margin-bottom: 6px; }
 .corr-desc { font-size: 13px; color: var(--text2); line-height: 1.6; }
 
@@ -396,6 +418,47 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
         <div class="corr-desc">Classical droplet evaporation model with Spalding mass transfer number correction for high-temperature and high-pressure conditions.</div>
       </div>
     </div>
+
+    <div class="equation-card reveal">
+      <div class="equation-label">// The dimensionless groups that govern breakup</div>
+      <div class="equation-row">
+        <div>
+          <div class="equation-display" id="eq-weber"></div>
+          <div class="equation-caption">Weber number — ratio of disruptive aerodynamic force to stabilizing surface tension. High <code>We</code> means the droplet breaks apart.</div>
+        </div>
+        <div>
+          <div class="equation-display" id="eq-ohnesorge"></div>
+          <div class="equation-caption">Ohnesorge number — relates viscous force to surface tension/inertia. Together, <code>We</code> and <code>Oh</code> set the breakup regime every correlation above predicts.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section class="persona-section" id="persona">
+  <div class="persona-inner">
+    <div class="reveal">
+      <span class="section-label">Who actually uses this</span>
+      <h2 class="section-title">Same atomization physics, different reasons to open it</h2>
+    </div>
+    <div class="persona-grid reveal">
+      <div class="persona-card">
+        <div class="persona-emoji">🎓</div>
+        <div class="persona-role">Students</div>
+        <div class="persona-body">See how injection pressure and orifice geometry actually change droplet size and penetration — not just read about it in a textbook.</div>
+      </div>
+      <div class="persona-card teal">
+        <div class="persona-emoji">🔬</div>
+        <div class="persona-role">Researchers</div>
+        <div class="persona-body">Cross-check which SMD correlation best fits your regime before writing it into a paper or a CFD boundary condition.</div>
+      </div>
+      <div class="persona-card gold">
+        <div class="persona-emoji">⚙️</div>
+        <div class="persona-role">Industry Engineers</div>
+        <div class="persona-body">Get a fast, defensible spray estimate for an injector spec change without waiting on a full CFD atomization study.</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -558,6 +621,21 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   document.addEventListener('fullscreenchange',updateIcon);
   document.addEventListener('keydown',function(e){if((e.key==='f'||e.key==='F')&&!e.ctrlKey&&!e.metaKey&&!e.altKey){var t=document.activeElement&&document.activeElement.tagName;if(t!=='INPUT'&&t!=='TEXTAREA'&&t!=='SELECT')toggleFS();}});
 })();
+</script>
+
+<!-- EQUATION RENDERING -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof katex === 'undefined') return;
+  var eqs = {
+    'eq-weber': 'We = \\dfrac{\\rho_g\\,U^2\\,d}{\\sigma}',
+    'eq-ohnesorge': 'Oh = \\dfrac{\\mu_l}{\\sqrt{\\rho_l\\,\\sigma\\,d}}'
+  };
+  Object.keys(eqs).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) katex.render(eqs[id], el, { throwOnError: false, displayMode: true });
+  });
+});
 </script>
 </body>
 </html>

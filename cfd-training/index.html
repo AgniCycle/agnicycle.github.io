@@ -21,6 +21,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -204,6 +206,17 @@ a:hover { text-decoration: underline; }
   transition: border-color 0.2s, transform 0.2s;
 }
 .module-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.equation-preview {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 16px; padding: 32px 28px; margin-top: 24px;
+  box-shadow: var(--shadow); display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center;
+}
+.equation-preview > div { min-width: 0; }
+@media (max-width: 700px) { .equation-preview { grid-template-columns: 1fr; } }
+.equation-preview-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 14px; }
+.equation-preview-display { font-size: 17px; color: var(--text); overflow-x: auto; }
+.equation-preview-caption { font-size: 13.5px; color: var(--text2); line-height: 1.65; }
+.equation-preview-caption strong { color: var(--text); }
 .module-card::before {
   content: ''; position: absolute; inset: 0;
   background: linear-gradient(135deg, var(--teal-dim) 0%, transparent 60%);
@@ -414,6 +427,16 @@ footer {
         <p>End-to-end simulation walkthroughs: IC engine in-cylinder flow, gas turbine combustor, and aftertreatment systems with real datasets.</p>
       </div>
     </div>
+
+    <div class="equation-preview reveal">
+      <div>
+        <div class="equation-preview-label">// A Taste of Module 4</div>
+        <div class="equation-preview-display" id="eq-rans"></div>
+      </div>
+      <div class="equation-preview-caption">
+        The Reynolds-Averaged Navier-Stokes momentum equation — the foundation of every k-ε and k-ω SST turbulence model you'll configure in OpenFOAM. <strong>Module 4</strong> covers where the Reynolds stress term <code>-ρ·u'u'</code> comes from, why it needs closure, and how to pick the right model for your flow.
+      </div>
+    </div>
   </div>
 </section>
 
@@ -552,6 +575,20 @@ function handleNotify(e) {
   document.addEventListener('fullscreenchange',updateIcon);
   document.addEventListener('keydown',function(e){if((e.key==='f'||e.key==='F')&&!e.ctrlKey&&!e.metaKey&&!e.altKey){var t=document.activeElement&&document.activeElement.tagName;if(t!=='INPUT'&&t!=='TEXTAREA'&&t!=='SELECT')toggleFS();}});
 })();
+</script>
+
+<!-- EQUATION RENDERING -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof katex === 'undefined') return;
+  var eqs = {
+    'eq-rans': '\\rho\\dfrac{\\partial \\bar u_i}{\\partial t} + \\rho\\bar u_j\\dfrac{\\partial \\bar u_i}{\\partial x_j} = -\\dfrac{\\partial \\bar p}{\\partial x_i} + \\dfrac{\\partial}{\\partial x_j}\\!\\left(\\mu\\dfrac{\\partial \\bar u_i}{\\partial x_j} - \\rho\\overline{u_i^{\\prime} u_j^{\\prime}}\\right)'
+  };
+  Object.keys(eqs).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) katex.render(eqs[id], el, { throwOnError: false, displayMode: true });
+  });
+});
 </script>
 </body>
 </html>

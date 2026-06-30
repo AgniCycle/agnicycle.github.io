@@ -21,6 +21,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
 <style>
 /* ── RESET & TOKENS ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -319,6 +321,19 @@ code { font-family: 'JetBrains Mono', monospace; }
   line-height: 1.7; max-width: 560px; margin: 0 auto;
 }
 
+/* ── PERSONA SECTION ── */
+.persona-section { padding: 80px 24px; background: var(--bg2); border-top: 1px solid var(--border); }
+.persona-inner { max-width: 1100px; margin: 0 auto; }
+.persona-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; }
+@media (max-width: 860px) { .persona-grid { grid-template-columns: 1fr; } }
+.persona-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 26px 22px; position: relative; overflow: hidden; }
+.persona-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--fire); }
+.persona-card.teal::before { background: var(--teal); }
+.persona-card.gold::before { background: var(--gold); }
+.persona-emoji { font-size: 28px; margin-bottom: 12px; }
+.persona-role { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.persona-body { font-size: 13.5px; color: var(--text2); line-height: 1.6; }
+
 /* ── CALCULATOR ROWS ── */
 .calc-section { padding: 40px 24px; }
 .calc-row {
@@ -428,12 +443,11 @@ code { font-family: 'JetBrains Mono', monospace; }
   text-transform: uppercase; color: var(--text3); margin-bottom: 12px;
 }
 .formula-eq {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 15px; color: var(--teal);
+  font-size: 16px; color: var(--teal);
   background: var(--bg2); border: 1px solid var(--border);
-  border-radius: 8px; padding: 12px 14px;
-  letter-spacing: 0.3px; line-height: 1.6;
-  margin-bottom: 10px;
+  border-radius: 8px; padding: 14px;
+  line-height: 1.6; margin-bottom: 10px;
+  overflow-x: auto;
 }
 .formula-note { font-size: 12.5px; color: var(--text2); line-height: 1.6; }
 
@@ -1020,27 +1034,60 @@ footer {
     <div class="formula-grid">
       <div class="formula-card reveal">
         <div class="formula-card-title">Reynolds Number</div>
-        <div class="formula-eq">Re = ρ · U · Dh / μ</div>
-        <div class="formula-note">Dh = 4A/P for non-circular ducts. Laminar: Re &lt; 2300, Turbulent: Re &gt; 4000.</div>
+        <div class="formula-eq" id="eq-re"></div>
+        <div class="formula-note">D_h = 4A/P for non-circular ducts. Laminar: Re &lt; 2300, Turbulent: Re &gt; 4000.</div>
       </div>
       <div class="formula-card reveal reveal-delay-1">
         <div class="formula-card-title">Turbulent Kinetic Energy</div>
-        <div class="formula-eq">k = 1.5 · (U · I)²</div>
-        <div class="formula-note">I = turbulence intensity. ε = Cμ^(3/4) · k^(3/2) / l. ω = k^(1/2) / (Cμ^(1/4) · l).</div>
+        <div class="formula-eq" id="eq-tke"></div>
+        <div class="formula-note">I = turbulence intensity. ε = Cμ^(3/4)·k^(3/2)/l. ω = k^(1/2)/(Cμ^(1/4)·l).</div>
       </div>
       <div class="formula-card reveal reveal-delay-2">
         <div class="formula-card-title">First Cell Height (y⁺)</div>
-        <div class="formula-eq">Δy₁ = y⁺ · μ / (ρ · uτ)</div>
-        <div class="formula-note">uτ = √(τw/ρ). For internal flows: τw via Blasius friction factor. External: Cf via Schlichting correlation.</div>
+        <div class="formula-eq" id="eq-ycell"></div>
+        <div class="formula-note">u_τ = √(τw/ρ). For internal flows: τw via Blasius friction factor. External: Cf via Schlichting correlation.</div>
       </div>
       <div class="formula-card reveal">
         <div class="formula-card-title">Friction Velocity</div>
-        <div class="formula-eq">uτ = √(τw / ρ)</div>
-        <div class="formula-note">τw = Cf · (1/2) · ρ · U². Cf from Schlichting: 0.0592 · Re^(-1/5) for turbulent flat plate.</div>
+        <div class="formula-eq" id="eq-utau"></div>
+        <div class="formula-note">τw = Cf·(1/2)·ρ·U². Cf from Schlichting: 0.0592·Re^(-1/5) for turbulent flat plate.</div>
       </div>
+    </div>
+
+    <div class="formula-card reveal" style="margin-top:16px">
+      <div class="formula-card-title">Heat Transfer — Dittus-Boelter Correlation</div>
+      <div class="formula-eq" id="eq-nusselt"></div>
+      <div class="formula-note">n = 0.4 for heating, 0.3 for cooling. Valid for 0.6 &lt; Pr &lt; 160, Re &gt; 10,000 — the standard forced-convection correlation referenced across the calculators above.</div>
     </div>
   </div>
 </div>
+
+<!-- WHO IT'S FOR -->
+<section class="persona-section" id="persona">
+  <div class="persona-inner">
+    <div class="section-center reveal" style="text-align:center">
+      <span class="eyebrow" style="justify-content:center">Who actually uses this</span>
+      <h2 class="section-headline">Same calculators, different reasons to open them</h2>
+    </div>
+    <div class="persona-grid reveal">
+      <div class="persona-card">
+        <div class="persona-emoji">🎓</div>
+        <div class="persona-role">Students</div>
+        <div class="persona-body">Check a homework Reynolds number or y⁺ target in seconds instead of hunting through a textbook appendix for the right correlation.</div>
+      </div>
+      <div class="persona-card teal">
+        <div class="persona-emoji">🔬</div>
+        <div class="persona-role">Researchers</div>
+        <div class="persona-body">Sanity-check mesh sizing and boundary-layer resolution before launching a multi-hour OpenFOAM or CONVERGE run.</div>
+      </div>
+      <div class="persona-card gold">
+        <div class="persona-emoji">⚙️</div>
+        <div class="persona-role">Industry Engineers</div>
+        <div class="persona-body">Get a quick first-cell-height or heat-transfer estimate to scope a simulation contract without opening a full CFD license.</div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- CTA BAND -->
 <div class="cta-band">
@@ -1309,6 +1356,24 @@ document.getElementById('footer-year').textContent = new Date().getFullYear();
   document.addEventListener('fullscreenchange',updateIcon);
   document.addEventListener('keydown',function(e){if((e.key==='f'||e.key==='F')&&!e.ctrlKey&&!e.metaKey&&!e.altKey){var t=document.activeElement&&document.activeElement.tagName;if(t!=='INPUT'&&t!=='TEXTAREA'&&t!=='SELECT')toggleFS();}});
 })();
+</script>
+
+<!-- EQUATION RENDERING -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof katex === 'undefined') return;
+  var eqs = {
+    'eq-re':      'Re = \\dfrac{\\rho\\,U\\,D_h}{\\mu}',
+    'eq-tke':     'k = 1.5\\,(U\\,I)^2',
+    'eq-ycell':   '\\Delta y_1 = \\dfrac{y^+\\,\\mu}{\\rho\\,u_\\tau}',
+    'eq-utau':    'u_\\tau = \\sqrt{\\dfrac{\\tau_w}{\\rho}}',
+    'eq-nusselt': 'Nu = 0.023\\,Re^{0.8}\\,Pr^{\\,n}'
+  };
+  Object.keys(eqs).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) katex.render(eqs[id], el, { throwOnError: false, displayMode: false });
+  });
+});
 </script>
 </body>
 </html>

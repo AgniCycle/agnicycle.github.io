@@ -31,6 +31,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
 <style>
 /* ──────────────────────────────────────────────
    RESET & TOKENS
@@ -697,6 +699,57 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
   max-width: 1100px; margin: 0 auto;
   display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
 }
+
+/* ──────────────────────────────────────────────
+   PHYSICS / VALIDATED SCIENCE SECTION
+────────────────────────────────────────────── */
+.physics-section {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 100px 24px;
+  position: relative; overflow: hidden;
+}
+.physics-section::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse 60% 50% at 50% 50%, #000 0%, transparent 70%);
+  pointer-events: none;
+}
+.physics-inner { max-width: 1100px; margin: 0 auto; position: relative; }
+.physics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; margin-top: 48px; }
+.physics-grid > * { min-width: 0; }
+.equation-card {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: var(--radius-lg); padding: 36px 32px;
+  box-shadow: var(--shadow);
+}
+.equation-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 18px; font-family: 'Inter', sans-serif;
+}
+.equation-display {
+  font-size: 19px; color: var(--text); overflow-x: auto; padding: 4px 0 14px;
+}
+.equation-display .katex { font-size: 1.15em; }
+.equation-caption { font-size: 13.5px; color: var(--text2); margin-top: 12px; line-height: 1.65; border-top: 1px solid var(--border); padding-top: 16px; }
+.equation-caption code { font-family: 'JetBrains Mono', monospace; color: var(--gold); background: rgba(251,191,36,0.1); padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }
+.physics-stats { display: flex; gap: 36px; flex-wrap: wrap; margin-top: 28px; }
+.physics-stat-num {
+  font-family: 'Sora', sans-serif; font-size: 30px; font-weight: 800; color: var(--fire);
+  text-shadow: 0 0 30px rgba(249,115,22,0.35);
+}
+.physics-stat-label { font-size: 12px; color: var(--text2); margin-top: 4px; }
+@media (max-width: 860px) {
+  .physics-grid { grid-template-columns: 1fr; gap: 40px; }
+}
+
+/* ──────────────────────────────────────────────
+   PERSONA SECTION (reuses .audience-* design system)
+────────────────────────────────────────────── */
+.persona-section { padding: 100px 24px; }
+.persona-inner { max-width: 1100px; margin: 0 auto; }
 
 /* ──────────────────────────────────────────────
    SIGNUP / CTA SECTION
@@ -1548,6 +1601,76 @@ details.faq-item[open] .faq-chevron { transform: rotate(180deg); color: var(--fi
         </div>
       </div>
 
+    </div>
+  </div>
+</section>
+
+<!-- PHYSICS / VALIDATED SCIENCE -->
+<section class="physics-section" id="physics">
+  <div class="physics-inner">
+    <div class="section-center reveal">
+      <div class="eyebrow" style="justify-content:center">The Math, Not Marketing</div>
+      <h2 class="section-headline">Real combustion physics, not a black box</h2>
+      <p class="section-sub">Every result traces back to published, peer-reviewed equations — the same ones used in combustion research labs. Nothing here is a hand-wavy approximation.</p>
+    </div>
+    <div class="physics-grid">
+      <div class="equation-card reveal">
+        <div class="equation-label">// Wiebe Heat Release Function</div>
+        <div class="equation-display" id="eq-wiebe"></div>
+        <div class="equation-caption">
+          Models the fraction of fuel mass burned <code>x_b</code> through the engine cycle. <code>a</code> and <code>m</code> are shape factors fit to real cylinder-pressure data — this is the same function used in GT-Power and CONVERGE for 0-D/1-D combustion modeling.
+        </div>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <p style="color:var(--text2);font-size:16px;line-height:1.85;margin-bottom:22px">
+          AgniCycle's simulator solves this across <strong style="color:var(--text)">2,881 discrete crank-angle steps</strong> per cycle, coupled to a full first-law energy balance on the cylinder control volume. The thermodynamic property models trace to peer-reviewed combustion literature for diesel, gasoline, and alternative fuels.
+        </p>
+        <p style="color:var(--text2);font-size:16px;line-height:1.85;margin-bottom:0">
+          It's a 0-D tool — fast enough to run instantly in your browser, accurate enough to use as a baseline before committing to a multi-hour 3-D CFD run.
+        </p>
+        <div class="physics-stats">
+          <div>
+            <div class="physics-stat-num">2,881</div>
+            <div class="physics-stat-label">Crank-angle steps / cycle</div>
+          </div>
+          <div>
+            <div class="physics-stat-num">&lt;1<span style="font-size:18px">s</span></div>
+            <div class="physics-stat-label">Time to first result</div>
+          </div>
+          <div>
+            <div class="physics-stat-num">3</div>
+            <div class="physics-stat-label">Fuel families validated</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section class="persona-section" id="persona">
+  <div class="persona-inner">
+    <div class="section-center reveal">
+      <div class="eyebrow" style="justify-content:center">Built For Different People</div>
+      <h2 class="section-headline">Same physics engine, different reasons to use it</h2>
+      <p class="section-sub">Three very different people open AgniCycle every week — each one comes for something else.</p>
+    </div>
+    <div class="audience-grid reveal">
+      <div class="audience-card">
+        <div class="audience-emoji">🎓</div>
+        <div class="audience-role">Students</div>
+        <div class="audience-body">Build real intuition for engine cycles, spray breakup, and thermodynamics by changing a slider and watching the physics respond instantly — no license, no install, no waiting for a campus HPC queue.</div>
+      </div>
+      <div class="audience-card teal">
+        <div class="audience-emoji">🔬</div>
+        <div class="audience-role">Researchers</div>
+        <div class="audience-body">Sanity-check a hypothesis or pre-screen a sweep of operating conditions in seconds before committing hours of CONVERGE or OpenFOAM compute time to the cases that actually matter.</div>
+      </div>
+      <div class="audience-card gold">
+        <div class="audience-emoji">⚙️</div>
+        <div class="audience-role">Industry Engineers</div>
+        <div class="audience-body">Run a fast feasibility check on a fuel blend or injection strategy before scoping a full simulation contract — get a defensible first-order answer the same afternoon you ask the question.</div>
+      </div>
     </div>
   </div>
 </section>
@@ -2901,6 +3024,20 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeApp(); 
   document.addEventListener('visibilitychange', ()=>document.hidden?stopLoop():startLoop());
   startLoop();
 })();
+</script>
+
+<!-- EQUATION RENDERING -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof katex === 'undefined') return;
+  var eqs = {
+    'eq-wiebe': 'x_b(\\theta) = 1 - \\exp\\!\\left[-a\\left(\\dfrac{\\theta-\\theta_0}{\\Delta\\theta}\\right)^{\\,m+1}\\right]'
+  };
+  Object.keys(eqs).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) katex.render(eqs[id], el, { throwOnError: false, displayMode: true });
+  });
+});
 </script>
 </body>
 </html>
