@@ -1,4 +1,4 @@
-const CACHE = 'agnicycle-v2';
+const CACHE = 'agnicycle-v3';
 const PRECACHE = [
   '/',
   '/index.html',
@@ -11,6 +11,8 @@ const PRECACHE = [
   '/og-image.png',
   '/icon-192.png',
   '/icon-512.png',
+  '/logo.svg',
+  '/logo-animated.svg',
   '/manifest.json',
 ];
 

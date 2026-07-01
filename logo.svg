@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="fo" cx="50%" cy="68%" r="62%">
+      <stop offset="0%" stop-color="#FFF06B"/>
+      <stop offset="60%" stop-color="#F97316"/>
+      <stop offset="100%" stop-color="#F0500F"/>
+    </radialGradient>
+    <radialGradient id="fc" cx="50%" cy="70%" r="60%">
+      <stop offset="0%" stop-color="#FFFDE7"/>
+      <stop offset="45%" stop-color="#FFE87A"/>
+      <stop offset="100%" stop-color="#FB923C"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="92" fill="#0B2536"/>
+  <circle cx="256" cy="256" r="200" fill="none" stroke="#0EA5B7" stroke-width="21"/>
+  <g transform="translate(456,256) rotate(90)"><path d="M28 0 L-41 -33 L-41 33 Z" fill="#0EA5B7"/></g>
+  <g transform="translate(56,256) rotate(270)"><path d="M28 0 L-41 -33 L-41 33 Z" fill="#0EA5B7"/></g>
+  <g transform="translate(256,392.6) scale(3.17) translate(-45.5,-86)">
+    <path d="M50 8 C68 32 75 52 66 68 C59 80 43 86 31 78 C19 70 16 54 25 42 C29 52 37 58 43 52 C37 40 41 22 50 8 Z" fill="url(#fo)"/>
+  </g>
+  <g transform="translate(256,375) scale(1.74) translate(-45.5,-86)" opacity="0.95">
+    <path d="M50 8 C68 32 75 52 66 68 C59 80 43 86 31 78 C19 70 16 54 25 42 C29 52 37 58 43 52 C37 40 41 22 50 8 Z" fill="url(#fc)"/>
+  </g>
+</svg>
