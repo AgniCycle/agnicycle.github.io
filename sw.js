@@ -1,4 +1,4 @@
-const CACHE = 'agnicycle-v3';
+const CACHE = 'agnicycle-v4';
 const PRECACHE = [
   '/',
   '/index.html',
