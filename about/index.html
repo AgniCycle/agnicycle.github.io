@@ -188,6 +188,41 @@ a:hover { text-decoration: underline; }
 }
 .founder-link:hover { color: var(--teal); border-color: var(--teal); text-decoration: none; }
 
+/* ── BRAND / LOGO ── */
+.brand-section { padding: 0 24px 80px; }
+.brand-inner { max-width: 1000px; margin: 0 auto; }
+.brand-grid { display: grid; grid-template-columns: auto 1fr; gap: 48px; align-items: start; margin-top: 36px; }
+@media (max-width: 760px) { .brand-grid { grid-template-columns: 1fr; justify-items: center; } }
+.logo-showcase {
+  width: 240px; height: 240px; border-radius: 52px;
+  background: #0B2536; border: 1px solid rgba(14,165,183,0.25);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 12px 48px rgba(11,37,54,0.35);
+  flex-shrink: 0;
+}
+.logo-showcase svg { width: 176px; height: 176px; }
+.logo-features { list-style: none; display: flex; flex-direction: column; gap: 18px; }
+.logo-features li { font-size: 14.5px; color: var(--text2); line-height: 1.7; padding-left: 26px; position: relative; }
+.logo-features li::before {
+  content: ''; position: absolute; left: 0; top: 7px;
+  width: 10px; height: 10px; border-radius: 50%;
+}
+.logo-features li:nth-child(1)::before { background: var(--fire); }
+.logo-features li:nth-child(2)::before { background: var(--teal); }
+.logo-features li:nth-child(3)::before { background: #22D3EE; }
+.logo-features li:nth-child(4)::before { background: var(--gold); }
+.logo-features strong { color: var(--text); font-weight: 700; }
+.dl-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 26px; }
+.dl-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 13px; font-weight: 600; color: var(--text2);
+  background: var(--surface2); border: 1px solid var(--border2);
+  padding: 9px 16px; border-radius: 9px;
+  text-decoration: none; transition: color 0.15s, border-color 0.15s;
+}
+.dl-btn:hover { color: var(--teal); border-color: var(--teal); text-decoration: none; }
+.dl-note { font-size: 12px; color: var(--muted); margin-top: 12px; }
+
 /* ── CONTACT ── */
 .contact-section { padding: 0 24px 80px; }
 .contact-inner { max-width: 1000px; margin: 0 auto; }
@@ -223,7 +258,7 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
   .hero { padding: 110px 16px 56px; }
   .hero-title { font-size: clamp(28px, 9vw, 42px); }
   .hero-sub { font-size: 14px; }
-  .mission-section, .founder-section, .contact-section { padding-left: 16px; padding-right: 16px; }
+  .mission-section, .founder-section, .contact-section, .brand-section { padding-left: 16px; padding-right: 16px; }
   .founder-card { padding: 24px 20px; gap: 24px; }
   .contact-card { padding: 32px 20px; }
   .contact-card h2 { font-size: 1.4rem; }
@@ -391,6 +426,43 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
             support@agnicycle.com
           </a>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRAND / LOGO -->
+<section class="brand-section">
+  <div class="brand-inner">
+    <div class="section-label" style="margin-bottom:16px">The Logo</div>
+    <h2 class="section-title" style="margin-bottom:8px">A thermodynamic cycle, drawn honestly</h2>
+    <p class="section-body">Every element of the AgniCycle mark means something. It isn't decoration — it's a diagram.</p>
+    <div class="brand-grid">
+      <div class="logo-showcase">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="aglSo" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#F97316"/><stop offset="55%" stop-color="#F0570F"/><stop offset="100%" stop-color="#D93B06"/></linearGradient><linearGradient id="aglSm" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#FBBF24"/><stop offset="60%" stop-color="#F97316"/><stop offset="100%" stop-color="#F0500F"/></linearGradient><linearGradient id="aglSk" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#FFF6C9"/><stop offset="45%" stop-color="#FFE87A"/><stop offset="100%" stop-color="#FBBF24"/></linearGradient><radialGradient id="aglSb" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#67E8F9" stop-opacity="0.9"/><stop offset="55%" stop-color="#0EA5B7" stop-opacity="0.5"/><stop offset="100%" stop-color="#0EA5B7" stop-opacity="0"/></radialGradient></defs><g><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="12s" repeatCount="indefinite"/><circle cx="50" cy="50" r="39" fill="none" stroke="#0EA5B7" stroke-width="4.5"/><g transform="translate(89,50) rotate(90)"><path d="M6 0 L-8.5 -7 L-8.5 7 Z" fill="#0EA5B7"/></g><g transform="translate(11,50) rotate(270)"><path d="M6 0 L-8.5 -7 L-8.5 7 Z" fill="#0EA5B7"/></g></g><g transform="translate(50,77.5)"><g><animateTransform attributeName="transform" type="scale" values="1 1;1.05 0.96;0.97 1.04;1.02 0.98;1 1" keyTimes="0;0.28;0.55;0.8;1" dur="1.9s" repeatCount="indefinite"/><g transform="scale(0.62) translate(-50,-88)"><ellipse cx="50" cy="83" rx="16" ry="8.5" fill="url(#aglSb)"/><path d="M50 8 C53 15 59 20 63 28 C68 36 71 44 71 56 C71 74 62 88 50 88 C38 88 29 74 29 56 C29 44 32 36 37 28 C41 20 47 15 50 8 Z" fill="url(#aglSo)"/><path d="M50 24 C54 31 60 37 62 46 C64.5 55 63 66 58 73 C55.5 77 53 79 50 79 C47 79 44.5 77 42 73 C37 66 35.5 55 38 46 C40 37 46 31 50 24 Z" fill="url(#aglSm)"/><path d="M50 46 C53 52 57 56 57.5 63 C58 70 55 76 50 76 C45 76 42 70 42.5 63 C43 56 47 52 50 46 Z" fill="url(#aglSk)"><animate attributeName="opacity" values="1;0.85;1;0.92;1" dur="1.3s" repeatCount="indefinite"/></path><path d="M38 76 C39.5 84 44.5 88 50 88 C55.5 88 60.5 84 62 76 C59 82 54.5 85 50 85 C45.5 85 41 82 38 76 Z" fill="#22D3EE" opacity="0.85"><animate attributeName="opacity" values="0.85;1;0.72;0.85" dur="1.7s" repeatCount="indefinite"/></path></g></g></g></svg>
+      </div>
+      <div>
+        <ul class="logo-features">
+          <li><strong>The flame — Agni.</strong> Sanskrit for fire, the root of our name. Combustion sits at the center of everything we build, so it sits at the center of the mark.</li>
+          <li><strong>The clockwise ring.</strong> On a pressure–volume diagram, a cycle traced clockwise produces net work — the universal signature of an engine. Traced counter-clockwise it would be a refrigerator. The arrows run clockwise on purpose.</li>
+          <li><strong>The blue base.</strong> Real flames burn blue at the bottom — the premixed reaction zone, the hottest and cleanest part of combustion. It also happens to be our brand teal.</li>
+          <li><strong>The temperature layers.</strong> A bright yellow-white core low in the flame (the luminous zone), deepening to orange-red at the tip where gases cool — the colors are in the physically correct order.</li>
+        </ul>
+        <div class="dl-row">
+          <a class="dl-btn" href="/logo.svg" download="agnicycle-logo.svg">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            SVG — static
+          </a>
+          <a class="dl-btn" href="/logo-animated.svg" download="agnicycle-logo-animated.svg">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            SVG — animated
+          </a>
+          <a class="dl-btn" href="/icon-512.png" download="agnicycle-logo-512.png">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            PNG — 512 px
+          </a>
+        </div>
+        <p class="dl-note">SVG files scale to any size without quality loss — use them for print and presentations. Free to use when referencing AgniCycle.</p>
       </div>
     </div>
   </div>
