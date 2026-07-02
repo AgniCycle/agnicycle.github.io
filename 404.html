@@ -25,6 +25,20 @@ p { font-size: 1rem; color: var(--text2); max-width: 420px; line-height: 1.65; m
 .btn-secondary { background: var(--surface); color: var(--text); padding: 11px 24px; border-radius: 10px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid var(--border); transition: border-color 0.2s; }
 .btn-secondary:hover { border-color: var(--teal); }
 </style>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NB63ZYGBT7"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-NB63ZYGBT7');
+document.addEventListener('DOMContentLoaded', function() {
+  var tb = document.getElementById('theme-btn');
+  if (tb) tb.addEventListener('click', function() {
+    gtag('event', 'theme_toggle', { theme_set: document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light' });
+  });
+});
+</script>
 </head>
 <body>
 <div class="logo-mark">

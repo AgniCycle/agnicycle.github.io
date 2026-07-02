@@ -278,6 +278,20 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
 .announce-dot { width: 6px; height: 6px; background: #f97316; border-radius: 50%; animation: pulse 2s ease-in-out infinite; flex-shrink: 0; }
 @media (max-width: 600px) { .announce-desc { display: none; } }
 </style>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NB63ZYGBT7"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-NB63ZYGBT7');
+document.addEventListener('DOMContentLoaded', function() {
+  var tb = document.getElementById('theme-btn');
+  if (tb) tb.addEventListener('click', function() {
+    gtag('event', 'theme_toggle', { theme_set: document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light' });
+  });
+});
+</script>
 </head>
 <body>
 <canvas id="page-bg-canvas" aria-hidden="true"></canvas>

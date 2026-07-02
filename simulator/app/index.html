@@ -184,6 +184,20 @@
 [data-theme="light"] #theme-sun { display: block; }
 .app-bar-icon-btn { display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:7px; background:var(--surface2); border:1px solid var(--border); color:var(--text2); cursor:pointer; transition:color 0.2s,background 0.2s; flex-shrink:0; }
 </style>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NB63ZYGBT7"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-NB63ZYGBT7');
+document.addEventListener('DOMContentLoaded', function() {
+  var tb = document.getElementById('theme-btn');
+  if (tb) tb.addEventListener('click', function() {
+    gtag('event', 'theme_toggle', { theme_set: document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light' });
+  });
+});
+</script>
 </head>
 <body>
 <div class="app-shell">
