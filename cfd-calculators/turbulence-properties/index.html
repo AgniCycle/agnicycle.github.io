@@ -78,6 +78,11 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 .announce-dot { width: 5px; height: 5px; background: #f97316; border-radius: 50%; animation: pulse 2s ease-in-out infinite; flex-shrink: 0; }
 @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
 @media (max-width: 700px) { .announce-desc { display: none; } }
+@media (max-width: 640px) {
+  .topbar-sep, .topbar-title, .topbar-badge, .topbar-back-label { display: none; }
+  .topbar-back { padding: 5px 8px; }
+  .topbar { padding: 0 12px; gap: 6px; }
+}
 </style>
 <!-- Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NB63ZYGBT7"></script>
@@ -124,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <span class="topbar-badge">CFD Tool</span>
     <a class="topbar-back" href="/cfd-calculators/">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-      All Calculators
+      <span class="topbar-back-label">All Calculators</span>
     </a>
   </div>
 </div>
