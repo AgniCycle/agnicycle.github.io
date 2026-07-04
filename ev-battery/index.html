@@ -99,6 +99,16 @@ a:hover { text-decoration: underline; }
 .btn-launch-nav:hover { opacity: 0.88; box-shadow: var(--shadow-ev); text-decoration: none; }
 .nav-icon-btn { display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:8px; background:var(--surface2); border:1px solid var(--border); color:var(--text2); cursor:pointer; transition:color 0.2s,background 0.2s; flex-shrink:0; }
 .nav-icon-btn:hover { color:var(--text); background:var(--surface); }
+.launch-tools-wrap { position: relative; }
+.launch-tools-btn { display:flex; align-items:center; gap:6px; height:34px; padding:0 12px; border-radius:8px; background:var(--surface2); border:1px solid var(--border); color:var(--text); font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; transition:color 0.2s, background 0.2s, border-color 0.2s; }
+.launch-tools-btn:hover { background:var(--surface); border-color:var(--border2); }
+.launch-tools-btn svg.chevron { transition:transform 0.2s; }
+.launch-tools-wrap.open .launch-tools-btn svg.chevron { transform:rotate(180deg); }
+.launch-tools-menu { position:absolute; top:calc(100% + 8px); right:0; min-width:210px; background:var(--surface); border:1px solid var(--border2); border-radius:12px; box-shadow:0 12px 32px rgba(0,0,0,0.25); padding:6px; display:none; flex-direction:column; gap:2px; z-index:200; }
+.launch-tools-wrap.open .launch-tools-menu { display:flex; }
+.launch-tools-menu a { display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:8px; text-decoration:none; color:var(--text); font-size:13.5px; font-weight:600; transition:background 0.15s; }
+.launch-tools-menu a:hover { background:var(--surface2); text-decoration:none; }
+.launch-tools-menu .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
 .nav-hamburger { display: none; background: none; border: none; color: var(--text); cursor: pointer; padding: 8px; margin-left: auto; border-radius: 8px; }
 .nav-mobile { display: none; position: fixed; top: 60px; left: 0; right: 0; bottom: 0; z-index: 99; background: var(--bg); padding: 20px; flex-direction: column; gap: 4px; border-top: 1px solid var(--border); overflow-y: auto; }
 .nav-mobile.open { display: flex; }
@@ -310,8 +320,8 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="announce-bar">
   <div class="announce-dot"></div>
   <strong>Now in Public Beta</strong>
-  <span class="announce-desc"> — Engine Simulator, Spray Calculator &amp; EV Battery Suite. Free access, no credit card.</span>
-  <a href="https://www.agnicycle.com/simulator/app/">Create free account →</a>
+  <span class="announce-desc"> — Engine Simulator, Spray Calculator &amp; EV Battery Suite. Free for approved researchers.</span>
+  <a href="https://www.agnicycle.com/simulator/app/">Request researcher access →</a>
 </div>
 
 <!-- NAV -->
@@ -332,6 +342,17 @@ document.addEventListener('DOMContentLoaded', function() {
     <li><a href="/about/">About Us</a></li>
   </ul>
   <div class="nav-right">
+    <div class="launch-tools-wrap" id="launch-tools-wrap">
+      <button class="launch-tools-btn" id="launch-tools-btn" aria-haspopup="true" aria-expanded="false">
+        Launch Tools
+        <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="launch-tools-menu" id="launch-tools-menu">
+        <a href="/simulator/app/"><span class="dot" style="background:var(--fire)"></span> Engine Simulator</a>
+        <a href="/spray/app/"><span class="dot" style="background:var(--teal)"></span> Spray Calculator</a>
+        <a href="/ev-battery/app/"><span class="dot" style="background:#10b981"></span> EV Battery Suite</a>
+      </div>
+    </div>
     <button class="nav-icon-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark">
       <svg id="theme-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       <svg id="theme-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
@@ -795,6 +816,24 @@ document.addEventListener('DOMContentLoaded', function() {
     if (el) katex.render(eqs[id], el, { throwOnError: false, displayMode: true });
   });
 });
+</script>
+<script>
+(function(){
+  var wrap = document.getElementById('launch-tools-wrap');
+  var btn = document.getElementById('launch-tools-btn');
+  if(!wrap || !btn) return;
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    var isOpen = wrap.classList.toggle('open');
+    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+  document.addEventListener('click', function(e){
+    if(!wrap.contains(e.target)){ wrap.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){ wrap.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
+  });
+})();
 </script>
 </body>
 </html>
