@@ -474,6 +474,16 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
   color: var(--text2); font-size: 13px; font-weight: 500;
 }
 .hero-badge svg { color: var(--green); flex-shrink: 0; }
+.top-countries { display: none; align-items: center; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+.top-countries-label { font-size: 13px; color: var(--text2); font-weight: 600; }
+.top-countries-list { display: flex; gap: 8px; flex-wrap: wrap; }
+.country-chip {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--surface2); border: 1px solid var(--border);
+  padding: 5px 12px; border-radius: 100px;
+  font-size: 13px; font-weight: 600; color: var(--text);
+}
+.country-chip .flag { font-size: 15px; }
 .hero-scroll {
   position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
   display: flex; flex-direction: column; align-items: center; gap: 8px;
@@ -1507,6 +1517,10 @@ document.addEventListener('DOMContentLoaded', function() {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           <span id="visitor-count-text"></span>
         </div>
+      </div>
+      <div class="top-countries" id="top-countries-widget">
+        <span class="top-countries-label">Visitors from</span>
+        <div class="top-countries-list" id="top-countries-list"></div>
       </div>
     </div>
 
@@ -3108,16 +3122,35 @@ document.addEventListener('DOMContentLoaded', function() {
     const db = getFirestore(app, "ai-studio-59121fd5-ef27-4a89-87c6-86a6a1726318");
     const badge = document.getElementById('visitor-count-badge');
     const text = document.getElementById('visitor-count-text');
-    if (!badge || !text) return;
+    const countriesWidget = document.getElementById('top-countries-widget');
+    const countriesList = document.getElementById('top-countries-list');
+
+    function flagEmoji(code) {
+      if (!code || code.length !== 2) return '';
+      return code.toUpperCase().replace(/./g, (c) => String.fromCodePoint(127397 + c.charCodeAt(0)));
+    }
 
     // Real-time listener: if the synced count changes while this tab is
-    // open, the badge updates automatically, no reload needed.
+    // open, the badge and country list update automatically, no reload needed.
     onSnapshot(doc(db, "publicStats", "visitors"), (snap) => {
       if (!snap.exists()) return;
-      const total = snap.data().totalUsers || 0;
-      if (total <= 0) return;
-      text.textContent = total.toLocaleString() + ' visitors and counting';
-      badge.style.display = '';
+      const data = snap.data();
+
+      const total = data.totalUsers || 0;
+      if (total > 0 && badge && text) {
+        text.textContent = total.toLocaleString() + ' visitors and counting';
+        badge.style.display = '';
+      }
+
+      const topCountries = data.topCountries || [];
+      if (topCountries.length > 0 && countriesWidget && countriesList) {
+        countriesList.innerHTML = topCountries.map((c) => {
+          const flag = flagEmoji(c.code);
+          const name = (c.name || '').replace(/</g, '&lt;');
+          return '<span class="country-chip">' + (flag ? '<span class="flag">' + flag + '</span>' : '') + name + '</span>';
+        }).join('');
+        countriesWidget.style.display = 'flex';
+      }
     }, (err) => {
       console.warn('Visitor count listener error', err);
     });
