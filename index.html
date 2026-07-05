@@ -1503,6 +1503,10 @@ document.addEventListener('DOMContentLoaded', function() {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           Peer-validated thermodynamics
         </div>
+        <div class="hero-badge" id="visitor-count-badge" style="display:none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span id="visitor-count-text"></span>
+        </div>
       </div>
     </div>
 
@@ -3083,6 +3087,40 @@ document.addEventListener('DOMContentLoaded', function() {
   document.addEventListener('keydown', function(e){
     if(e.key === 'Escape'){ wrap.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
   });
+})();
+</script>
+<script type="module">
+(async function(){
+  try {
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js');
+    const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js');
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDztmHfzr9dGh_8AUaxAMhr6oI4DzCWgL4",
+      authDomain: "project-65be7752-c792-4180-b5b.firebaseapp.com",
+      projectId: "project-65be7752-c792-4180-b5b",
+      storageBucket: "project-65be7752-c792-4180-b5b.firebasestorage.app",
+      messagingSenderId: "865384871824",
+      appId: "1:865384871824:web:716067ed9142ff3dff2515"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app, "ai-studio-59121fd5-ef27-4a89-87c6-86a6a1726318");
+    const snap = await getDoc(doc(db, "publicStats", "visitors"));
+    if (!snap.exists()) return;
+
+    const data = snap.data();
+    const total = data.totalUsers || 0;
+    if (total <= 0) return;
+
+    const badge = document.getElementById('visitor-count-badge');
+    const text = document.getElementById('visitor-count-text');
+    if (!badge || !text) return;
+    text.textContent = total.toLocaleString() + ' visitors and counting';
+    badge.style.display = '';
+  } catch (err) {
+    console.warn('Visitor count unavailable', err);
+  }
 })();
 </script>
 </body>
