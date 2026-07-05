@@ -3093,7 +3093,7 @@ document.addEventListener('DOMContentLoaded', function() {
 (async function(){
   try {
     const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js');
-    const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js');
+    const { getFirestore, doc, onSnapshot } = await import('https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js');
 
     const firebaseConfig = {
       apiKey: "AIzaSyDztmHfzr9dGh_8AUaxAMhr6oI4DzCWgL4",
@@ -3106,18 +3106,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app, "ai-studio-59121fd5-ef27-4a89-87c6-86a6a1726318");
-    const snap = await getDoc(doc(db, "publicStats", "visitors"));
-    if (!snap.exists()) return;
-
-    const data = snap.data();
-    const total = data.totalUsers || 0;
-    if (total <= 0) return;
-
     const badge = document.getElementById('visitor-count-badge');
     const text = document.getElementById('visitor-count-text');
     if (!badge || !text) return;
-    text.textContent = total.toLocaleString() + ' visitors and counting';
-    badge.style.display = '';
+
+    // Real-time listener: if the synced count changes while this tab is
+    // open, the badge updates automatically, no reload needed.
+    onSnapshot(doc(db, "publicStats", "visitors"), (snap) => {
+      if (!snap.exists()) return;
+      const total = snap.data().totalUsers || 0;
+      if (total <= 0) return;
+      text.textContent = total.toLocaleString() + ' visitors and counting';
+      badge.style.display = '';
+    }, (err) => {
+      console.warn('Visitor count listener error', err);
+    });
   } catch (err) {
     console.warn('Visitor count unavailable', err);
   }
