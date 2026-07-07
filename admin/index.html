@@ -83,14 +83,25 @@ a:hover { text-decoration: underline; }
 .tab .count { display: inline-block; background: var(--surface2); color: var(--text2); font-size: 11.5px; font-weight: 700; padding: 1px 7px; border-radius: 100px; margin-left: 6px; }
 .tab.active .count { background: rgba(249,115,22,0.12); color: var(--fire); }
 
-.profile-list { display: flex; flex-direction: column; gap: 14px; }
-.profile-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; }
-.profile-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
+.dash-controls { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+.search-input { flex: 1; min-width: 220px; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border2); background: var(--surface); font: inherit; font-size: 13.5px; color: var(--text); }
+.search-input:focus { outline: 2px solid rgba(249,115,22,0.35); border-color: var(--fire); }
+.sort-select { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border2); background: var(--surface); font: inherit; font-size: 13.5px; color: var(--text); cursor: pointer; }
+
+.profile-list { display: flex; flex-direction: column; gap: 12px; }
+.profile-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; }
+.profile-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+.profile-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .profile-name { font-size: 16px; font-weight: 700; color: var(--text); }
+.badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+.badge-role { background: var(--surface2); color: var(--text2); }
+.badge-src-teal { background: rgba(14,165,183,0.12); color: var(--teal); }
+.badge-src-fire { background: rgba(249,115,22,0.12); color: var(--fire); }
+.badge-src-green { background: rgba(34,197,94,0.12); color: var(--green); }
 .profile-email { font-size: 13px; color: var(--teal); }
 .profile-meta { font-size: 12px; color: var(--text3); margin-top: 3px; }
 .profile-actions { display: flex; gap: 8px; flex-shrink: 0; }
-.profile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px 20px; }
+.profile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px 20px; }
 .profile-field label { display: block; font-size: 10.5px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
 .profile-field div { font-size: 13.5px; color: var(--text); word-break: break-word; }
 .profile-field .empty { color: var(--text3); font-style: italic; }
@@ -172,6 +183,15 @@ footer { text-align: center; padding: 24px; font-size: 12.5px; color: var(--text
       <button class="tab active" id="tab-pending" data-tab="pending">Pending <span class="count" id="count-pending">0</span></button>
       <button class="tab" id="tab-approved" data-tab="approved">Approved <span class="count" id="count-approved">0</span></button>
     </div>
+    <div class="dash-controls">
+      <input type="search" id="search-input" class="search-input" placeholder="Search by name, email, institution…" autocomplete="off"/>
+      <select id="sort-select" class="sort-select">
+        <option value="newest">Newest first</option>
+        <option value="oldest">Oldest first</option>
+        <option value="name-asc">Name A–Z</option>
+        <option value="name-desc">Name Z–A</option>
+      </select>
+    </div>
     <div id="dash-msg"></div>
     <div class="profile-list" id="profile-list"></div>
   </div>
@@ -210,6 +230,12 @@ const db = getFirestore(app, "ai-studio-59121fd5-ef27-4a89-87c6-86a6a1726318");
 // what this page tries to do.
 const ADMIN_EMAILS = ['dhkrnl37@gmail.com', 'dkumar39@wisc.edu', 'dkumar39@uwalumni.com'];
 
+const TOOL_META = {
+  'engine-simulator': { label: 'Engine Simulator', cls: 'badge-src-teal' },
+  'spray-calculator': { label: 'Spray Calculator', cls: 'badge-src-fire' },
+  'ev-battery-suite': { label: 'EV Battery Suite', cls: 'badge-src-green' },
+};
+
 const steps = ['loading', 'auth', 'denied', 'dashboard'];
 function showStep(name) {
   steps.forEach(s => {
@@ -224,6 +250,8 @@ function setMsg(elId, text, kind) {
 
 let allProfiles = [];
 let activeTab = 'pending';
+let searchQuery = '';
+let sortMode = 'newest';
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) { showStep('auth'); return; }
@@ -269,6 +297,8 @@ document.getElementById('btn-signout-denied').addEventListener('click', () => si
 
 document.getElementById('tab-pending').addEventListener('click', () => switchTab('pending'));
 document.getElementById('tab-approved').addEventListener('click', () => switchTab('approved'));
+document.getElementById('search-input').addEventListener('input', (e) => { searchQuery = e.target.value.trim(); renderList(); });
+document.getElementById('sort-select').addEventListener('change', (e) => { sortMode = e.target.value; renderList(); });
 
 function switchTab(tab) {
   activeTab = tab;
@@ -300,6 +330,30 @@ function fmtDate(ts) {
   try { return ts.toDate().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }); }
   catch (e) { return ''; }
 }
+function tsMillis(ts) {
+  try { return ts.toDate().getTime(); } catch (e) { return 0; }
+}
+function metaLine(p) {
+  let s = 'Registered ' + fmtDate(p.createdAt);
+  const created = tsMillis(p.createdAt), updated = tsMillis(p.updatedAt);
+  if (updated && created && (updated - created) > 60000) {
+    s += ' · Updated ' + fmtDate(p.updatedAt);
+  }
+  return s;
+}
+function matchesSearch(p, q) {
+  if (!q) return true;
+  const hay = [p.name, p.email, p.username, p.institution, p.country, p.jobTitle].filter(Boolean).join(' ').toLowerCase();
+  return hay.includes(q.toLowerCase());
+}
+function sortProfiles(list) {
+  const arr = [...list];
+  if (sortMode === 'newest') arr.sort((a, b) => tsMillis(b.createdAt) - tsMillis(a.createdAt));
+  else if (sortMode === 'oldest') arr.sort((a, b) => tsMillis(a.createdAt) - tsMillis(b.createdAt));
+  else if (sortMode === 'name-asc') arr.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  else if (sortMode === 'name-desc') arr.sort((a, b) => (b.name || '').localeCompare(a.name || ''));
+  return arr;
+}
 
 function renderList() {
   const pending = allProfiles.filter(p => p.isApproved !== true);
@@ -307,22 +361,31 @@ function renderList() {
   document.getElementById('count-pending').textContent = pending.length;
   document.getElementById('count-approved').textContent = approved.length;
 
-  const list = activeTab === 'pending' ? pending : approved;
+  let list = activeTab === 'pending' ? pending : approved;
+  list = sortProfiles(list.filter(p => matchesSearch(p, searchQuery)));
   const container = document.getElementById('profile-list');
 
   if (list.length === 0) {
-    container.innerHTML = '<div class="empty-state"><div class="icon">' + (activeTab === 'pending' ? '📭' : '👥') + '</div>' +
-      (activeTab === 'pending' ? 'No pending requests right now.' : 'No approved researchers yet.') + '</div>';
+    const emptyText = searchQuery
+      ? 'No matches for "' + escapeHtml(searchQuery) + '".'
+      : (activeTab === 'pending' ? 'No pending requests right now.' : 'No approved researchers yet.');
+    container.innerHTML = '<div class="empty-state"><div class="icon">' + (searchQuery ? '🔍' : (activeTab === 'pending' ? '📭' : '👥')) + '</div>' + emptyText + '</div>';
     return;
   }
 
-  container.innerHTML = list.map(p => `
+  container.innerHTML = list.map(p => {
+    const tool = TOOL_META[p.signupSource];
+    return `
     <div class="profile-card" data-id="${p.id}">
       <div class="profile-top">
         <div>
-          <div class="profile-name">${escapeHtml(p.name || '(no name)')}</div>
+          <div class="profile-name-row">
+            <span class="profile-name">${escapeHtml(p.name || '(no name)')}</span>
+            <span class="badge badge-role">${escapeHtml(p.role || 'Researcher')}</span>
+            ${tool ? `<span class="badge ${tool.cls}">${escapeHtml(tool.label)}</span>` : ''}
+          </div>
           <div class="profile-email">${escapeHtml(p.email || '')}</div>
-          <div class="profile-meta">Registered ${fmtDate(p.createdAt)}${p.signupSource ? ' · via ' + escapeHtml(p.signupSource) : ''}</div>
+          <div class="profile-meta">${metaLine(p)}</div>
         </div>
         <div class="profile-actions">
           ${activeTab === 'pending'
@@ -341,7 +404,8 @@ function renderList() {
         ${fieldHtml('Research Domain', p.researchDomain)}
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   container.querySelectorAll('button[data-action]').forEach(btn => {
     btn.addEventListener('click', () => handleAction(btn.dataset.action, btn.dataset.id, btn));
