@@ -35,6 +35,8 @@ a:hover { text-decoration: underline; }
 .topbar-right { display: flex; align-items: center; gap: 14px; }
 .admin-email-tag { font-size: 12.5px; color: var(--text2); }
 .back-link { font-size: 13px; font-weight: 600; color: var(--text2); }
+.btn-ghost-link { background: none; border: none; font-family: inherit; cursor: pointer; padding: 0; }
+.btn-ghost-link:hover { color: var(--fire); }
 
 .wrap { flex: 1; padding: 40px 20px 80px; }
 .center-wrap { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding: 48px 20px 80px; }
@@ -128,6 +130,7 @@ footer { text-align: center; padding: 24px; font-size: 12.5px; color: var(--text
   </a>
   <div class="topbar-right">
     <span class="admin-email-tag" id="admin-email-tag"></span>
+    <button class="back-link btn-ghost-link" id="btn-signout-dashboard" style="display:none">Sign out</button>
     <a class="back-link" href="/">← Back to site</a>
   </div>
 </div>
@@ -254,17 +257,27 @@ let searchQuery = '';
 let sortMode = 'newest';
 
 onAuthStateChanged(auth, async (user) => {
-  if (!user) { showStep('auth'); return; }
+  const signoutBtn = document.getElementById('btn-signout-dashboard');
+  if (!user) {
+    document.getElementById('admin-email-tag').textContent = '';
+    signoutBtn.style.display = 'none';
+    showStep('auth');
+    return;
+  }
   const email = (user.email || '').toLowerCase();
   document.getElementById('admin-email-tag').textContent = email;
   if (!ADMIN_EMAILS.includes(email)) {
+    signoutBtn.style.display = 'none';
     document.getElementById('denied-email').textContent = email;
     showStep('denied');
     return;
   }
+  signoutBtn.style.display = '';
   showStep('dashboard');
   await loadProfiles();
 });
+
+document.getElementById('btn-signout-dashboard').addEventListener('click', () => signOut(auth));
 
 document.getElementById('btn-google').addEventListener('click', async () => {
   setMsg('auth-msg', '', 'error');
