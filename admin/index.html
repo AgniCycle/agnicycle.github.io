@@ -354,7 +354,7 @@ async function handleAction(action, id, btn) {
     if (action === 'approve') {
       await updateDoc(doc(db, 'researcherProfiles', id), { isApproved: true, updatedAt: serverTimestamp() });
     } else if (action === 'revoke') {
-      if (!confirm('Revoke this researcher\\'s access? They will need to be re-approved to use the tools again.')) { btn.disabled = false; return; }
+      if (!confirm('Revoke this researcher\'s access? They will need to be re-approved to use the tools again.')) { btn.disabled = false; return; }
       await updateDoc(doc(db, 'researcherProfiles', id), { isApproved: false, updatedAt: serverTimestamp() });
     } else if (action === 'reject') {
       if (!confirm('Reject and permanently delete this registration request?')) { btn.disabled = false; return; }
