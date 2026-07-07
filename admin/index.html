@@ -79,6 +79,13 @@ a:hover { text-decoration: underline; }
 .dash-header { margin-bottom: 24px; }
 .dash-header h1 { font-size: 26px; margin-bottom: 6px; }
 .dash-header p { font-size: 14px; color: var(--text2); }
+.usage-panel { display: flex; gap: 32px; flex-wrap: wrap; margin-bottom: 22px; padding: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; }
+.usage-col { flex: 1; min-width: 220px; }
+.usage-title { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+.usage-chips { display: flex; flex-wrap: wrap; gap: 8px; font-size: 12.5px; color: var(--text2); }
+.usage-chip { display: flex; align-items: center; gap: 6px; background: var(--surface2); padding: 5px 10px; border-radius: 8px; }
+.usage-chip .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.usage-chip .count { font-weight: 700; color: var(--text); }
 .tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 1px solid var(--border); }
 .tab { padding: 10px 18px; font-size: 14px; font-weight: 600; color: var(--text2); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
 .tab.active { color: var(--fire); border-bottom-color: var(--fire); }
@@ -183,6 +190,16 @@ footer { text-align: center; padding: 24px; font-size: 12.5px; color: var(--text
       <h1>Researcher Approvals</h1>
       <p>Review new access requests and approve or reject them. Approving sends the researcher an automatic confirmation email.</p>
     </div>
+    <div class="usage-panel">
+      <div class="usage-col">
+        <div class="usage-title">Signups by tool</div>
+        <div class="usage-chips" id="signup-stats"></div>
+      </div>
+      <div class="usage-col">
+        <div class="usage-title">Landing page traffic (28 days)</div>
+        <div class="usage-chips" id="traffic-stats">Loading…</div>
+      </div>
+    </div>
     <div class="tabs">
       <button class="tab active" id="tab-pending" data-tab="pending">Pending <span class="count" id="count-pending">0</span></button>
       <button class="tab" id="tab-approved" data-tab="approved">Approved <span class="count" id="count-approved">0</span></button>
@@ -210,7 +227,7 @@ import {
   signInWithEmailAndPassword, signOut
 } from 'https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js';
 import {
-  getFirestore, collection, query, where, orderBy, getDocs,
+  getFirestore, collection, query, where, orderBy, getDocs, getDoc,
   doc, updateDoc, deleteDoc, serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js';
 import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/12.14.0/firebase-functions.js';
@@ -279,6 +296,7 @@ onAuthStateChanged(auth, async (user) => {
   signoutBtn.style.display = '';
   showStep('dashboard');
   await loadProfiles();
+  loadTrafficStats();
 });
 
 document.getElementById('btn-signout-dashboard').addEventListener('click', () => signOut(auth));
@@ -331,9 +349,51 @@ async function loadProfiles() {
     allProfiles = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     setMsg('dash-msg', '', 'info');
     renderList();
+    renderSignupStats();
     loadActivity(allProfiles);
   } catch (err) {
     setMsg('dash-msg', 'Could not load researcher profiles: ' + (err.message || 'unknown error'), 'error');
+  }
+}
+
+const TOOL_DOT_COLOR = {
+  'engine-simulator': 'var(--teal)',
+  'spray-calculator': 'var(--fire)',
+  'ev-battery-suite': 'var(--green)',
+};
+
+function renderSignupStats() {
+  const counts = { 'engine-simulator': 0, 'spray-calculator': 0, 'ev-battery-suite': 0 };
+  let unknown = 0;
+  allProfiles.forEach(p => {
+    if (p.signupSource && counts.hasOwnProperty(p.signupSource)) counts[p.signupSource]++;
+    else unknown++;
+  });
+  let html = Object.keys(TOOL_META).map(key =>
+    '<span class="usage-chip"><span class="dot" style="background:' + TOOL_DOT_COLOR[key] + '"></span>' +
+    TOOL_META[key].label + ' <span class="count">' + counts[key] + '</span></span>'
+  ).join('');
+  if (unknown > 0) {
+    html += '<span class="usage-chip"><span class="dot" style="background:var(--text3)"></span>Unknown <span class="count">' + unknown + '</span></span>';
+  }
+  document.getElementById('signup-stats').innerHTML = html;
+}
+
+async function loadTrafficStats() {
+  const el = document.getElementById('traffic-stats');
+  el.textContent = 'Loading…';
+  try {
+    const snap = await getDoc(doc(db, 'publicStats', 'visitors'));
+    const traffic = snap.exists() ? (snap.data().toolTraffic || {}) : {};
+    const html = Object.keys(TOOL_META).map(key => {
+      const t = traffic[key];
+      const text = t ? t.views + ' views · ' + t.users + ' users' : 'No data';
+      return '<span class="usage-chip"><span class="dot" style="background:' + TOOL_DOT_COLOR[key] + '"></span>' +
+        TOOL_META[key].label + ': ' + text + '</span>';
+    }).join('');
+    el.innerHTML = html || 'No data yet.';
+  } catch (err) {
+    el.textContent = 'Could not load traffic data: ' + (err.message || 'unknown error');
   }
 }
 
