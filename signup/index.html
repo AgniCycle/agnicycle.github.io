@@ -810,27 +810,9 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
       uid: user.uid,
     });
 
-    // Notify admin of the new pending request — fire-and-forget, never
-    // blocks the user's signup flow if the email fails to send.
-    fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({
-        access_key: 'feb6af6b-c57b-434f-a4fa-6ad95cb21762',
-        subject: 'New AgniCycle researcher signup: ' + name,
-        from_name: 'AgniCycle Signup',
-        email: profileData.email,
-        Name: profileData.name,
-        Username: profileData.username,
-        Email: profileData.email,
-        Phone: profileData.phone,
-        'Job Title': profileData.jobTitle,
-        Institution: profileData.institution,
-        Country: profileData.country,
-        'Research Domain': profileData.researchDomain || '(not provided)',
-        message: 'New researcher access request pending approval. Review and approve in the Engine Simulator admin dashboard.',
-      }),
-    }).catch(function(err) { console.warn('Admin notification failed to send', err); });
+    // Admin + user notification emails are sent by the onResearcherProfileCreated
+    // Cloud Function, triggered directly off this Firestore write — no
+    // client-side notification call needed here.
 
     document.getElementById('pending-email').textContent = user.email || '';
     showStep('pending');
