@@ -546,6 +546,8 @@ function accessRowsHtml(p) {
                  <button class="btn btn-xs btn-reject" data-action="deny-key" data-key="${key}" data-id="${p.id}">Deny</button>`;
     } else if (status === 'approved') {
       actions = `<button class="btn btn-xs btn-reject" data-action="revoke-key" data-key="${key}" data-id="${p.id}">Revoke</button>`;
+    } else {
+      actions = `<button class="btn btn-xs btn-approve" data-action="approve-key" data-key="${key}" data-id="${p.id}">Grant</button>`;
     }
     return `<div class="access-row">
       <span class="access-label">${TOOL_ACCESS_LABELS[key]}</span>
