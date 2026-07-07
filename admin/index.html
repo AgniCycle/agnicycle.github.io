@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Admin — AgniCycle</title>
+<meta name="description" content="AgniCycle researcher account approval dashboard."/>
+<meta name="robots" content="noindex, nofollow"/>
+<meta name="theme-color" content="#f97316"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='92' fill='%230B2536'/><circle cx='256' cy='256' r='200' fill='none' stroke='%230EA5B7' stroke-width='21'/><g transform='translate(456,256) rotate(90)'><path d='M28 0 L-41 -33 L-41 33 Z' fill='%230EA5B7'/></g><g transform='translate(56,256) rotate(270)'><path d='M28 0 L-41 -33 L-41 33 Z' fill='%230EA5B7'/></g><g transform='translate(256,256) scale(3.3) translate(-50,-49)'><path d='M50 8 C53 15 59 20 63 28 C68 36 71 44 71 56 C71 74 62 88 50 88 C38 88 29 74 29 56 C29 44 32 36 37 28 C41 20 47 15 50 8 Z' fill='url(%23fvo)'/><path d='M50 24 C54 31 60 37 62 46 C64.5 55 63 66 58 73 C55.5 77 53 79 50 79 C47 79 44.5 77 42 73 C37 66 35.5 55 38 46 C40 37 46 31 50 24 Z' fill='url(%23fvm)'/><path d='M50 46 C53 52 57 56 57.5 63 C58 70 55 76 50 76 C45 76 42 70 42.5 63 C43 56 47 52 50 46 Z' fill='url(%23fvk)'/><path d='M38 76 C39.5 84 44.5 88 50 88 C55.5 88 60.5 84 62 76 C59 82 54.5 85 50 85 C45.5 85 41 82 38 76 Z' fill='%2322D3EE' opacity='0.85'/></g><defs><linearGradient id='fvo' x1='0' y1='1' x2='0' y2='0'><stop offset='0%25' stop-color='%23F97316'/><stop offset='55%25' stop-color='%23F0570F'/><stop offset='100%25' stop-color='%23D93B06'/></linearGradient><linearGradient id='fvm' x1='0' y1='1' x2='0' y2='0'><stop offset='0%25' stop-color='%23FBBF24'/><stop offset='60%25' stop-color='%23F97316'/><stop offset='100%25' stop-color='%23F0500F'/></linearGradient><linearGradient id='fvk' x1='0' y1='1' x2='0' y2='0'><stop offset='0%25' stop-color='%23FFF6C9'/><stop offset='45%25' stop-color='%23FFE87A'/><stop offset='100%25' stop-color='%23FBBF24'/></linearGradient></defs></svg>" type="image/svg+xml"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f5f7fa; --bg2: #edf1f7; --surface: #ffffff; --surface2: #edf2f8;
+  --border: rgba(0,0,0,0.08); --border2: rgba(0,0,0,0.13);
+  --text: #1e293b; --text2: #475569; --text3: #94a3b8; --muted: #64748b;
+  --fire: #f97316; --teal: #0ea5b7; --green: #22c55e; --red: #dc2626;
+  --radius: 14px;
+}
+html { background: var(--bg); }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+h1,h2,h3 { font-family: 'Sora', sans-serif; line-height: 1.25; color: #0f172a; }
+a { color: var(--teal); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; border-bottom: 1px solid var(--border); background: var(--surface); }
+.brand { display: flex; align-items: center; gap: 10px; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); text-decoration: none; }
+.brand:hover { text-decoration: none; }
+.brand-mark { width: 30px; height: 30px; border-radius: 8px; background: #0B2536; border: 1.5px solid var(--teal); display: flex; align-items: center; justify-content: center; }
+.brand-mark svg { width: 18px; height: 18px; }
+.brand em { color: var(--fire); font-style: normal; }
+.topbar-right { display: flex; align-items: center; gap: 14px; }
+.admin-email-tag { font-size: 12.5px; color: var(--text2); }
+.back-link { font-size: 13px; font-weight: 600; color: var(--text2); }
+
+.wrap { flex: 1; padding: 40px 20px 80px; }
+.center-wrap { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding: 48px 20px 80px; }
+.card { width: 100%; max-width: 480px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 36px; box-shadow: 0 10px 40px rgba(15,23,42,0.06); }
+.card h1 { font-size: 22px; margin-bottom: 8px; }
+.card .sub { font-size: 14px; color: var(--text2); margin-bottom: 24px; }
+
+.field { margin-bottom: 16px; text-align: left; }
+.field label { display: block; font-size: 12px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+.field input { width: 100%; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--border2); background: var(--bg); font: inherit; font-size: 14px; color: var(--text); }
+.field input:focus { outline: 2px solid rgba(249,115,22,0.35); border-color: var(--fire); }
+
+.btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px 16px; border-radius: 10px; border: none; font: inherit; font-size: 14.5px; font-weight: 700; cursor: pointer; transition: opacity 0.15s; }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn-primary { background: var(--fire); color: #fff; }
+.btn-primary:hover:not(:disabled) { opacity: 0.9; }
+.btn-google { background: var(--surface); border: 1px solid var(--border2); color: var(--text); }
+.btn-google:hover:not(:disabled) { background: var(--surface2); }
+.btn-ghost { background: none; border: none; color: var(--teal); font-weight: 600; font-size: 13.5px; width: auto; padding: 4px 0; }
+.btn-sm { width: auto; padding: 8px 16px; font-size: 13px; }
+.btn-approve { background: var(--green); color: #fff; }
+.btn-approve:hover:not(:disabled) { opacity: 0.88; }
+.btn-reject { background: var(--surface); border: 1px solid rgba(220,38,38,0.3); color: var(--red); }
+.btn-reject:hover:not(:disabled) { background: rgba(220,38,38,0.06); }
+
+.divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--text3); font-size: 12px; font-weight: 600; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.msg { padding: 12px 14px; border-radius: 10px; font-size: 13.5px; font-weight: 500; margin-bottom: 16px; line-height: 1.5; }
+.msg-error { background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.25); color: #b91c1c; }
+.msg-info { background: rgba(14,165,183,0.08); border: 1px solid rgba(14,165,183,0.3); color: #0e7490; }
+
+.step { display: none; }
+.step.active { display: block; }
+.status-icon { font-size: 40px; margin-bottom: 12px; }
+.spinner { width: 30px; height: 30px; border-radius: 50%; border: 3px solid var(--border2); border-top-color: var(--fire); animation: spin 0.8s linear infinite; margin: 30px auto; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── DASHBOARD ── */
+.dash-inner { max-width: 900px; margin: 0 auto; }
+.dash-header { margin-bottom: 24px; }
+.dash-header h1 { font-size: 26px; margin-bottom: 6px; }
+.dash-header p { font-size: 14px; color: var(--text2); }
+.tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 1px solid var(--border); }
+.tab { padding: 10px 18px; font-size: 14px; font-weight: 600; color: var(--text2); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.tab.active { color: var(--fire); border-bottom-color: var(--fire); }
+.tab .count { display: inline-block; background: var(--surface2); color: var(--text2); font-size: 11.5px; font-weight: 700; padding: 1px 7px; border-radius: 100px; margin-left: 6px; }
+.tab.active .count { background: rgba(249,115,22,0.12); color: var(--fire); }
+
+.profile-list { display: flex; flex-direction: column; gap: 14px; }
+.profile-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; }
+.profile-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
+.profile-name { font-size: 16px; font-weight: 700; color: var(--text); }
+.profile-email { font-size: 13px; color: var(--teal); }
+.profile-meta { font-size: 12px; color: var(--text3); margin-top: 3px; }
+.profile-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.profile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px 20px; }
+.profile-field label { display: block; font-size: 10.5px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+.profile-field div { font-size: 13.5px; color: var(--text); word-break: break-word; }
+.profile-field .empty { color: var(--text3); font-style: italic; }
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text2); }
+.empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+
+footer { text-align: center; padding: 24px; font-size: 12.5px; color: var(--text3); }
+@media (max-width: 600px) {
+  .wrap { padding: 24px 14px 60px; }
+  .profile-top { flex-direction: column; }
+  .profile-actions { width: 100%; }
+  .profile-actions .btn { flex: 1; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="brand" href="/">
+    <span class="brand-mark">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="adg0o" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#F97316"/><stop offset="55%" stop-color="#F0570F"/><stop offset="100%" stop-color="#D93B06"/></linearGradient><linearGradient id="adg0m" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#FBBF24"/><stop offset="60%" stop-color="#F97316"/><stop offset="100%" stop-color="#F0500F"/></linearGradient><linearGradient id="adg0k" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#FFF6C9"/><stop offset="45%" stop-color="#FFE87A"/><stop offset="100%" stop-color="#FBBF24"/></linearGradient><radialGradient id="adg0b" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#67E8F9" stop-opacity="0.9"/><stop offset="55%" stop-color="#0EA5B7" stop-opacity="0.5"/><stop offset="100%" stop-color="#0EA5B7" stop-opacity="0"/></radialGradient></defs><g><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="12s" repeatCount="indefinite"/><circle cx="50" cy="50" r="39" fill="none" stroke="#0EA5B7" stroke-width="4.5"/><g transform="translate(89,50) rotate(90)"><path d="M6 0 L-8.5 -7 L-8.5 7 Z" fill="#0EA5B7"/></g><g transform="translate(11,50) rotate(270)"><path d="M6 0 L-8.5 -7 L-8.5 7 Z" fill="#0EA5B7"/></g></g><g transform="translate(50,77.5)"><g><animateTransform attributeName="transform" type="scale" values="1 1;1.05 0.96;0.97 1.04;1.02 0.98;1 1" keyTimes="0;0.28;0.55;0.8;1" dur="1.9s" repeatCount="indefinite"/><g transform="scale(0.62) translate(-50,-88)"><ellipse cx="50" cy="83" rx="16" ry="8.5" fill="url(#adg0b)"/><path d="M50 8 C53 15 59 20 63 28 C68 36 71 44 71 56 C71 74 62 88 50 88 C38 88 29 74 29 56 C29 44 32 36 37 28 C41 20 47 15 50 8 Z" fill="url(#adg0o)"/><path d="M50 24 C54 31 60 37 62 46 C64.5 55 63 66 58 73 C55.5 77 53 79 50 79 C47 79 44.4 77 42 73 C37 66 35.5 55 38 46 C40 37 46 31 50 24 Z" fill="url(#adg0m)"/><path d="M50 46 C53 52 57 56 57.5 63 C58 70 55 76 50 76 C45 76 42 70 42.5 63 C43 56 47 52 50 46 Z" fill="url(#adg0k)"><animate attributeName="opacity" values="1;0.85;1;0.92;1" dur="1.3s" repeatCount="indefinite"/></path><path d="M38 76 C39.5 84 44.5 88 50 88 C55.5 88 60.5 84 62 76 C59 82 54.5 85 50 85 C45.5 85 41 82 38 76 Z" fill="#22D3EE" opacity="0.85"><animate attributeName="opacity" values="0.85;1;0.72;0.85" dur="1.7s" repeatCount="indefinite"/></path></g></g></g></svg>
+    </span>
+    <span>Agni<em>Cycle</em> <span style="color:var(--text3);font-weight:500;font-size:13px">/ Admin</span></span>
+  </a>
+  <div class="topbar-right">
+    <span class="admin-email-tag" id="admin-email-tag"></span>
+    <a class="back-link" href="/">← Back to site</a>
+  </div>
+</div>
+
+<!-- STEP: loading -->
+<div class="step active center-wrap" id="step-loading">
+  <div class="spinner"></div>
+</div>
+
+<!-- STEP: auth -->
+<div class="step center-wrap" id="step-auth">
+  <div class="card">
+    <h1>Admin Sign In</h1>
+    <p class="sub">Sign in with an authorized admin account to review and approve researcher access requests.</p>
+    <div id="auth-msg"></div>
+    <button class="btn btn-google" id="btn-google">
+      <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18A10.96 10.96 0 0 0 1 12c0 1.77.43 3.45 1.18 4.94l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+      Continue with Google
+    </button>
+    <div class="divider">or use email</div>
+    <form id="email-form">
+      <div class="field">
+        <label for="email">Email address</label>
+        <input type="email" id="email" autocomplete="email" required/>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" autocomplete="current-password" required/>
+      </div>
+      <button class="btn btn-primary" type="submit" id="btn-email-submit">Sign in</button>
+    </form>
+  </div>
+</div>
+
+<!-- STEP: not authorized -->
+<div class="step center-wrap" id="step-denied">
+  <div class="card" style="text-align:center">
+    <div class="status-icon">🔒</div>
+    <h1>Not Authorized</h1>
+    <p class="sub">Signed in as <strong id="denied-email"></strong>, which isn't on the admin allowlist. Sign in with an authorized admin account instead.</p>
+    <button class="btn btn-primary" id="btn-signout-denied">Sign out</button>
+  </div>
+</div>
+
+<!-- STEP: dashboard -->
+<div class="step wrap" id="step-dashboard">
+  <div class="dash-inner">
+    <div class="dash-header">
+      <h1>Researcher Approvals</h1>
+      <p>Review new access requests and approve or reject them. Approving sends the researcher an automatic confirmation email.</p>
+    </div>
+    <div class="tabs">
+      <button class="tab active" id="tab-pending" data-tab="pending">Pending <span class="count" id="count-pending">0</span></button>
+      <button class="tab" id="tab-approved" data-tab="approved">Approved <span class="count" id="count-approved">0</span></button>
+    </div>
+    <div id="dash-msg"></div>
+    <div class="profile-list" id="profile-list"></div>
+  </div>
+</div>
+
+<footer>© <span id="year"></span> AgniCycle · <a href="/">agnicycle.com</a></footer>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js';
+import {
+  getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup,
+  signInWithEmailAndPassword, signOut
+} from 'https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js';
+import {
+  getFirestore, collection, query, where, orderBy, getDocs,
+  doc, updateDoc, deleteDoc, serverTimestamp
+} from 'https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js';
+
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDztmHfzr9dGh_8AUaxAMhr6oI4DzCWgL4",
+  authDomain: "project-65be7752-c792-4180-b5b.firebaseapp.com",
+  projectId: "project-65be7752-c792-4180-b5b",
+  storageBucket: "project-65be7752-c792-4180-b5b.firebasestorage.app",
+  messagingSenderId: "865384871824",
+  appId: "1:865384871824:web:716067ed9142ff3dff2515"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app, "ai-studio-59121fd5-ef27-4a89-87c6-86a6a1726318");
+
+// Client-side check only for UX (which step to show). The REAL security
+// boundary is enforced server-side by Firestore rules (isEmailAdmin()) —
+// a non-admin email cannot list/update researcherProfiles regardless of
+// what this page tries to do.
+const ADMIN_EMAILS = ['dhkrnl37@gmail.com', 'dkumar39@wisc.edu', 'dkumar39@uwalumni.com'];
+
+const steps = ['loading', 'auth', 'denied', 'dashboard'];
+function showStep(name) {
+  steps.forEach(s => {
+    const el = document.getElementById('step-' + s);
+    el.classList.toggle('active', s === name);
+  });
+}
+function setMsg(elId, text, kind) {
+  const el = document.getElementById(elId);
+  el.innerHTML = text ? '<div class="msg msg-' + kind + '">' + text + '</div>' : '';
+}
+
+let allProfiles = [];
+let activeTab = 'pending';
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { showStep('auth'); return; }
+  const email = (user.email || '').toLowerCase();
+  document.getElementById('admin-email-tag').textContent = email;
+  if (!ADMIN_EMAILS.includes(email)) {
+    document.getElementById('denied-email').textContent = email;
+    showStep('denied');
+    return;
+  }
+  showStep('dashboard');
+  await loadProfiles();
+});
+
+document.getElementById('btn-google').addEventListener('click', async () => {
+  setMsg('auth-msg', '', 'error');
+  try {
+    await signInWithPopup(auth, new GoogleAuthProvider());
+  } catch (err) {
+    if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
+      setMsg('auth-msg', 'Sign-in failed: ' + (err.message || err.code || 'unknown error'), 'error');
+    }
+  }
+});
+
+document.getElementById('email-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('email').value.trim();
+  const pass = document.getElementById('password').value;
+  const btn = document.getElementById('btn-email-submit');
+  btn.disabled = true;
+  setMsg('auth-msg', '', 'error');
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch (err) {
+    setMsg('auth-msg', 'Sign-in failed: ' + (err.message || err.code || 'unknown error'), 'error');
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+document.getElementById('btn-signout-denied').addEventListener('click', () => signOut(auth));
+
+document.getElementById('tab-pending').addEventListener('click', () => switchTab('pending'));
+document.getElementById('tab-approved').addEventListener('click', () => switchTab('approved'));
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.getElementById('tab-pending').classList.toggle('active', tab === 'pending');
+  document.getElementById('tab-approved').classList.toggle('active', tab === 'approved');
+  renderList();
+}
+
+async function loadProfiles() {
+  setMsg('dash-msg', 'Loading requests…', 'info');
+  try {
+    const snap = await getDocs(query(collection(db, 'researcherProfiles'), orderBy('createdAt', 'desc')));
+    allProfiles = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    setMsg('dash-msg', '', 'info');
+    renderList();
+  } catch (err) {
+    setMsg('dash-msg', 'Could not load researcher profiles: ' + (err.message || 'unknown error'), 'error');
+  }
+}
+
+function fieldHtml(label, value) {
+  return '<div class="profile-field"><label>' + label + '</label><div' + (value ? '' : ' class="empty"') + '>' + (value ? escapeHtml(value) : '—') + '</div></div>';
+}
+function escapeHtml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function fmtDate(ts) {
+  if (!ts) return '';
+  try { return ts.toDate().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }); }
+  catch (e) { return ''; }
+}
+
+function renderList() {
+  const pending = allProfiles.filter(p => p.isApproved !== true);
+  const approved = allProfiles.filter(p => p.isApproved === true);
+  document.getElementById('count-pending').textContent = pending.length;
+  document.getElementById('count-approved').textContent = approved.length;
+
+  const list = activeTab === 'pending' ? pending : approved;
+  const container = document.getElementById('profile-list');
+
+  if (list.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">' + (activeTab === 'pending' ? '📭' : '👥') + '</div>' +
+      (activeTab === 'pending' ? 'No pending requests right now.' : 'No approved researchers yet.') + '</div>';
+    return;
+  }
+
+  container.innerHTML = list.map(p => `
+    <div class="profile-card" data-id="${p.id}">
+      <div class="profile-top">
+        <div>
+          <div class="profile-name">${escapeHtml(p.name || '(no name)')}</div>
+          <div class="profile-email">${escapeHtml(p.email || '')}</div>
+          <div class="profile-meta">Registered ${fmtDate(p.createdAt)}${p.signupSource ? ' · via ' + escapeHtml(p.signupSource) : ''}</div>
+        </div>
+        <div class="profile-actions">
+          ${activeTab === 'pending'
+            ? `<button class="btn btn-sm btn-approve" data-action="approve" data-id="${p.id}">✓ Approve</button>
+               <button class="btn btn-sm btn-reject" data-action="reject" data-id="${p.id}">Reject</button>`
+            : `<button class="btn btn-sm btn-reject" data-action="revoke" data-id="${p.id}">Revoke access</button>`
+          }
+        </div>
+      </div>
+      <div class="profile-grid">
+        ${fieldHtml('Username', p.username)}
+        ${fieldHtml('Phone', p.phone)}
+        ${fieldHtml('Job Title', p.jobTitle)}
+        ${fieldHtml('Institution', p.institution)}
+        ${fieldHtml('Country', p.country)}
+        ${fieldHtml('Research Domain', p.researchDomain)}
+      </div>
+    </div>
+  `).join('');
+
+  container.querySelectorAll('button[data-action]').forEach(btn => {
+    btn.addEventListener('click', () => handleAction(btn.dataset.action, btn.dataset.id, btn));
+  });
+}
+
+async function handleAction(action, id, btn) {
+  btn.disabled = true;
+  try {
+    if (action === 'approve') {
+      await updateDoc(doc(db, 'researcherProfiles', id), { isApproved: true, updatedAt: serverTimestamp() });
+    } else if (action === 'revoke') {
+      if (!confirm('Revoke this researcher\\'s access? They will need to be re-approved to use the tools again.')) { btn.disabled = false; return; }
+      await updateDoc(doc(db, 'researcherProfiles', id), { isApproved: false, updatedAt: serverTimestamp() });
+    } else if (action === 'reject') {
+      if (!confirm('Reject and permanently delete this registration request?')) { btn.disabled = false; return; }
+      await deleteDoc(doc(db, 'researcherProfiles', id));
+    }
+    await loadProfiles();
+  } catch (err) {
+    setMsg('dash-msg', 'Action failed: ' + (err.message || 'unknown error'), 'error');
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>
