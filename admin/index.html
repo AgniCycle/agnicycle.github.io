@@ -112,6 +112,14 @@ a:hover { text-decoration: underline; }
 .profile-email { font-size: 13px; color: var(--teal); }
 .profile-actions { display: flex; gap: 8px; flex-shrink: 0; }
 .profile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px 24px; }
+.access-grid { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; padding: 10px 14px; background: var(--bg2); border-radius: 10px; }
+.access-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.access-label { flex: 1; min-width: 200px; font-size: 12.5px; font-weight: 600; color: var(--text); }
+.access-badge-none { background: var(--surface2); color: var(--text3); }
+.access-badge-pending { background: rgba(249,115,22,0.12); color: var(--fire); }
+.access-badge-approved { background: rgba(34,197,94,0.12); color: var(--green); }
+.btn-xs { padding: 5px 10px; font-size: 11.5px; width: auto; }
+.migration-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; font-size: 12.5px; color: var(--text2); }
 .profile-field label { display: block; font-size: 10.5px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
 .profile-field div { font-size: 13.5px; color: var(--text); word-break: break-word; }
 .profile-field .empty { color: var(--text3); font-style: italic; }
@@ -200,6 +208,10 @@ footer { text-align: center; padding: 24px; font-size: 12.5px; color: var(--text
         <div class="usage-chips" id="traffic-stats">Loading…</div>
       </div>
     </div>
+    <div class="migration-bar">
+      <span id="migration-msg">Access is now tracked per tool/mode. If profiles below show all statuses as "none" unexpectedly, run the one-time migration.</span>
+      <button class="btn btn-sm btn-google" id="btn-run-migration">Run tool-access migration</button>
+    </div>
     <div class="tabs">
       <button class="tab active" id="tab-pending" data-tab="pending">Pending <span class="count" id="count-pending">0</span></button>
       <button class="tab" id="tab-approved" data-tab="approved">Approved <span class="count" id="count-approved">0</span></button>
@@ -247,18 +259,33 @@ const auth = getAuth(app);
 const db = getFirestore(app, "ai-studio-59121fd5-ef27-4a89-87c6-86a6a1726318");
 const functions = getFunctions(app);
 const getAuthMetadataFn = httpsCallable(functions, 'getResearcherAuthMetadata');
+const migrateToolAccessFn = httpsCallable(functions, 'migrateToolAccess');
 
 // Client-side check only for UX (which step to show). The REAL security
 // boundary is enforced server-side by Firestore rules (isEmailAdmin()) —
 // a non-admin email cannot list/update researcherProfiles regardless of
 // what this page tries to do.
-const ADMIN_EMAILS = ['dhkrnl37@gmail.com', 'dkumar39@wisc.edu', 'dkumar39@uwalumni.com'];
+const ADMIN_EMAILS = ['dhkrnl37@gmail.com', 'dkumar39@wisc.edu', 'dkumar39@uwalumni.com', 'agnicycle5@gmail.com'];
 
 const TOOL_META = {
   'engine-simulator': { label: 'Engine Simulator', cls: 'badge-src-teal' },
   'spray-calculator': { label: 'Spray Calculator', cls: 'badge-src-fire' },
   'ev-battery-suite': { label: 'EV Battery Suite', cls: 'badge-src-green' },
 };
+
+const TOOL_ACCESS_KEYS = ['engine-simulator:researcher', 'engine-simulator:instructor', 'spray-calculator', 'ev-battery-suite'];
+const TOOL_ACCESS_LABELS = {
+  'engine-simulator:researcher': 'Engine Simulator — Researcher',
+  'engine-simulator:instructor': 'Engine Simulator — Instructor',
+  'spray-calculator': 'Spray Calculator',
+  'ev-battery-suite': 'EV Battery Suite',
+};
+function getToolAccess(p) {
+  return p.toolAccess || {
+    'engine-simulator:researcher': 'none', 'engine-simulator:instructor': 'none',
+    'spray-calculator': 'none', 'ev-battery-suite': 'none',
+  };
+}
 
 const steps = ['loading', 'auth', 'denied', 'dashboard'];
 function showStep(name) {
@@ -300,6 +327,23 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 document.getElementById('btn-signout-dashboard').addEventListener('click', () => signOut(auth));
+
+document.getElementById('btn-run-migration').addEventListener('click', async (e) => {
+  const btn = e.target;
+  const msgEl = document.getElementById('migration-msg');
+  btn.disabled = true;
+  msgEl.textContent = 'Running migration…';
+  try {
+    const res = await migrateToolAccessFn();
+    const { migrated, skipped, total } = res.data;
+    msgEl.textContent = `Migration complete: ${migrated} profile(s) updated, ${skipped} already had tool access (${total} total). Safe to run again anytime.`;
+    await loadProfiles();
+  } catch (err) {
+    msgEl.textContent = 'Migration failed: ' + (err.message || 'unknown error');
+  } finally {
+    btn.disabled = false;
+  }
+});
 
 document.getElementById('btn-google').addEventListener('click', async () => {
   setMsg('auth-msg', '', 'error');
@@ -492,9 +536,29 @@ function footerHtml(p) {
   return '<div class="profile-footer">' + parts.map(t => '<span>' + t + '</span>').join('') + disabledBadge + '</div>';
 }
 
+function accessRowsHtml(p) {
+  const ta = getToolAccess(p);
+  const rows = TOOL_ACCESS_KEYS.map(key => {
+    const status = ta[key];
+    let actions = '';
+    if (status === 'pending') {
+      actions = `<button class="btn btn-xs btn-approve" data-action="approve-key" data-key="${key}" data-id="${p.id}">Approve</button>
+                 <button class="btn btn-xs btn-reject" data-action="deny-key" data-key="${key}" data-id="${p.id}">Deny</button>`;
+    } else if (status === 'approved') {
+      actions = `<button class="btn btn-xs btn-reject" data-action="revoke-key" data-key="${key}" data-id="${p.id}">Revoke</button>`;
+    }
+    return `<div class="access-row">
+      <span class="access-label">${TOOL_ACCESS_LABELS[key]}</span>
+      <span class="badge access-badge-${status}">${status}</span>
+      <span class="profile-actions">${actions}</span>
+    </div>`;
+  }).join('');
+  return `<div class="access-grid">${rows}</div>`;
+}
+
 function renderList() {
-  const pending = allProfiles.filter(p => p.isApproved !== true);
-  const approved = allProfiles.filter(p => p.isApproved === true);
+  const pending = allProfiles.filter(p => TOOL_ACCESS_KEYS.some(k => getToolAccess(p)[k] === 'pending'));
+  const approved = allProfiles.filter(p => TOOL_ACCESS_KEYS.some(k => getToolAccess(p)[k] === 'approved'));
   document.getElementById('count-pending').textContent = pending.length;
   document.getElementById('count-approved').textContent = approved.length;
 
@@ -523,14 +587,9 @@ function renderList() {
           </div>
           <div class="profile-email">${escapeHtml(p.email || '')}</div>
         </div>
-        <div class="profile-actions">
-          ${activeTab === 'pending'
-            ? `<button class="btn btn-sm btn-approve" data-action="approve" data-id="${p.id}">✓ Approve</button>
-               <button class="btn btn-sm btn-reject" data-action="reject" data-id="${p.id}">Reject</button>`
-            : `<button class="btn btn-sm btn-reject" data-action="revoke" data-id="${p.id}">Revoke access</button>`
-          }
-        </div>
+        <button class="btn btn-xs btn-reject" data-action="delete-profile" data-id="${p.id}">Delete</button>
       </div>
+      ${accessRowsHtml(p)}
       <div class="profile-grid">
         ${fieldHtml('Username', p.username)}
         ${fieldHtml('Phone', p.phone)}
@@ -545,20 +604,21 @@ function renderList() {
   }).join('');
 
   container.querySelectorAll('button[data-action]').forEach(btn => {
-    btn.addEventListener('click', () => handleAction(btn.dataset.action, btn.dataset.id, btn));
+    btn.addEventListener('click', () => handleAction(btn.dataset.action, btn.dataset.id, btn, btn.dataset.key));
   });
 }
 
-async function handleAction(action, id, btn) {
+async function handleAction(action, id, btn, key) {
   btn.disabled = true;
   try {
-    if (action === 'approve') {
-      await updateDoc(doc(db, 'researcherProfiles', id), { isApproved: true, updatedAt: serverTimestamp() });
-    } else if (action === 'revoke') {
-      if (!confirm('Revoke this researcher\'s access? They will need to be re-approved to use the tools again.')) { btn.disabled = false; return; }
-      await updateDoc(doc(db, 'researcherProfiles', id), { isApproved: false, updatedAt: serverTimestamp() });
-    } else if (action === 'reject') {
-      if (!confirm('Reject and permanently delete this registration request?')) { btn.disabled = false; return; }
+    const profile = allProfiles.find(p => p.id === id);
+    const ta = getToolAccess(profile);
+    if (action === 'approve-key') {
+      await updateDoc(doc(db, 'researcherProfiles', id), { toolAccess: { ...ta, [key]: 'approved' }, updatedAt: serverTimestamp() });
+    } else if (action === 'deny-key' || action === 'revoke-key') {
+      await updateDoc(doc(db, 'researcherProfiles', id), { toolAccess: { ...ta, [key]: 'none' }, updatedAt: serverTimestamp() });
+    } else if (action === 'delete-profile') {
+      if (!confirm('Permanently delete this researcher profile? This removes all access and cannot be undone.')) { btn.disabled = false; return; }
       await deleteDoc(doc(db, 'researcherProfiles', id));
     }
     await loadProfiles();
