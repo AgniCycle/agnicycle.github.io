@@ -265,6 +265,11 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
           <div class="hint">Letters, numbers, underscores, and hyphens only.</div>
         </div>
         <div class="field">
+          <label for="p-phone">Contact number</label>
+          <input type="tel" id="p-phone" autocomplete="tel" maxlength="30" placeholder="+1 555 000 0000" required/>
+          <div class="hint">Used for identity verification during approval — not shared publicly.</div>
+        </div>
+        <div class="field">
           <label for="p-jobtitle">Job title <span class="optional-tag">(optional)</span></label>
           <input type="text" id="p-jobtitle" maxlength="100" placeholder="e.g. PhD Student, Research Engineer"/>
         </div>
@@ -286,7 +291,7 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="p-terms" required/>
-          <label for="p-terms" style="font-weight:500; text-transform:none; letter-spacing:0; font-size:13.5px;">I agree to the AgniCycle Terms of Use and Privacy Policy</label>
+          <label for="p-terms" style="font-weight:500; text-transform:none; letter-spacing:0; font-size:13.5px;">I agree to the AgniCycle <a href="/terms/" target="_blank" rel="noopener">Terms of Use</a> and <a href="/privacy/" target="_blank" rel="noopener">Privacy Policy</a></label>
         </div>
         <button class="btn btn-primary" type="submit" id="btn-profile-submit">Submit access request</button>
       </form>
@@ -346,6 +351,8 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
         <li><a href="/about/">About AgniCycle</a></li>
         <li><a href="/cfd-training/">CFD Training</a></li>
         <li><a href="mailto:support@agnicycle.com">Contact</a></li>
+        <li><a href="/terms/">Terms of Use</a></li>
+        <li><a href="/privacy/">Privacy Policy</a></li>
       </ul>
     </div>
     <div class="footer-col">
@@ -551,10 +558,15 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
   const name = document.getElementById('p-name').value.trim();
   const username = document.getElementById('p-username').value.trim();
   const cleanUsername = username.toLowerCase();
+  const phone = document.getElementById('p-phone').value.trim();
 
   setMsg('profile-msg', '', 'error');
   if (!/^[a-zA-Z0-9_\-]+$/.test(cleanUsername)) {
     setMsg('profile-msg', 'Username can only contain letters, numbers, underscores, and hyphens.', 'error');
+    return;
+  }
+  if (!phone) {
+    setMsg('profile-msg', 'A contact number is required for approval.', 'error');
     return;
   }
   if (!document.getElementById('p-terms').checked) {
@@ -580,7 +592,7 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
       jobTitle: document.getElementById('p-jobtitle').value.trim(),
       institution: document.getElementById('p-institution').value.trim(),
       country: document.getElementById('p-country').value.trim(),
-      phone: '',
+      phone: phone,
       researchDomain: document.getElementById('p-domain').value.trim(),
       // "Both" so this account works in every tool, including Engine
       // Simulator's Researcher/Learner mode check at sign-in.
