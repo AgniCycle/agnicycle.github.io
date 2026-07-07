@@ -485,6 +485,26 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
           <label for="p-domain">Research domain <span class="optional-tag">(optional)</span></label>
           <input type="text" id="p-domain" maxlength="200" placeholder="e.g. IC engines, sprays, batteries, CFD"/>
         </div>
+        <div class="field">
+          <label>Which access do you need?</label>
+          <div class="hint" style="margin-top:0; margin-bottom:10px;">Pick one or more — each is reviewed and approved independently, so you're not blocked waiting on the others.</div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="tool-es-researcher" checked/>
+            <label for="tool-es-researcher" style="font-weight:500; text-transform:none; letter-spacing:0; font-size:13.5px;">Engine Simulator — Researcher</label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="tool-es-instructor"/>
+            <label for="tool-es-instructor" style="font-weight:500; text-transform:none; letter-spacing:0; font-size:13.5px;">Engine Simulator — Instructor</label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="tool-spray"/>
+            <label for="tool-spray" style="font-weight:500; text-transform:none; letter-spacing:0; font-size:13.5px;">Spray Calculator</label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="tool-ev"/>
+            <label for="tool-ev" style="font-weight:500; text-transform:none; letter-spacing:0; font-size:13.5px;">EV Battery Suite</label>
+          </div>
+        </div>
         <div class="checkbox-row">
           <input type="checkbox" id="p-subscribe" checked/>
           <label for="p-subscribe" style="font-weight:500; text-transform:none; letter-spacing:0; font-size:13.5px;">Email me about new tools and platform updates</label>
@@ -500,26 +520,14 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
       </p>
     </div>
 
-    <!-- STEP: pending -->
-    <div class="step" id="step-pending">
-      <div class="status-icon">⏳</div>
-      <h1>Request received</h1>
-      <p class="sub">Your researcher profile is <strong>pending admin approval</strong>. You'll get an email at <strong id="pending-email"></strong> once you're approved — then the same login works on every AgniCycle tool.</p>
-      <div class="msg msg-info">Approval is manual and usually quick. No further action is needed from you.</div>
-      <p style="text-align:center;"><button class="btn-ghost" type="button" id="btn-signout-3">Sign out</button></p>
-    </div>
-
-    <!-- STEP: approved -->
-    <div class="step" id="step-approved">
-      <div class="status-icon">✅</div>
-      <h1>You're approved</h1>
-      <p class="sub">Your account <strong id="approved-email"></strong> already has full researcher access. Sign in to any tool with the same credentials:</p>
-      <div class="tool-links">
-        <a class="tool-link" href="/simulator/app/"><span class="dot" style="background:var(--fire)"></span> Engine Simulator</a>
-        <a class="tool-link" href="/spray/app/"><span class="dot" style="background:var(--teal)"></span> Spray Calculator</a>
-        <a class="tool-link" href="/ev-battery/app/"><span class="dot" style="background:#10b981"></span> EV Battery Suite</a>
-      </div>
-      <p style="margin-top:16px; text-align:center;"><button class="btn-ghost" type="button" id="btn-signout-4">Sign out</button></p>
+    <!-- STEP: status (per-tool access, shown for both new pending requests
+         and returning users checking on / requesting more access) -->
+    <div class="step" id="step-status">
+      <h1>Your AgniCycle Access</h1>
+      <p class="sub">Signed in as <strong id="status-email"></strong>. Each tool/mode is reviewed and approved independently.</p>
+      <div id="status-msg"></div>
+      <div class="tool-links" id="status-rows"></div>
+      <p style="margin-top:16px; text-align:center;"><button class="btn-ghost" type="button" id="btn-signout-3">Sign out</button></p>
     </div>
 
   </div>
@@ -594,7 +602,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app, "ai-studio-59121fd5-ef27-4a89-87c6-86a6a1726318");
 
-const steps = ['loading','auth','verify','profile','pending','approved'];
+const steps = ['loading','auth','verify','profile','status'];
 function showStep(name) {
   steps.forEach(s => document.getElementById('step-' + s).classList.toggle('active', s === name));
 }
@@ -604,6 +612,73 @@ function setMsg(elId, text, kind) {
 }
 
 let signinMode = false; // false = create account, true = sign in
+
+const TOOL_ACCESS_KEYS = ['engine-simulator:researcher', 'engine-simulator:instructor', 'spray-calculator', 'ev-battery-suite'];
+const TOOL_ACCESS_META = {
+  'engine-simulator:researcher': { label: 'Engine Simulator — Researcher', color: 'var(--fire)', link: '/simulator/app/' },
+  'engine-simulator:instructor': { label: 'Engine Simulator — Instructor', color: 'var(--fire)', link: '/simulator/app/' },
+  'spray-calculator': { label: 'Spray Calculator', color: 'var(--teal)', link: '/spray/app/' },
+  'ev-battery-suite': { label: 'EV Battery Suite', color: '#10b981', link: '/ev-battery/app/' },
+};
+
+// Profiles created before toolAccess existed only have the old blanket
+// isApproved flag — treat that as "researcher access approved" so returning
+// users from before this change still see a sensible status.
+function getToolAccess(data) {
+  return data.toolAccess || {
+    'engine-simulator:researcher': data.isApproved ? 'approved' : 'none',
+    'engine-simulator:instructor': 'none',
+    'spray-calculator': 'none',
+    'ev-battery-suite': 'none',
+  };
+}
+
+function renderStatusRows(uid, data) {
+  const ta = getToolAccess(data);
+  const container = document.getElementById('status-rows');
+  container.innerHTML = TOOL_ACCESS_KEYS.map((key) => {
+    const meta = TOOL_ACCESS_META[key];
+    const status = ta[key] || 'none';
+    let action = '';
+    if (status === 'approved') {
+      action = '<a href="' + meta.link + '" style="font-size:13px; font-weight:700;">Open →</a>';
+    } else if (status === 'pending') {
+      action = '<span style="font-size:12.5px; color:var(--text3); font-weight:600;">Pending review</span>';
+    } else {
+      action = '<button class="btn-ghost" type="button" data-request-key="' + key + '" style="font-size:13px;">Request access</button>';
+    }
+    return '<div class="tool-link" style="justify-content:space-between;">'
+      + '<span style="display:flex; align-items:center; gap:10px;"><span class="dot" style="background:' + meta.color + '"></span>' + meta.label + '</span>'
+      + action
+      + '</div>';
+  }).join('');
+
+  container.querySelectorAll('button[data-request-key]').forEach((btn) => {
+    btn.addEventListener('click', () => handleRequestAccess(uid, btn.dataset.requestKey, btn));
+  });
+}
+
+async function handleRequestAccess(uid, key, btn) {
+  btn.disabled = true;
+  btn.textContent = 'Requesting…';
+  setMsg('status-msg', '', 'error');
+  try {
+    const snap = await getDoc(doc(db, 'researcherProfiles', uid));
+    const ta = getToolAccess(snap.data());
+    await setDoc(doc(db, 'researcherProfiles', uid), {
+      toolAccess: { ...ta, [key]: 'pending' },
+      updatedAt: serverTimestamp(),
+    }, { merge: true });
+    const freshSnap = await getDoc(doc(db, 'researcherProfiles', uid));
+    renderStatusRows(uid, freshSnap.data());
+    setMsg('status-msg', "Request submitted — you'll get an email once it's approved.", 'ok');
+  } catch (err) {
+    console.error('Request access failed', err);
+    setMsg('status-msg', 'Could not submit request: ' + (err.message || 'unknown error'), 'error');
+    btn.disabled = false;
+    btn.textContent = 'Request access';
+  }
+}
 
 async function routeUser(user) {
   if (!user) { showStep('auth'); return; }
@@ -616,14 +691,9 @@ async function routeUser(user) {
   try {
     const snap = await getDoc(doc(db, 'researcherProfiles', user.uid));
     if (snap.exists()) {
-      const email = user.email || '';
-      if (snap.data().isApproved === true) {
-        document.getElementById('approved-email').textContent = email;
-        showStep('approved');
-      } else {
-        document.getElementById('pending-email').textContent = email;
-        showStep('pending');
-      }
+      document.getElementById('status-email').textContent = user.email || '';
+      renderStatusRows(user.uid, snap.data());
+      showStep('status');
       return;
     }
   } catch (err) {
@@ -774,6 +844,15 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
     return;
   }
 
+  const wantsEsResearcher = document.getElementById('tool-es-researcher').checked;
+  const wantsEsInstructor = document.getElementById('tool-es-instructor').checked;
+  const wantsSpray = document.getElementById('tool-spray').checked;
+  const wantsEv = document.getElementById('tool-ev').checked;
+  if (!wantsEsResearcher && !wantsEsInstructor && !wantsSpray && !wantsEv) {
+    setMsg('profile-msg', 'Select at least one tool/mode you want access to.', 'error');
+    return;
+  }
+
   btn.disabled = true;
   try {
     // Username uniqueness check (public-readable lookup collection)
@@ -794,9 +873,15 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
       country: document.getElementById('p-country').value.trim(),
       phone: phone,
       researchDomain: document.getElementById('p-domain').value.trim(),
-      // "Both" so this account works in every tool, including Engine
-      // Simulator's Researcher/Learner mode check at sign-in.
-      appMode: 'Both',
+      // Kept for Engine Simulator's own Researcher/Learner UI toggle
+      // (a separate, self-selected preference from toolAccess approval).
+      appMode: wantsEsResearcher && wantsEsInstructor ? 'Both' : (wantsEsInstructor ? 'Learner' : 'Researcher'),
+      toolAccess: {
+        'engine-simulator:researcher': wantsEsResearcher ? 'pending' : 'none',
+        'engine-simulator:instructor': wantsEsInstructor ? 'pending' : 'none',
+        'spray-calculator': wantsSpray ? 'pending' : 'none',
+        'ev-battery-suite': wantsEv ? 'pending' : 'none',
+      },
       termsAccepted: true,
       subscribeUpdates: document.getElementById('p-subscribe').checked,
       isApproved: false,
@@ -814,8 +899,9 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
     // Cloud Function, triggered directly off this Firestore write — no
     // client-side notification call needed here.
 
-    document.getElementById('pending-email').textContent = user.email || '';
-    showStep('pending');
+    document.getElementById('status-email').textContent = user.email || '';
+    renderStatusRows(user.uid, profileData);
+    showStep('status');
   } catch (err) {
     console.warn('Profile submit failed', err);
     let msg = 'Could not submit your request: ' + (err.message || 'unknown error');
@@ -829,7 +915,7 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
 });
 
 // ── Sign out buttons ──
-['btn-signout-1','btn-signout-2','btn-signout-3','btn-signout-4'].forEach((id) => {
+['btn-signout-1','btn-signout-2','btn-signout-3'].forEach((id) => {
   document.getElementById(id).addEventListener('click', async () => {
     await signOut(auth);
     signinMode = false;
