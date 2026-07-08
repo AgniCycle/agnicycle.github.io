@@ -210,6 +210,7 @@ footer { text-align: center; padding: 24px; font-size: 12.5px; color: var(--text
             <div class="readonly-row"><span class="rl-label">Username</span><span class="rl-value" id="ro-username"></span></div>
             <div class="readonly-row"><span class="rl-label">Email</span><span class="rl-value" id="ro-email"></span></div>
             <div class="readonly-row"><span class="rl-label">Member since</span><span class="rl-value" id="ro-membersince"></span></div>
+            <div class="readonly-row"><span class="rl-label">Access Valid Until</span><span class="rl-value" id="ro-validity"></span></div>
           </div>
 
           <form id="profile-form">
@@ -596,6 +597,21 @@ function populateProfileForm(data) {
   document.getElementById('ro-email').textContent = data.email || '';
   const created = data.createdAt && typeof data.createdAt.toDate === 'function' ? data.createdAt.toDate() : null;
   document.getElementById('ro-membersince').textContent = created ? created.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : '—';
+
+  const ta = getToolAccess(data);
+  const expiry = getToolAccessExpiry(data);
+  const approvedDates = TOOL_ACCESS_KEYS
+    .filter((key) => ta[key] === 'approved' && expiry[key] && typeof expiry[key].toDate === 'function')
+    .map((key) => expiry[key].toDate())
+    .sort((a, b) => a - b);
+  const validityEl = document.getElementById('ro-validity');
+  if (approvedDates.length === 0) {
+    validityEl.textContent = '—';
+  } else {
+    const soonestText = approvedDates[0].toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    const allSame = approvedDates.every((d) => d.getTime() === approvedDates[0].getTime());
+    validityEl.textContent = allSame ? soonestText : soonestText + ' (earliest — see Tool Access below)';
+  }
 
   document.getElementById('d-name').value = data.name || '';
   document.getElementById('d-phone').value = data.phone || '';
