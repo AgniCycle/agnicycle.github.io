@@ -189,6 +189,14 @@ const oobCode = params.get('oobCode');
 const continueUrl = params.get('continueUrl');
 
 async function init() {
+  // No mode/oobCode at all means we were reached via Firebase's own hosted
+  // action page's "continue" link *after* it already completed the action
+  // (Firebase doesn't forward mode/oobCode to continueUrl) -- not an error,
+  // just land the user somewhere useful instead of a scary "invalid" screen.
+  if (!mode && !oobCode) {
+    window.location.href = '/account/';
+    return;
+  }
   if (!mode || !oobCode) {
     document.getElementById('invalid-msg').textContent = 'This link is missing required information.';
     showStep('invalid');
