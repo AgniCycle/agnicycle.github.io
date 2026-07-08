@@ -219,6 +219,7 @@ footer { text-align: center; padding: 24px; font-size: 12.5px; color: var(--text
       <button class="tab active" id="tab-pending" data-tab="pending">Pending <span class="count" id="count-pending">0</span></button>
       <button class="tab" id="tab-approved" data-tab="approved">Approved <span class="count" id="count-approved">0</span></button>
       <button class="tab" id="tab-expired" data-tab="expired">Expired <span class="count" id="count-expired">0</span></button>
+      <button class="tab" id="tab-profile-changes" data-tab="profile-changes">Profile Changes <span class="count" id="count-profile-changes">0</span></button>
       <button class="tab" id="tab-deletion" data-tab="deletion">Deletion Requests <span class="count" id="count-deletion">0</span></button>
     </div>
     <div class="dash-controls">
@@ -400,11 +401,12 @@ document.getElementById('btn-signout-denied').addEventListener('click', () => si
 document.getElementById('tab-pending').addEventListener('click', () => switchTab('pending'));
 document.getElementById('tab-approved').addEventListener('click', () => switchTab('approved'));
 document.getElementById('tab-expired').addEventListener('click', () => switchTab('expired'));
+document.getElementById('tab-profile-changes').addEventListener('click', () => switchTab('profile-changes'));
 document.getElementById('tab-deletion').addEventListener('click', () => switchTab('deletion'));
 document.getElementById('search-input').addEventListener('input', (e) => { searchQuery = e.target.value.trim(); renderList(); });
 document.getElementById('sort-select').addEventListener('change', (e) => { sortMode = e.target.value; renderList(); });
 
-const TABS = ['pending', 'approved', 'expired', 'deletion'];
+const TABS = ['pending', 'approved', 'expired', 'profile-changes', 'deletion'];
 function switchTab(tab) {
   activeTab = tab;
   TABS.forEach(t => document.getElementById('tab-' + t).classList.toggle('active', t === tab));
@@ -592,17 +594,45 @@ function accessRowsHtml(p) {
   return `<div class="access-grid">${rows}</div>`;
 }
 
+const PROFILE_CHANGE_FIELDS = [
+  ['name', 'Name'], ['jobTitle', 'Job Title'], ['phone', 'Phone'],
+  ['institution', 'Institution'], ['country', 'Country'], ['researchDomain', 'Research Domain'],
+];
+function profileChangeHtml(p) {
+  const pcr = p.profileChangeRequest;
+  if (!pcr) return '';
+  const rows = PROFILE_CHANGE_FIELDS
+    .filter(([key]) => (p[key] || '') !== (pcr[key] || ''))
+    .map(([key, label]) => `<div class="access-row">
+      <span class="access-label">${label}</span>
+      <span style="font-size:12.5px; color:var(--text3); flex:1;">${escapeHtml(p[key] || '—')} → <strong style="color:var(--text);">${escapeHtml(pcr[key] || '—')}</strong></span>
+    </div>`)
+    .join('') || `<div class="access-row"><span style="font-size:12.5px; color:var(--text3);">No field differences — resubmitted the same values.</span></div>`;
+  return `<div class="access-grid" style="margin-top:10px; border:1px solid rgba(249,115,22,0.35);">
+    <div class="access-row">
+      <span class="access-label" style="color:var(--fire);">Pending Profile Change Request</span>
+      <span class="profile-actions">
+        <button class="btn btn-xs btn-approve" data-action="approve-profile-change" data-id="${p.id}">Approve</button>
+        <button class="btn btn-xs btn-reject" data-action="reject-profile-change" data-id="${p.id}">Reject</button>
+      </span>
+    </div>
+    ${rows}
+  </div>`;
+}
+
 function renderList() {
   const pending = allProfiles.filter(p => TOOL_ACCESS_KEYS.some(k => getToolAccess(p)[k] === 'pending'));
   const approved = allProfiles.filter(p => TOOL_ACCESS_KEYS.some(k => getToolAccess(p)[k] === 'approved'));
   const expired = allProfiles.filter(p => TOOL_ACCESS_KEYS.some(k => getToolAccess(p)[k] === 'expired'));
+  const profileChanges = allProfiles.filter(p => p.profileChangeRequest);
   const deletion = allProfiles.filter(p => p.deletionRequested);
   document.getElementById('count-pending').textContent = pending.length;
   document.getElementById('count-approved').textContent = approved.length;
   document.getElementById('count-expired').textContent = expired.length;
+  document.getElementById('count-profile-changes').textContent = profileChanges.length;
   document.getElementById('count-deletion').textContent = deletion.length;
 
-  const tabLists = { pending, approved, expired, deletion };
+  const tabLists = { pending, approved, expired, 'profile-changes': profileChanges, deletion };
   let list = tabLists[activeTab] || pending;
   list = sortProfiles(list.filter(p => matchesSearch(p, searchQuery)));
   const container = document.getElementById('profile-list');
@@ -612,6 +642,7 @@ function renderList() {
       pending: ['📭', 'No pending requests right now.'],
       approved: ['👥', 'No approved researchers yet.'],
       expired: ['⏳', 'No expired access right now.'],
+      'profile-changes': ['✏️', 'No profile change requests right now.'],
       deletion: ['🗑️', 'No deletion requests right now.'],
     };
     const [icon, text] = emptyByTab[activeTab] || emptyByTab.pending;
@@ -637,6 +668,7 @@ function renderList() {
         <button class="btn btn-xs btn-reject" data-action="delete-profile" data-id="${p.id}">Delete Account</button>
       </div>
       ${accessRowsHtml(p)}
+      ${profileChangeHtml(p)}
       <div class="profile-grid">
         ${fieldHtml('Username', p.username)}
         ${fieldHtml('Phone', p.phone)}
@@ -678,6 +710,17 @@ async function handleAction(action, id, btn, key) {
     } else if (action === 'delete-profile') {
       if (!confirm('Permanently delete this account? This removes their sign-in credentials, profile, and all tool access, and cannot be undone.')) { btn.disabled = false; return; }
       await deleteResearcherAccountFn({ uid: id });
+    } else if (action === 'approve-profile-change') {
+      const pcr = profile.profileChangeRequest;
+      if (!pcr) { btn.disabled = false; return; }
+      await updateDoc(doc(db, 'researcherProfiles', id), {
+        name: pcr.name, jobTitle: pcr.jobTitle, phone: pcr.phone,
+        institution: pcr.institution, country: pcr.country, researchDomain: pcr.researchDomain,
+        profileChangeRequest: null,
+        updatedAt: serverTimestamp(),
+      });
+    } else if (action === 'reject-profile-change') {
+      await updateDoc(doc(db, 'researcherProfiles', id), { profileChangeRequest: null, updatedAt: serverTimestamp() });
     }
     await loadProfiles();
   } catch (err) {

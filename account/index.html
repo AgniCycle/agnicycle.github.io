@@ -203,8 +203,9 @@ footer { text-align: center; padding: 24px; font-size: 12.5px; color: var(--text
       <div class="dash-grid">
         <div class="panel">
           <h2>Profile</h2>
-          <p class="panel-sub">Fields marked required are used for access approval and account verification.</p>
+          <p class="panel-sub">Fields marked required are used for access approval and account verification. Changes to these fields are reviewed by an admin before they take effect.</p>
           <div id="profile-msg"></div>
+          <div id="pending-change-banner" class="msg msg-info" style="display:none;"></div>
 
           <div class="readonly-block">
             <div class="readonly-row"><span class="rl-label">Username</span><span class="rl-value" id="ro-username"></span></div>
@@ -444,8 +445,11 @@ footer { text-align: center; padding: 24px; font-size: 12.5px; color: var(--text
               <input type="checkbox" id="d-subscribe"/>
               <label for="d-subscribe" style="font-weight:500; text-transform:none; letter-spacing:0; font-size:13.5px;">Email me about new tools and platform updates</label>
             </div>
-            <button class="btn btn-primary" type="submit" id="btn-profile-save">Save changes</button>
+            <button class="btn btn-primary" type="submit" id="btn-profile-save">Submit Change Request</button>
           </form>
+          <p id="cancel-change-wrap" style="margin-top:10px; text-align:center; display:none;">
+            <button class="btn-ghost" type="button" id="btn-cancel-change">Cancel Request</button>
+          </p>
         </div>
 
         <div class="panel">
@@ -613,13 +617,30 @@ function populateProfileForm(data) {
     validityEl.textContent = allSame ? soonestText : soonestText + ' (earliest — see Tool Access below)';
   }
 
-  document.getElementById('d-name').value = data.name || '';
-  document.getElementById('d-phone').value = data.phone || '';
-  document.getElementById('d-jobtitle').value = data.jobTitle || '';
-  document.getElementById('d-institution').value = data.institution || '';
-  document.getElementById('d-country').value = data.country || '';
-  document.getElementById('d-domain').value = data.researchDomain || '';
+  const pcr = data.profileChangeRequest || null;
+  const src = pcr || data;
+  document.getElementById('d-name').value = src.name || '';
+  document.getElementById('d-phone').value = src.phone || '';
+  document.getElementById('d-jobtitle').value = src.jobTitle || '';
+  document.getElementById('d-institution').value = src.institution || '';
+  document.getElementById('d-country').value = src.country || '';
+  document.getElementById('d-domain').value = src.researchDomain || '';
   document.getElementById('d-subscribe').checked = !!data.subscribeUpdates;
+
+  const banner = document.getElementById('pending-change-banner');
+  const cancelWrap = document.getElementById('cancel-change-wrap');
+  const saveBtn = document.getElementById('btn-profile-save');
+  if (pcr) {
+    const at = pcr.requestedAt && typeof pcr.requestedAt.toDate === 'function' ? pcr.requestedAt.toDate() : null;
+    banner.textContent = 'Profile change request pending review' + (at ? ' since ' + at.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : '') + '. The fields below show what you requested — resubmit to change it, or cancel below.';
+    banner.style.display = '';
+    cancelWrap.style.display = '';
+    saveBtn.textContent = 'Resubmit Change Request';
+  } else {
+    banner.style.display = 'none';
+    cancelWrap.style.display = 'none';
+    saveBtn.textContent = 'Submit Change Request';
+  }
 }
 
 function renderDangerZone(uid, data) {
@@ -813,19 +834,47 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
   btn.disabled = true;
   try {
     await setDoc(doc(db, 'researcherProfiles', user.uid), {
-      name,
-      phone,
-      jobTitle,
-      institution,
-      country,
-      researchDomain: document.getElementById('d-domain').value.trim(),
+      profileChangeRequest: {
+        name,
+        phone,
+        jobTitle,
+        institution,
+        country,
+        researchDomain: document.getElementById('d-domain').value.trim(),
+        requestedAt: serverTimestamp(),
+      },
       subscribeUpdates: document.getElementById('d-subscribe').checked,
       updatedAt: serverTimestamp(),
     }, { merge: true });
-    setMsg('profile-msg', 'Profile updated.', 'ok');
+    const freshSnap = await getDoc(doc(db, 'researcherProfiles', user.uid));
+    populateProfileForm(freshSnap.data());
+    setMsg('profile-msg', "Change request submitted — an admin will review it shortly.", 'ok');
   } catch (err) {
     console.warn('Profile save failed', err);
-    setMsg('profile-msg', 'Could not save changes: ' + (err.message || 'unknown error'), 'error');
+    setMsg('profile-msg', 'Could not submit change request: ' + (err.message || 'unknown error'), 'error');
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+// ── Cancel pending profile change request ──
+document.getElementById('btn-cancel-change').addEventListener('click', async () => {
+  const user = auth.currentUser;
+  if (!user) return;
+  const btn = document.getElementById('btn-cancel-change');
+  btn.disabled = true;
+  setMsg('profile-msg', '', 'error');
+  try {
+    await setDoc(doc(db, 'researcherProfiles', user.uid), {
+      profileChangeRequest: null,
+      updatedAt: serverTimestamp(),
+    }, { merge: true });
+    const freshSnap = await getDoc(doc(db, 'researcherProfiles', user.uid));
+    populateProfileForm(freshSnap.data());
+    setMsg('profile-msg', 'Change request cancelled.', 'ok');
+  } catch (err) {
+    console.warn('Cancel change request failed', err);
+    setMsg('profile-msg', 'Could not cancel request: ' + (err.message || 'unknown error'), 'error');
   } finally {
     btn.disabled = false;
   }
