@@ -118,6 +118,9 @@ a:hover { text-decoration: underline; }
 .access-badge-none { background: var(--surface2); color: var(--text3); }
 .access-badge-pending { background: rgba(249,115,22,0.12); color: var(--fire); }
 .access-badge-approved { background: rgba(34,197,94,0.12); color: var(--green); }
+.access-badge-expired { background: rgba(220,38,38,0.12); color: var(--red); }
+.access-expiry { font-size: 11px; color: var(--text3); font-weight: 500; }
+.access-renewal-tag { font-size: 10.5px; font-weight: 700; color: var(--fire); text-transform: uppercase; letter-spacing: 0.04em; }
 .btn-xs { padding: 5px 10px; font-size: 11.5px; width: auto; }
 .migration-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; font-size: 12.5px; color: var(--text2); }
 .profile-field label { display: block; font-size: 10.5px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
@@ -215,6 +218,7 @@ footer { text-align: center; padding: 24px; font-size: 12.5px; color: var(--text
     <div class="tabs">
       <button class="tab active" id="tab-pending" data-tab="pending">Pending <span class="count" id="count-pending">0</span></button>
       <button class="tab" id="tab-approved" data-tab="approved">Approved <span class="count" id="count-approved">0</span></button>
+      <button class="tab" id="tab-expired" data-tab="expired">Expired <span class="count" id="count-expired">0</span></button>
       <button class="tab" id="tab-deletion" data-tab="deletion">Deletion Requests <span class="count" id="count-deletion">0</span></button>
     </div>
     <div class="dash-controls">
@@ -287,6 +291,23 @@ function getToolAccess(p) {
     'engine-simulator:researcher': 'none', 'engine-simulator:instructor': 'none',
     'spray-calculator': 'none', 'ev-battery-suite': 'none',
   };
+}
+function getToolAccessExpiry(p) {
+  return p.toolAccessExpiry || {
+    'engine-simulator:researcher': null, 'engine-simulator:instructor': null,
+    'spray-calculator': null, 'ev-battery-suite': null,
+  };
+}
+const ACCESS_VALIDITY_DAYS = 365;
+function freshExpiryDate() {
+  const d = new Date();
+  d.setDate(d.getDate() + ACCESS_VALIDITY_DAYS);
+  return d;
+}
+function fmtExpiry(ts) {
+  if (!ts) return '';
+  try { return ts.toDate().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }); }
+  catch (e) { return ''; }
 }
 
 const steps = ['loading', 'auth', 'denied', 'dashboard'];
@@ -378,15 +399,15 @@ document.getElementById('btn-signout-denied').addEventListener('click', () => si
 
 document.getElementById('tab-pending').addEventListener('click', () => switchTab('pending'));
 document.getElementById('tab-approved').addEventListener('click', () => switchTab('approved'));
+document.getElementById('tab-expired').addEventListener('click', () => switchTab('expired'));
 document.getElementById('tab-deletion').addEventListener('click', () => switchTab('deletion'));
 document.getElementById('search-input').addEventListener('input', (e) => { searchQuery = e.target.value.trim(); renderList(); });
 document.getElementById('sort-select').addEventListener('change', (e) => { sortMode = e.target.value; renderList(); });
 
+const TABS = ['pending', 'approved', 'expired', 'deletion'];
 function switchTab(tab) {
   activeTab = tab;
-  document.getElementById('tab-pending').classList.toggle('active', tab === 'pending');
-  document.getElementById('tab-approved').classList.toggle('active', tab === 'approved');
-  document.getElementById('tab-deletion').classList.toggle('active', tab === 'deletion');
+  TABS.forEach(t => document.getElementById('tab-' + t).classList.toggle('active', t === tab));
   renderList();
 }
 
@@ -542,20 +563,29 @@ function footerHtml(p) {
 
 function accessRowsHtml(p) {
   const ta = getToolAccess(p);
+  const expiry = getToolAccessExpiry(p);
   const rows = TOOL_ACCESS_KEYS.map(key => {
     const status = ta[key];
+    const exp = expiry[key];
     let actions = '';
+    let expiryTag = '';
     if (status === 'pending') {
       actions = `<button class="btn btn-xs btn-approve" data-action="approve-key" data-key="${key}" data-id="${p.id}">Approve</button>
                  <button class="btn btn-xs btn-reject" data-action="deny-key" data-key="${key}" data-id="${p.id}">Deny</button>`;
+      if (exp) expiryTag = `<span class="access-renewal-tag">Renewal</span>`;
     } else if (status === 'approved') {
       actions = `<button class="btn btn-xs btn-reject" data-action="revoke-key" data-key="${key}" data-id="${p.id}">Revoke</button>`;
+      if (exp) expiryTag = `<span class="access-expiry">expires ${fmtExpiry(exp)}</span>`;
+    } else if (status === 'expired') {
+      actions = `<button class="btn btn-xs btn-approve" data-action="approve-key" data-key="${key}" data-id="${p.id}">Renew</button>`;
+      if (exp) expiryTag = `<span class="access-expiry">expired ${fmtExpiry(exp)}</span>`;
     } else {
       actions = `<button class="btn btn-xs btn-approve" data-action="approve-key" data-key="${key}" data-id="${p.id}">Grant</button>`;
     }
     return `<div class="access-row">
       <span class="access-label">${TOOL_ACCESS_LABELS[key]}</span>
       <span class="badge access-badge-${status}">${status}</span>
+      ${expiryTag}
       <span class="profile-actions">${actions}</span>
     </div>`;
   }).join('');
@@ -565,20 +595,28 @@ function accessRowsHtml(p) {
 function renderList() {
   const pending = allProfiles.filter(p => TOOL_ACCESS_KEYS.some(k => getToolAccess(p)[k] === 'pending'));
   const approved = allProfiles.filter(p => TOOL_ACCESS_KEYS.some(k => getToolAccess(p)[k] === 'approved'));
+  const expired = allProfiles.filter(p => TOOL_ACCESS_KEYS.some(k => getToolAccess(p)[k] === 'expired'));
   const deletion = allProfiles.filter(p => p.deletionRequested);
   document.getElementById('count-pending').textContent = pending.length;
   document.getElementById('count-approved').textContent = approved.length;
+  document.getElementById('count-expired').textContent = expired.length;
   document.getElementById('count-deletion').textContent = deletion.length;
 
-  let list = activeTab === 'pending' ? pending : (activeTab === 'approved' ? approved : deletion);
+  const tabLists = { pending, approved, expired, deletion };
+  let list = tabLists[activeTab] || pending;
   list = sortProfiles(list.filter(p => matchesSearch(p, searchQuery)));
   const container = document.getElementById('profile-list');
 
   if (list.length === 0) {
-    const emptyText = searchQuery
-      ? 'No matches for "' + escapeHtml(searchQuery) + '".'
-      : (activeTab === 'pending' ? 'No pending requests right now.' : (activeTab === 'approved' ? 'No approved researchers yet.' : 'No deletion requests right now.'));
-    container.innerHTML = '<div class="empty-state"><div class="icon">' + (searchQuery ? '🔍' : (activeTab === 'pending' ? '📭' : (activeTab === 'approved' ? '👥' : '🗑️'))) + '</div>' + emptyText + '</div>';
+    const emptyByTab = {
+      pending: ['📭', 'No pending requests right now.'],
+      approved: ['👥', 'No approved researchers yet.'],
+      expired: ['⏳', 'No expired access right now.'],
+      deletion: ['🗑️', 'No deletion requests right now.'],
+    };
+    const [icon, text] = emptyByTab[activeTab] || emptyByTab.pending;
+    const emptyText = searchQuery ? 'No matches for "' + escapeHtml(searchQuery) + '".' : text;
+    container.innerHTML = '<div class="empty-state"><div class="icon">' + (searchQuery ? '🔍' : icon) + '</div>' + emptyText + '</div>';
     return;
   }
 
@@ -622,10 +660,21 @@ async function handleAction(action, id, btn, key) {
   try {
     const profile = allProfiles.find(p => p.id === id);
     const ta = getToolAccess(profile);
+    const expiry = getToolAccessExpiry(profile);
+    const reminded = profile.toolAccessExpiryReminded || {};
     if (action === 'approve-key') {
-      await updateDoc(doc(db, 'researcherProfiles', id), { toolAccess: { ...ta, [key]: 'approved' }, updatedAt: serverTimestamp() });
+      await updateDoc(doc(db, 'researcherProfiles', id), {
+        toolAccess: { ...ta, [key]: 'approved' },
+        toolAccessExpiry: { ...expiry, [key]: freshExpiryDate() },
+        toolAccessExpiryReminded: { ...reminded, [key]: false },
+        updatedAt: serverTimestamp(),
+      });
     } else if (action === 'deny-key' || action === 'revoke-key') {
-      await updateDoc(doc(db, 'researcherProfiles', id), { toolAccess: { ...ta, [key]: 'none' }, updatedAt: serverTimestamp() });
+      await updateDoc(doc(db, 'researcherProfiles', id), {
+        toolAccess: { ...ta, [key]: 'none' },
+        toolAccessExpiry: { ...expiry, [key]: null },
+        updatedAt: serverTimestamp(),
+      });
     } else if (action === 'delete-profile') {
       if (!confirm('Permanently delete this account? This removes their sign-in credentials, profile, and all tool access, and cannot be undone.')) { btn.disabled = false; return; }
       await deleteResearcherAccountFn({ uid: id });
