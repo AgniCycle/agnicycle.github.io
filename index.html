@@ -33,59 +33,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/assets/site.css"/>
 <style>
 /* ──────────────────────────────────────────────
-   RESET & TOKENS
+   PAGE-SPECIFIC TOKENS & OVERRIDES
+   (shared tokens/components now live in /assets/site.css)
 ────────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg:        #07090f;
-  --bg2:       #0d1320;
-  --surface:   #111827;
-  --surface2:  #1a2235;
-  --border:    rgba(255,255,255,0.07);
-  --border2:   rgba(255,255,255,0.12);
-  --text:      #e2e8f0;
-  --text2:     #94a3b8;
-  --muted:     #64748b;
-  --fire:      #f97316;
-  --fire-dim:  #ea580c;
-  --fire-glow: rgba(249,115,22,0.18);
-  --teal:      #0ea5b7;
-  --teal-dim:  rgba(14,165,183,0.15);
-  --gold:      #fbbf24;
-  --green:     #22c55e;
-  --radius:    14px;
-  --radius-lg: 20px;
-  --shadow:    0 4px 24px rgba(0,0,0,0.5);
-  --shadow-fire: 0 0 40px rgba(249,115,22,0.3);
-  --text3:     rgba(255,255,255,0.35);
-  --surface3:  rgba(255,255,255,0.08);
-}
-/* ── LIGHT THEME ── */
-[data-theme="light"] {
-  --bg:        #f5f7fa;
-  --bg2:       #edf1f7;
-  --surface:   #ffffff;
-  --surface2:  #edf2f8;
-  --border:    rgba(0,0,0,0.08);
-  --border2:   rgba(0,0,0,0.13);
-  --text:      #1e293b;
-  --text2:     #475569;
-  --muted:     #64748b;
-  --shadow:    0 4px 24px rgba(0,0,0,0.07);
-  --shadow-fire: 0 0 40px rgba(249,115,22,0.18);
-  --text3:     #94a3b8;
-  --surface3:  rgba(0,0,0,0.06);
-}
-[data-theme="light"] .nav {
-  background: rgba(245,247,250,0.88);
-  border-bottom-color: rgba(0,0,0,0.07);
-}
-[data-theme="light"] .nav.scrolled {
-  background: rgba(245,247,250,0.97);
-  box-shadow: 0 1px 24px rgba(0,0,0,0.07);
-}
 [data-theme="light"] .hero-grid {
   background-image:
     linear-gradient(rgba(14,165,183,0.08) 1px, transparent 1px),
@@ -100,38 +53,24 @@
 [data-theme="light"] .hero-orb-teal {
   background: radial-gradient(ellipse at center, rgba(14,165,183,0.08) 0%, transparent 70%);
 }
-[data-theme="light"] .nav-mobile { background: var(--bg); border-top-color: var(--border); }
-[data-theme="light"] .nav-mobile a { color: var(--text); }
-[data-theme="light"] .footer-col a { color: var(--text2); }
-[data-theme="light"] .footer-col a:hover { color: var(--fire); text-decoration: none; }
-[data-theme="light"] ::-webkit-scrollbar-track { background: var(--bg2); }
-[data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); }
 [data-theme="light"] .faq-item[open] { border-color: rgba(249,115,22,0.2); }
 [data-theme="light"] .hero-product-panel { box-shadow: 0 16px 48px rgba(0,0,0,0.12); }
 [data-theme="light"] .hero h1 { color: #1e293b; }
 [data-theme="light"] .hero-eyebrow { border-color: rgba(249,115,22,0.3); background: rgba(249,115,22,0.06); }
 [data-theme="light"] .hero-trust span { color: var(--text2); }
-#theme-sun { display: none; }
-[data-theme="light"] #theme-moon { display: none; }
-[data-theme="light"] #theme-sun { display: block; }
 
-/* ── Light mode: fix hardcoded #fff text ── */
-[data-theme="light"] .section-headline { color: #0f172a; }
+/* ── Light mode: fix hardcoded #fff text (page-specific classes only —
+   .section-headline/.feat-title/.footer-brand-logo span now come from
+   /assets/site.css and are already theme-aware via var(--text)) ── */
 [data-theme="light"] .product-title { color: #0f172a; }
-[data-theme="light"] .feat-title { color: #1e293b; }
 [data-theme="light"] .audience-role { color: #1e293b; }
-[data-theme="light"] .footer-brand-logo span { color: #1e293b; }
 [data-theme="light"] .roadmap-title { color: #1e293b; }
 [data-theme="light"] .prod-title-lg { color: #0f172a; }
 [data-theme="light"] .prod-title-sm { color: #1e293b; }
 [data-theme="light"] .btn-sm-card:hover { background: rgba(0,0,0,0.07); color: var(--text); }
 
-html { scroll-behavior: smooth; background: var(--bg); }
 body {
-  font-family: 'Inter', sans-serif;
   background: transparent;
-  color: var(--text);
-  line-height: 1.6;
   overflow-x: hidden;
 }
 #page-bg-canvas {
@@ -145,212 +84,12 @@ body {
   opacity: 0.12;
 }
 
-/* ──────────────────────────────────────────────
-   ANNOUNCEMENT BAR
-────────────────────────────────────────────── */
-.announce-bar {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 101;
-  background: linear-gradient(90deg, #7c2d12 0%, #9a3412 40%, #7c2d12 100%);
-  border-bottom: 1px solid rgba(249,115,22,0.3);
-  padding: 9px 24px;
-  display: flex; align-items: center; justify-content: center; gap: 12px;
-  font-size: 13px; font-weight: 500; color: #fed7aa;
-  text-align: center;
-}
-.announce-bar strong { color: #fff; font-weight: 700; }
-.announce-bar a { color: #fdba74; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
-.announce-bar a:hover { color: #fff; }
-.announce-dot { width: 6px; height: 6px; background: #f97316; border-radius: 50%; animation: pulse 2s ease-in-out infinite; flex-shrink: 0; }
+/* announcement bar + scrollbar + nav system now come from /assets/site.css */
 h1,h2,h3,h4 { font-family: 'Sora', sans-serif; line-height: 1.2; }
 a { color: var(--fire); text-decoration: none; }
 a:hover { text-decoration: underline; }
 img { max-width: 100%; display: block; }
 code, .mono { font-family: 'JetBrains Mono', monospace; }
-
-/* ──────────────────────────────────────────────
-   SCROLLBAR
-────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg2); }
-::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
-
-/* ──────────────────────────────────────────────
-   NAV
-────────────────────────────────────────────── */
-/* ── NAV ── */
-.nav {
-  position: fixed; top: 38px; left: 0; right: 0; z-index: 100;
-  display: flex; align-items: center;
-  padding: 0 40px;
-  height: 60px;
-  background: rgba(7,9,15,0.85);
-  backdrop-filter: blur(24px) saturate(180%);
-  border-bottom: 1px solid var(--border);
-  transition: box-shadow 0.3s, background 0.3s;
-}
-.nav.scrolled {
-  box-shadow: 0 1px 40px rgba(0,0,0,0.5);
-  background: rgba(7,9,15,0.97);
-}
-.nav-brand {
-  display: flex; align-items: center; gap: 10px;
-  text-decoration: none; color: var(--text);
-  font-family: 'Sora', sans-serif; font-weight: 700; font-size: 18px;
-  flex-shrink: 0; margin-right: 32px;
-}
-.nav-brand:hover { text-decoration: none; }
-.nav-logo-mark {
-  width: 34px; height: 34px; border-radius: 9px;
-  background: #0B2536;
-  border: 1.5px solid #0ea5b7;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 0 14px rgba(14,165,183,0.3);
-}
-.nav-logo-mark svg { width: 20px; height: 20px; }
-.nav-brand span { letter-spacing: -0.3px; }
-.nav-brand em { color: var(--fire); font-style: normal; }
-
-/* center group */
-.nav-links {
-  display: flex; align-items: center; gap: 2px;
-  list-style: none; flex: 1;
-}
-.nav-links > li { position: relative; }
-.nav-links a, .nav-links button.nav-dd-trigger {
-  color: var(--text2); font-size: 13.5px; font-weight: 500;
-  padding: 6px 11px; border-radius: 8px;
-  transition: color 0.18s, background 0.18s;
-  text-decoration: none; cursor: pointer;
-  background: none; border: none; font-family: inherit; line-height: 1;
-  display: flex; align-items: center; gap: 4px;
-  white-space: nowrap;
-}
-.nav-links a:hover,
-.nav-links button.nav-dd-trigger:hover { color: var(--text); background: var(--surface2); }
-.nav-links a.nav-active { color: var(--text); }
-.nav-links a.nav-active::after {
-  content: ''; position: absolute; bottom: -2px; left: 11px; right: 11px;
-  height: 2px; border-radius: 2px;
-  background: var(--fire);
-}
-
-/* chevron icon in dropdown trigger */
-.nav-dd-trigger svg { transition: transform 0.2s; }
-.nav-links > li.open .nav-dd-trigger svg { transform: rotate(180deg); }
-
-/* dropdown panel */
-.nav-dropdown {
-  position: absolute; top: calc(100% + 10px); left: 50%;
-  transform: translateX(-50%);
-  min-width: 230px;
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: 14px; padding: 8px;
-  box-shadow: 0 16px 48px rgba(0,0,0,0.5);
-  opacity: 0; pointer-events: none;
-  transform: translateX(-50%) translateY(-6px);
-  transition: opacity 0.18s, transform 0.18s;
-}
-.nav-links > li.open .nav-dropdown {
-  opacity: 1; pointer-events: all;
-  transform: translateX(-50%) translateY(0);
-}
-.nav-dropdown a {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 12px; border-radius: 9px;
-  color: var(--text2); font-size: 13.5px; font-weight: 500;
-  text-decoration: none; transition: background 0.15s, color 0.15s;
-  background: none;
-}
-.nav-dropdown a:hover { background: var(--surface2); color: var(--text); }
-.nav-dd-icon {
-  width: 30px; height: 30px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.nav-dd-icon.fire { background: rgba(249,115,22,0.12); color: var(--fire); }
-.nav-dd-icon.teal { background: rgba(14,165,183,0.12); color: var(--teal); }
-.nav-dd-icon.gold { background: rgba(251,191,36,0.12); color: var(--gold); }
-.nav-dd-meta { display: flex; flex-direction: column; gap: 1px; }
-.nav-dd-meta strong { color: var(--text); font-size: 13px; font-weight: 600; }
-.nav-dd-meta span { color: var(--text3); font-size: 11.5px; }
-.nav-dd-divider { height: 1px; background: var(--border); margin: 6px 4px; }
-
-/* right side */
-.nav-right {
-  display: flex; align-items: center; gap: 6px;
-  margin-left: auto;
-}
-.nav-cta {
-  background: var(--fire);
-  color: #fff;
-  padding: 7px 16px;
-  border-radius: 9px;
-  font-weight: 600;
-  font-size: 13.5px;
-  border: none; cursor: pointer; font-family: inherit;
-  transition: opacity 0.2s, box-shadow 0.2s;
-  text-decoration: none; white-space: nowrap;
-}
-.nav-cta:hover { opacity: 0.88; box-shadow: var(--shadow-fire); }
-.nav-icon-btn {
-  display: flex; align-items: center; justify-content: center;
-  width: 34px; height: 34px; border-radius: 8px;
-  background: var(--surface2); border: 1px solid var(--border);
-  color: var(--text3); cursor: pointer;
-  transition: color 0.2s, background 0.2s, border-color 0.2s;
-  flex-shrink: 0;
-}
-.nav-icon-btn:hover { color: var(--text); background: var(--surface3); border-color: rgba(255,255,255,0.12); }
-.launch-tools-wrap { position: relative; }
-.launch-tools-btn { display:flex; align-items:center; gap:6px; height:34px; padding:0 12px; border-radius:8px; background:var(--surface2); border:1px solid var(--border); color:var(--text); font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; transition:color 0.2s, background 0.2s, border-color 0.2s; }
-.launch-tools-btn:hover { background:var(--surface); border-color:var(--border2); }
-.launch-tools-btn svg.chevron { transition:transform 0.2s; }
-.launch-tools-wrap.open .launch-tools-btn svg.chevron { transform:rotate(180deg); }
-.launch-tools-menu { position:absolute; top:calc(100% + 8px); right:0; min-width:210px; background:var(--surface); border:1px solid var(--border2); border-radius:12px; box-shadow:0 12px 32px rgba(0,0,0,0.25); padding:6px; display:none; flex-direction:column; gap:2px; z-index:200; }
-.launch-tools-wrap.open .launch-tools-menu { display:flex; }
-.launch-tools-menu a { display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:8px; text-decoration:none; color:var(--text); font-size:13.5px; font-weight:600; transition:background 0.15s; }
-.launch-tools-menu a:hover { background:var(--surface2); text-decoration:none; }
-.launch-tools-menu .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-.nav-icon-btn.install-btn { display: none; }
-.nav-icon-btn.install-btn.visible { display: flex; }
-
-/* hamburger */
-.nav-hamburger {
-  display: none; background: none; border: none;
-  color: var(--text); cursor: pointer; padding: 8px;
-  margin-left: auto; border-radius: 8px;
-  transition: background 0.2s;
-}
-.nav-hamburger:hover { background: var(--surface2); }
-
-/* mobile drawer */
-.nav-mobile {
-  display: none; position: fixed; top: 98px; left: 0; right: 0; bottom: 0; z-index: 99;
-  background: var(--bg); padding: 20px 20px 40px;
-  flex-direction: column; gap: 4px;
-  border-top: 1px solid var(--border);
-  overflow-y: auto;
-}
-.nav-mobile.open { display: flex; }
-.nav-mobile-section {
-  font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em;
-  color: var(--text3); text-transform: uppercase;
-  padding: 12px 14px 6px; margin-top: 8px;
-}
-.nav-mobile a {
-  color: var(--text); font-size: 15px; font-weight: 500;
-  padding: 11px 14px; border-radius: 10px;
-  text-decoration: none; display: flex; align-items: center; gap: 10px;
-  transition: background 0.15s;
-}
-.nav-mobile a:hover { background: var(--surface2); }
-.nav-mobile-cta {
-  margin-top: 16px; padding: 13px 14px; border-radius: 12px;
-  background: var(--fire); color: #fff;
-  font-weight: 600; font-size: 15px; text-align: center;
-  text-decoration: none; display: block;
-}
 
 /* ──────────────────────────────────────────────
    HERO
@@ -445,26 +184,8 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
 .hero-ctas {
   display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
 }
-.btn-primary {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--fire); color: #fff;
-  font-size: 15px; font-weight: 600;
-  padding: 14px 28px; border-radius: 12px; border: none; cursor: pointer;
-  text-decoration: none;
-  transition: opacity 0.2s, box-shadow 0.2s, transform 0.15s;
-  box-shadow: 0 4px 20px rgba(249,115,22,0.4);
-}
-.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 8px 32px rgba(249,115,22,0.5); text-decoration: none; }
-.btn-secondary {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--surface2); color: var(--text);
-  font-size: 15px; font-weight: 500;
-  padding: 13px 24px; border-radius: 12px;
-  border: 1px solid var(--border2); cursor: pointer;
-  text-decoration: none;
-  transition: background 0.2s, transform 0.15s;
-}
-.btn-secondary:hover { background: var(--surface); transform: translateY(-1px); text-decoration: none; }
+/* .btn-primary/.btn-secondary base now in /assets/site.css — page-specific
+   glow/shimmer enhancements for them still live further down this file */
 .hero-badges {
   display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
   margin-top: 8px;
@@ -526,27 +247,7 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
 .section-full {
   padding: 100px 24px;
 }
-.section-center { text-align: center; }
-.eyebrow {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
-  text-transform: uppercase; color: var(--teal);
-  margin-bottom: 14px;
-}
-.eyebrow::before {
-  content: ''; width: 24px; height: 2px;
-  background: var(--teal); border-radius: 1px;
-}
-.section-headline {
-  font-size: clamp(28px, 4vw, 44px);
-  font-weight: 800; letter-spacing: -1px;
-  color: #fff; margin-bottom: 18px;
-}
-.section-sub {
-  font-size: 17px; color: var(--text2);
-  max-width: 600px; margin: 0 auto 60px;
-  line-height: 1.7;
-}
+/* .section-center/.eyebrow/.section-headline/.section-sub now in /assets/site.css */
 
 /* ──────────────────────────────────────────────
    PRODUCT SECTIONS
@@ -660,28 +361,8 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
 .features-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
 }
-.feat-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 28px 24px;
-  transition: border-color 0.2s, transform 0.2s;
-}
-.feat-card:hover { border-color: var(--border2); transform: translateY(-2px); }
-.feat-icon {
-  width: 44px; height: 44px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 16px;
-  font-size: 22px;
-}
-.feat-icon.orange { background: rgba(249,115,22,0.12); }
-.feat-icon.teal   { background: rgba(14,165,183,0.12); }
-.feat-icon.gold   { background: rgba(251,191,36,0.12); }
-.feat-icon.green  { background: rgba(34,197,94,0.12); }
-.feat-icon.purple { background: rgba(168,85,247,0.12); }
-.feat-icon.blue   { background: rgba(59,130,246,0.12); }
-.feat-title { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 8px; }
-.feat-body { font-size: 14px; color: var(--text2); line-height: 1.65; }
+/* .feat-card/.feat-icon/.feat-title/.feat-body base now in /assets/site.css —
+   hover-glow enhancements for them still live further down this file */
 
 /* ──────────────────────────────────────────────
    AUDIENCE
@@ -823,49 +504,7 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
 /* ──────────────────────────────────────────────
    FOOTER
 ────────────────────────────────────────────── */
-footer {
-  background: var(--bg);
-  border-top: 1px solid var(--border);
-  padding: 48px 24px;
-}
-.footer-inner {
-  max-width: 1100px; margin: 0 auto;
-  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px;
-}
-.footer-brand { display: flex; flex-direction: column; gap: 14px; }
-.footer-brand-logo { display: flex; align-items: center; gap: 10px; }
-.footer-brand-logo span { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 18px; color: #fff; }
-.footer-tagline { font-size: 14px; color: var(--text2); line-height: 1.65; max-width: 280px; }
-.footer-col h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 14px; letter-spacing: 0.5px; text-transform: uppercase; }
-.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-.footer-col ul a { font-size: 14px; color: var(--text2); text-decoration: none; transition: color 0.2s; }
-.footer-col ul a:hover { color: var(--fire); }
-.footer-bottom {
-  max-width: 1100px; margin: 40px auto 0;
-  padding-top: 24px; border-top: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-  font-size: 13px; color: var(--muted); flex-wrap: wrap; gap: 12px;
-}
-.footer-bottom a { color: var(--muted); }
-.footer-bottom a:hover { color: var(--text); }
-
-/* ──────────────────────────────────────────────
-   STATUS BADGES
-────────────────────────────────────────────── */
-.status-badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  align-self: flex-start;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.8px;
-  text-transform: uppercase; padding: 4px 10px; border-radius: 999px;
-  margin-bottom: 12px;
-}
-.status-live { background: rgba(34,197,94,0.12); color: #22c55e; border: 1px solid rgba(34,197,94,0.25); }
-.status-beta { background: rgba(249,115,22,0.12); color: #f97316; border: 1px solid rgba(249,115,22,0.25); }
-.status-soon { background: rgba(100,116,139,0.12); color: #94a3b8; border: 1px solid rgba(100,116,139,0.2); }
-.status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-.status-live .status-dot { background: #22c55e; animation: pulse 2s ease-in-out infinite; }
-.status-beta .status-dot { background: #f97316; animation: pulse 2s ease-in-out infinite; }
-.status-soon .status-dot { background: #64748b; }
+/* footer + status-badge system now in /assets/site.css */
 
 /* ──────────────────────────────────────────────
    ROADMAP
@@ -966,12 +605,8 @@ footer {
     var(--bg2);
 }
 
-/* ── Announce bar animated gradient ── */
-.announce-bar {
-  background: linear-gradient(90deg, #7c2d12 0%, #9a3412 25%, #c2410c 50%, #9a3412 75%, #7c2d12 100%);
-  background-size: 200% auto;
-  animation: gradient-flow 8s linear infinite;
-}
+/* announce bar now uses the calm shared style from /assets/site.css — the
+   loud flowing-gradient animation was removed here on purpose */
 
 /* ── Section ambient radial glows ── */
 #simulator { position: relative; }
@@ -1323,7 +958,6 @@ details.faq-item[open] .faq-chevron { transform: rotate(180deg); color: var(--fi
 .prod-visual { border-left:1px solid var(--border); }
 .prod-header { display:flex; align-items:center; gap:12px; margin-bottom:18px; flex-wrap:wrap; }
 .prod-num { font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--muted); text-transform:uppercase; }
-.prod-num-sm { font-size:10.5px; font-weight:700; letter-spacing:1.5px; color:var(--muted); text-transform:uppercase; margin-bottom:10px; }
 .prod-title-lg { font-family:'Sora',sans-serif; font-size:clamp(26px,2.8vw,38px); font-weight:800; color:#fff; letter-spacing:-0.5px; margin-bottom:16px; line-height:1.15; }
 .prod-title-sm { font-family:'Sora',sans-serif; font-size:20px; font-weight:700; color:#fff; margin-bottom:10px; line-height:1.25; }
 .prod-desc-lg { font-size:15px; color:var(--text2); line-height:1.75; margin-bottom:28px; max-width:420px; }
@@ -1385,10 +1019,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
   <ul class="nav-links">
     <li><a href="/" class="nav-active">Home</a></li>
-    <li><a href="/simulator" style="color:var(--fire);font-weight:600">Engine Simulator</a></li>
-    <li><a href="/spray" style="color:var(--teal);font-weight:600">Spray Calculator</a></li>
-    <li><a href="/ev-battery/" style="color:#10b981;font-weight:600">EV Battery</a></li>
-    <li><a href="/cfd-calculators/" style="color:var(--teal);font-weight:600">CFD Calculators</a></li>
+    <li><a href="/simulator">Engine Simulator</a></li>
+    <li><a href="/spray">Spray Calculator</a></li>
+    <li><a href="/ev-battery/">EV Battery</a></li>
+    <li><a href="/cfd-calculators/">CFD Calculators</a></li>
     <li><a href="/cfd-training/">CFD Training</a></li>
     <li><a href="/about/">About</a></li>
   </ul>
@@ -1564,7 +1198,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- PRODUCTS BENTO -->
 <section id="products" style="padding:72px 24px 80px;background:var(--bg)">
-  <div style="max-width:1100px;margin:0 auto">
+  <div style="max-width:var(--container-wide);margin:0 auto">
     <div class="section-center reveal" style="margin-bottom:44px">
       <div class="eyebrow">What we build</div>
       <h2 class="section-headline">Five tools. One mission.</h2>
@@ -1576,7 +1210,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <div class="prod-card prod-featured reveal">
         <div class="prod-card-body">
           <div class="prod-header">
-            <span class="prod-num">// 01 — FLAGSHIP</span>
+            <span class="prod-num">Flagship</span>
             <div class="status-badge status-live"><div class="status-dot"></div> Live · v1.3</div>
           </div>
           <h2 class="prod-title-lg">AgniCycle™ <em style="color:var(--fire)">Engine</em> Simulator</h2>
@@ -1607,8 +1241,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       <!-- 02 SPRAY CALCULATOR -->
       <div class="prod-card reveal reveal-delay-1">
-        <div class="status-badge status-live" style="margin-bottom:14px"><div class="status-dot"></div> Live · Beta</div>
-        <div class="prod-num-sm">// 02</div>
+        <div class="status-badge status-live"><div class="status-dot"></div> Live · Beta</div>
         <h3 class="prod-title-sm">Fuel <em style="color:var(--teal)">Spray</em> Calculator</h3>
         <p class="prod-desc-sm">Droplet SMD, spray penetration, cone angle, and D² evaporation — without a wind tunnel. Export CSV + SVG.</p>
         <div class="prod-actions-sm">
@@ -1619,8 +1252,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       <!-- 03 EV BATTERY SUITE -->
       <div class="prod-card reveal reveal-delay-1">
-        <div class="status-badge status-live" style="margin-bottom:14px;color:#10b981;background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.22)"><div class="status-dot" style="background:#10b981"></div> Live · Beta</div>
-        <div class="prod-num-sm">// 03</div>
+        <div class="status-badge status-live" style="color:#10b981;background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.22)"><div class="status-dot" style="background:#10b981"></div> Live · Beta</div>
         <h3 class="prod-title-sm"><em style="color:#10b981">EV Battery</em> Suite</h3>
         <p class="prod-desc-sm">ECM modeling, SOC/SOH estimation, thermal coupling, CC-CV charging, and degradation analysis — 6+ chemistries.</p>
         <div class="prod-actions-sm">
@@ -1631,8 +1263,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       <!-- 04 CFD CALCULATORS -->
       <div class="prod-card reveal reveal-delay-2">
-        <div class="status-badge status-live" style="margin-bottom:14px"><div class="status-dot"></div> No Sign-In Required</div>
-        <div class="prod-num-sm">// 04</div>
+        <div class="status-badge status-live"><div class="status-dot"></div> No Sign-In Required</div>
         <h3 class="prod-title-sm"><em style="color:var(--teal)">CFD</em> Calculators</h3>
         <p class="prod-desc-sm">Reynolds, y⁺, turbulence properties, and non-dimensional numbers — four browser tools, instant results.</p>
         <div class="prod-actions-sm">
@@ -1642,8 +1273,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       <!-- 05 CFD TRAINING -->
       <div class="prod-card reveal reveal-delay-2" id="cfd">
-        <div class="status-badge status-soon" style="margin-bottom:14px"><div class="status-dot"></div> Coming Soon</div>
-        <div class="prod-num-sm">// 05</div>
+        <div class="status-badge status-soon"><div class="status-dot"></div> Coming Soon</div>
         <h3 class="prod-title-sm"><em style="color:var(--gold)">CFD Training</em> & Consulting</h3>
         <p class="prod-desc-sm">Structured courses by an active combustion researcher. CONVERGE, GT-Power, HPC — real workflows, not toy tutorials.</p>
         <div class="prod-actions-sm">
@@ -1701,10 +1331,10 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- WHO IT'S FOR -->
 <section class="persona-section" id="persona">
   <div class="persona-inner">
-    <div class="section-center reveal">
-      <div class="eyebrow" style="justify-content:center">Built For Different People</div>
+    <div class="reveal">
+      <div class="eyebrow">Built For Different People</div>
       <h2 class="section-headline">Same physics engine, different reasons to use it</h2>
-      <p class="section-sub">Three very different people open AgniCycle every week — each one comes for something else.</p>
+      <p class="section-sub" style="margin-bottom:48px">Three very different people open AgniCycle every week — each one comes for something else.</p>
     </div>
     <div class="audience-grid reveal">
       <div class="audience-card">
@@ -1784,7 +1414,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- TEAM -->
 <div class="section-full" style="background:var(--bg2);border-top:1px solid var(--border);padding:100px 24px" id="team">
-  <div style="max-width:960px;margin:0 auto">
+  <div style="max-width:var(--container-wide);margin:0 auto">
     <div class="section-center reveal" style="margin-bottom:48px">
       <div class="eyebrow">The Team</div>
       <h2 class="section-headline">Built by an active researcher,<br/>not a software house</h2>
@@ -1861,7 +1491,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- FAQ -->
 <div class="section-full" id="faq" style="background:var(--bg);border-top:1px solid var(--border);padding:80px 24px">
-  <div style="max-width:820px;margin:0 auto">
+  <div style="max-width:var(--container-prose);margin:0 auto">
     <div class="section-center reveal" style="margin-bottom:48px">
       <div class="eyebrow">FAQ</div>
       <h2 class="section-headline">Frequently asked questions</h2>
@@ -1968,7 +1598,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- ROADMAP -->
 <div class="section-full" id="roadmap" style="background:var(--bg2);border-top:1px solid var(--border);padding:100px 24px">
-  <div style="max-width:1100px;margin:0 auto">
+  <div style="max-width:var(--container-wide);margin:0 auto">
     <div class="section-center reveal" style="margin-bottom:0">
       <div class="eyebrow">Roadmap</div>
       <h2 class="section-headline">What we're building</h2>
