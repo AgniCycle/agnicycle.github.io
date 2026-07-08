@@ -135,15 +135,6 @@ a:hover { text-decoration: underline; }
 .step.active { display: block; }
 
 .status-icon { font-size: 40px; margin-bottom: 12px; }
-.tool-links { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-.tool-link {
-  display: flex; align-items: center; gap: 10px;
-  padding: 12px 16px; border-radius: 10px;
-  background: var(--surface2); border: 1px solid var(--border);
-  font-weight: 600; font-size: 14px; color: var(--text);
-}
-.tool-link:hover { border-color: var(--border2); text-decoration: none; }
-.tool-link .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
 
 .spinner {
   width: 30px; height: 30px; border-radius: 50%;
@@ -182,7 +173,10 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
     </span>
     <span>Agni<em>Cycle</em></span>
   </a>
-  <a class="back-link" href="/">← Back to site</a>
+  <div style="display:flex; align-items:center; gap:18px;">
+    <a class="back-link" href="/account/">My Account</a>
+    <a class="back-link" href="/">← Back to site</a>
+  </div>
 </div>
 
 <div class="wrap">
@@ -520,16 +514,6 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
       </p>
     </div>
 
-    <!-- STEP: status (per-tool access, shown for both new pending requests
-         and returning users checking on / requesting more access) -->
-    <div class="step" id="step-status">
-      <h1>Your AgniCycle Access</h1>
-      <p class="sub">Signed in as <strong id="status-email"></strong>. Each tool/mode is reviewed and approved independently.</p>
-      <div id="status-msg"></div>
-      <div class="tool-links" id="status-rows"></div>
-      <p style="margin-top:16px; text-align:center;"><button class="btn-ghost" type="button" id="btn-signout-3">Sign out</button></p>
-    </div>
-
   </div>
 </div>
 
@@ -602,7 +586,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app, "ai-studio-59121fd5-ef27-4a89-87c6-86a6a1726318");
 
-const steps = ['loading','auth','verify','profile','status'];
+const steps = ['loading','auth','verify','profile'];
 function showStep(name) {
   steps.forEach(s => document.getElementById('step-' + s).classList.toggle('active', s === name));
 }
@@ -613,73 +597,6 @@ function setMsg(elId, text, kind) {
 
 let signinMode = false; // false = create account, true = sign in
 
-const TOOL_ACCESS_KEYS = ['engine-simulator:researcher', 'engine-simulator:instructor', 'spray-calculator', 'ev-battery-suite'];
-const TOOL_ACCESS_META = {
-  'engine-simulator:researcher': { label: 'Engine Simulator — Researcher', color: 'var(--fire)', link: '/simulator/app/' },
-  'engine-simulator:instructor': { label: 'Engine Simulator — Instructor', color: 'var(--fire)', link: '/simulator/app/' },
-  'spray-calculator': { label: 'Spray Calculator', color: 'var(--teal)', link: '/spray/app/' },
-  'ev-battery-suite': { label: 'EV Battery Suite', color: '#10b981', link: '/ev-battery/app/' },
-};
-
-// Profiles created before toolAccess existed only have the old blanket
-// isApproved flag — treat that as "researcher access approved" so returning
-// users from before this change still see a sensible status.
-function getToolAccess(data) {
-  return data.toolAccess || {
-    'engine-simulator:researcher': data.isApproved ? 'approved' : 'none',
-    'engine-simulator:instructor': 'none',
-    'spray-calculator': 'none',
-    'ev-battery-suite': 'none',
-  };
-}
-
-function renderStatusRows(uid, data) {
-  const ta = getToolAccess(data);
-  const container = document.getElementById('status-rows');
-  container.innerHTML = TOOL_ACCESS_KEYS.map((key) => {
-    const meta = TOOL_ACCESS_META[key];
-    const status = ta[key] || 'none';
-    let action = '';
-    if (status === 'approved') {
-      action = '<a href="' + meta.link + '" style="font-size:13px; font-weight:700;">Open →</a>';
-    } else if (status === 'pending') {
-      action = '<span style="font-size:12.5px; color:var(--text3); font-weight:600;">Pending review</span>';
-    } else {
-      action = '<button class="btn-ghost" type="button" data-request-key="' + key + '" style="font-size:13px;">Request access</button>';
-    }
-    return '<div class="tool-link" style="justify-content:space-between;">'
-      + '<span style="display:flex; align-items:center; gap:10px;"><span class="dot" style="background:' + meta.color + '"></span>' + meta.label + '</span>'
-      + action
-      + '</div>';
-  }).join('');
-
-  container.querySelectorAll('button[data-request-key]').forEach((btn) => {
-    btn.addEventListener('click', () => handleRequestAccess(uid, btn.dataset.requestKey, btn));
-  });
-}
-
-async function handleRequestAccess(uid, key, btn) {
-  btn.disabled = true;
-  btn.textContent = 'Requesting…';
-  setMsg('status-msg', '', 'error');
-  try {
-    const snap = await getDoc(doc(db, 'researcherProfiles', uid));
-    const ta = getToolAccess(snap.data());
-    await setDoc(doc(db, 'researcherProfiles', uid), {
-      toolAccess: { ...ta, [key]: 'pending' },
-      updatedAt: serverTimestamp(),
-    }, { merge: true });
-    const freshSnap = await getDoc(doc(db, 'researcherProfiles', uid));
-    renderStatusRows(uid, freshSnap.data());
-    setMsg('status-msg', "Request submitted — you'll get an email once it's approved.", 'ok');
-  } catch (err) {
-    console.error('Request access failed', err);
-    setMsg('status-msg', 'Could not submit request: ' + (err.message || 'unknown error'), 'error');
-    btn.disabled = false;
-    btn.textContent = 'Request access';
-  }
-}
-
 async function routeUser(user) {
   if (!user) { showStep('auth'); return; }
   if (!user.emailVerified) {
@@ -687,13 +604,12 @@ async function routeUser(user) {
     showStep('verify');
     return;
   }
-  // Verified — do they already have a profile?
+  // Verified — do they already have a profile? If so, /account/ is the
+  // canonical place to view status and request further access.
   try {
     const snap = await getDoc(doc(db, 'researcherProfiles', user.uid));
     if (snap.exists()) {
-      document.getElementById('status-email').textContent = user.email || '';
-      renderStatusRows(user.uid, snap.data());
-      showStep('status');
+      window.location.href = '/account/';
       return;
     }
   } catch (err) {
@@ -899,9 +815,8 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
     // Cloud Function, triggered directly off this Firestore write — no
     // client-side notification call needed here.
 
-    document.getElementById('status-email').textContent = user.email || '';
-    renderStatusRows(user.uid, profileData);
-    showStep('status');
+    window.location.href = '/account/';
+    return;
   } catch (err) {
     console.warn('Profile submit failed', err);
     let msg = 'Could not submit your request: ' + (err.message || 'unknown error');
@@ -915,7 +830,7 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
 });
 
 // ── Sign out buttons ──
-['btn-signout-1','btn-signout-2','btn-signout-3'].forEach((id) => {
+['btn-signout-1','btn-signout-2'].forEach((id) => {
   document.getElementById(id).addEventListener('click', async () => {
     await signOut(auth);
     signinMode = false;
