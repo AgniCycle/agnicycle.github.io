@@ -110,6 +110,11 @@ a:hover { text-decoration: underline; }
 .sparkline-bar:hover { opacity: 1; }
 .sparkline-bar.today { background: var(--fire); opacity: 1; }
 .sparkline-axis { display: flex; justify-content: space-between; margin-top: 8px; font-family: var(--mono); font-size: 10.5px; color: var(--text3); }
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+@media (max-width: 760px) { .chart-grid { grid-template-columns: 1fr; } }
+.traffic-sparkline-bar { flex: 1; display: flex; flex-direction: column-reverse; border-radius: 2px 2px 0 0; overflow: hidden; min-height: 2px; opacity: 0.9; transition: opacity 0.15s; }
+.traffic-sparkline-bar:hover { opacity: 1; }
+.traffic-sparkline-bar > div { width: 100%; }
 
 .bar-row { margin-bottom: 12px; }
 .bar-row:last-child { margin-bottom: 0; }
@@ -268,14 +273,21 @@ footer { text-align: center; padding: 24px; font-size: 12.5px; color: var(--text
         <div id="traffic-stats"><span class="stat-empty">Loading…</span></div>
       </div>
     </div>
-    <div class="chart-card" style="margin-bottom:22px;">
-      <div class="chart-card-title"><span class="sq" style="background:var(--fire)"></span>Signups — last 14 days</div>
-      <div class="sparkline-wrap" id="signup-sparkline"></div>
-      <div class="sparkline-axis" id="signup-sparkline-axis"></div>
+    <div class="chart-grid" style="margin-bottom:22px;">
+      <div class="chart-card">
+        <div class="chart-card-title"><span class="sq" style="background:var(--fire)"></span>Signups — last 14 days</div>
+        <div class="sparkline-wrap" id="signup-sparkline"></div>
+        <div class="sparkline-axis" id="signup-sparkline-axis"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title"><span class="sq" style="background:var(--teal)"></span>Landing traffic — last 14 days</div>
+        <div class="sparkline-wrap" id="traffic-sparkline"></div>
+        <div class="sparkline-axis" id="traffic-sparkline-axis"></div>
+      </div>
     </div>
 
     <div class="section-eyebrow">Access queue</div>
-    <div class="migration-bar">
+    <div class="migration-bar" id="migration-bar" style="display:none;">
       <span id="migration-msg">Access is now tracked per tool/mode. If profiles below show all statuses as "none" unexpectedly, run the one-time migration.</span>
       <button class="btn btn-sm btn-google" id="btn-run-migration">Run tool-access migration</button>
     </div>
@@ -505,6 +517,7 @@ async function loadProfiles() {
     const snap = await getDocs(query(collection(db, 'researcherProfiles'), orderBy('createdAt', 'desc')));
     allProfiles = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     setMsg('dash-msg', '', 'info');
+    document.getElementById('migration-bar').style.display = allProfiles.some(p => !p.toolAccess) ? '' : 'none';
     renderList();
     renderSignupStats();
     renderSignupSparkline();
@@ -542,7 +555,8 @@ async function loadTrafficStats() {
   el.innerHTML = '<span class="stat-empty">Loading…</span>';
   try {
     const snap = await getDoc(doc(db, 'publicStats', 'visitors'));
-    const traffic = snap.exists() ? (snap.data().toolTraffic || {}) : {};
+    const data = snap.exists() ? snap.data() : {};
+    const traffic = data.toolTraffic || {};
     const maxViews = Math.max(1, ...Object.keys(TOOL_META).map(key => (traffic[key] && traffic[key].views) || 0));
     const html = Object.keys(TOOL_META).map(key => {
       const t = traffic[key];
@@ -558,9 +572,40 @@ async function loadTrafficStats() {
       </div>`;
     }).join('');
     el.innerHTML = html || '<span class="stat-empty">No data yet.</span>';
+    renderTrafficSparkline(data.dailyTraffic || {});
   } catch (err) {
     el.innerHTML = '<span class="stat-empty">Could not load traffic data: ' + escapeHtml(err.message || 'unknown error') + '</span>';
   }
+}
+
+function formatGa4Date(ymd) {
+  const y = Number(ymd.slice(0, 4)), m = Number(ymd.slice(4, 6)) - 1, d = Number(ymd.slice(6, 8));
+  return new Date(y, m, d).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
+function renderTrafficSparkline(dailyTraffic) {
+  const wrap = document.getElementById('traffic-sparkline');
+  const axis = document.getElementById('traffic-sparkline-axis');
+  const toolKeys = Object.keys(TOOL_META);
+  const days = (dailyTraffic[toolKeys[0]] || []).map(d => d.date);
+  if (days.length === 0) {
+    wrap.innerHTML = '<span class="stat-empty">No traffic data yet.</span>';
+    axis.innerHTML = '';
+    return;
+  }
+  const dayTotals = days.map((_, i) => toolKeys.reduce((sum, k) => sum + ((dailyTraffic[k] || [])[i]?.users || 0), 0));
+  const maxTotal = Math.max(1, ...dayTotals);
+  wrap.innerHTML = days.map((date, i) => {
+    const total = dayTotals[i];
+    const pct = Math.max(total > 0 ? 6 : 2, Math.round((total / maxTotal) * 100));
+    const segs = toolKeys.map(k => {
+      const users = (dailyTraffic[k] || [])[i]?.users || 0;
+      return users > 0 ? `<div style="flex:${users};background:${TOOL_DOT_COLOR[k]}"></div>` : '';
+    }).join('');
+    const label = formatGa4Date(date);
+    return `<div class="traffic-sparkline-bar" style="height:${pct}%" title="${label}: ${total} visitor${total === 1 ? '' : 's'}">${segs}</div>`;
+  }).join('');
+  axis.innerHTML = `<span>${formatGa4Date(days[0])}</span><span>Today</span>`;
 }
 
 function renderSignupSparkline() {
