@@ -233,6 +233,12 @@ document.addEventListener('DOMContentLoaded', function() {
       <svg id="fs-expand" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
       <svg id="fs-shrink" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="3" y2="21"/><line x1="21" y1="3" x2="14" y2="10"/></svg>
     </button>
+    <a class="nav-icon-btn" href="/account/" aria-label="My Account" title="My Account">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+    </a>
   </div>
   <button class="nav-hamburger" id="hamburger" aria-label="Menu" onclick="toggleNav()">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -250,6 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
   <a href="/cfd-training/" onclick="closeNav()"><span style="color:var(--gold)">📊</span> CFD Training</a>
   <a href="/about/" onclick="closeNav()">About AgniCycle</a>
   <a href="mailto:support@agnicycle.com" onclick="closeNav()">Contact</a>
+  <a href="/account/" onclick="closeNav()">👤 My Account</a>
 </div>
 
 <!-- HERO -->
