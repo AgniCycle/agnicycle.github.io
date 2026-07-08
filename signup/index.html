@@ -15,15 +15,16 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='92' fill='%230B2536'/><circle cx='256' cy='256' r='200' fill='none' stroke='%230EA5B7' stroke-width='21'/><g transform='translate(456,256) rotate(90)'><path d='M28 0 L-41 -33 L-41 33 Z' fill='%230EA5B7'/></g><g transform='translate(56,256) rotate(270)'><path d='M28 0 L-41 -33 L-41 33 Z' fill='%230EA5B7'/></g><g transform='translate(256,256) scale(3.3) translate(-50,-49)'><path d='M50 8 C53 15 59 20 63 28 C68 36 71 44 71 56 C71 74 62 88 50 88 C38 88 29 74 29 56 C29 44 32 36 37 28 C41 20 47 15 50 8 Z' fill='url(%23fvo)'/><path d='M50 24 C54 31 60 37 62 46 C64.5 55 63 66 58 73 C55.5 77 53 79 50 79 C47 79 44.5 77 42 73 C37 66 35.5 55 38 46 C40 37 46 31 50 24 Z' fill='url(%23fvm)'/><path d='M50 46 C53 52 57 56 57.5 63 C58 70 55 76 50 76 C45 76 42 70 42.5 63 C43 56 47 52 50 46 Z' fill='url(%23fvk)'/><path d='M38 76 C39.5 84 44.5 88 50 88 C55.5 88 60.5 84 62 76 C59 82 54.5 85 50 85 C45.5 85 41 82 38 76 Z' fill='%2322D3EE' opacity='0.85'/></g><defs><linearGradient id='fvo' x1='0' y1='1' x2='0' y2='0'><stop offset='0%25' stop-color='%23F97316'/><stop offset='55%25' stop-color='%23F0570F'/><stop offset='100%25' stop-color='%23D93B06'/></linearGradient><linearGradient id='fvm' x1='0' y1='1' x2='0' y2='0'><stop offset='0%25' stop-color='%23FBBF24'/><stop offset='60%25' stop-color='%23F97316'/><stop offset='100%25' stop-color='%23F0500F'/></linearGradient><linearGradient id='fvk' x1='0' y1='1' x2='0' y2='0'><stop offset='0%25' stop-color='%23FFF6C9'/><stop offset='45%25' stop-color='%23FFE87A'/><stop offset='100%25' stop-color='%23FBBF24'/></linearGradient></defs></svg>" type="image/svg+xml"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
   --bg: #f5f7fa; --bg2: #edf1f7; --surface: #ffffff; --surface2: #edf2f8;
-  --border: rgba(0,0,0,0.08); --border2: rgba(0,0,0,0.13);
+  --border: rgba(15,23,42,0.09); --border2: rgba(15,23,42,0.15);
   --text: #1e293b; --text2: #475569; --text3: #94a3b8; --muted: #64748b;
   --fire: #f97316; --teal: #0ea5b7; --green: #22c55e; --red: #dc2626;
-  --radius: 14px;
+  --radius: 10px;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 html { background: var(--bg); }
 body {
@@ -33,6 +34,9 @@ body {
 h1,h2,h3 { font-family: 'Sora', sans-serif; line-height: 1.25; color: #0f172a; }
 a { color: var(--teal); text-decoration: none; }
 a:hover { text-decoration: underline; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.icon-circle { width: 54px; height: 54px; border-radius: 50%; background: var(--surface2); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
+.icon-lg { width: 24px; height: 24px; display: block; color: var(--teal); }
 
 /* ── ANNOUNCEMENT BAR ── */
 .announce-bar {
@@ -64,14 +68,14 @@ a:hover { text-decoration: underline; }
 }
 .wrap::before {
   content: ''; position: absolute; inset: 0;
-  background-image: linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
-  background-size: 32px 32px;
+  background-image: linear-gradient(rgba(15,23,42,0.028) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,0.028) 1px, transparent 1px);
+  background-size: 28px 28px;
   mask-image: radial-gradient(ellipse 70% 60% at 50% 20%, #000 0%, transparent 70%);
   pointer-events: none;
 }
 .card {
   width: 100%; max-width: 520px; background: var(--surface);
-  border: 1px solid var(--border); border-radius: 20px;
+  border: 1px solid var(--border); border-radius: 12px;
   padding: 36px; box-shadow: 0 10px 40px rgba(15,23,42,0.06);
   position: relative; z-index: 1;
 }
@@ -133,8 +137,6 @@ a:hover { text-decoration: underline; }
 
 .step { display: none; }
 .step.active { display: block; }
-
-.status-icon { font-size: 40px; margin-bottom: 12px; }
 
 .spinner {
   width: 30px; height: 30px; border-radius: 50%;
@@ -228,9 +230,9 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
       <div class="step-indicator">
         <div class="dot done"></div><div class="dot current"></div><div class="dot"></div>
       </div>
-      <div class="status-icon">📬</div>
+      <div class="icon-circle"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7L22 6"/></svg></div>
       <h1>Verify your email</h1>
-      <p class="sub">We sent a verification link to <strong id="verify-email"></strong>. Click the link in that email (check spam too), then come back here.</p>
+      <p class="sub">We sent a verification link to <strong class="mono" id="verify-email"></strong>. Click the link in that email (check spam too), then come back here.</p>
       <div id="verify-msg"></div>
       <button class="btn btn-primary" id="btn-check-verified">I've verified — continue</button>
       <p style="margin-top:14px; text-align:center;">
@@ -246,7 +248,7 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
         <div class="dot done"></div><div class="dot done"></div><div class="dot current"></div>
       </div>
       <h1>Complete your researcher profile</h1>
-      <p class="sub">Signed in as <strong id="profile-email"></strong>. Your access request is reviewed manually by the admin — the more context you give, the faster the approval.</p>
+      <p class="sub">Signed in as <strong class="mono" id="profile-email"></strong>. Your access request is reviewed manually by the admin — the more context you give, the faster the approval.</p>
       <div id="profile-msg"></div>
       <form id="profile-form">
         <div class="field">
