@@ -36,7 +36,7 @@ a { color: var(--teal); text-decoration: none; }
 a:hover { text-decoration: underline; }
 .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 .icon-circle { width: 54px; height: 54px; border-radius: 50%; background: var(--surface2); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
-.icon-lg { width: 24px; height: 24px; display: block; color: var(--teal); }
+.icon-lg { width: 24px; height: 24px; display: block; }
 
 /* ── ANNOUNCEMENT BAR ── */
 .announce-bar {
@@ -230,7 +230,7 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 4
       <div class="step-indicator">
         <div class="dot done"></div><div class="dot current"></div><div class="dot"></div>
       </div>
-      <div class="icon-circle"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7L22 6"/></svg></div>
+      <div class="icon-circle" style="color:var(--teal)"><svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7L22 6"/></svg></div>
       <h1>Verify your email</h1>
       <p class="sub">We sent a verification link to <strong class="mono" id="verify-email"></strong>. Click the link in that email (check spam too), then come back here.</p>
       <div id="verify-msg"></div>
@@ -666,7 +666,7 @@ document.getElementById('btn-forgot').addEventListener('click', async (e) => {
     return;
   }
   try {
-    await sendPasswordResetEmail(auth, email);
+    await sendPasswordResetEmail(auth, email, { url: 'https://www.agnicycle.com/auth-action/', handleCodeInApp: true });
     setMsg('auth-msg', 'Password reset email sent to ' + email + ' — check your inbox and spam folder.', 'ok');
   } catch (err) {
     const msg = err.code === 'auth/too-many-requests'
@@ -689,7 +689,7 @@ document.getElementById('email-form').addEventListener('submit', async (e) => {
     } else {
       const cred = await createUserWithEmailAndPassword(auth, email, pass);
       try {
-        await sendEmailVerification(cred.user, { url: 'https://www.agnicycle.com/signup/' });
+        await sendEmailVerification(cred.user, { url: 'https://www.agnicycle.com/auth-action/?continueUrl=' + encodeURIComponent('https://www.agnicycle.com/signup/'), handleCodeInApp: true });
       } catch (vErr) { console.warn('Verification email send failed', vErr); }
     }
     // onAuthStateChanged routes to the right step
@@ -727,7 +727,7 @@ document.getElementById('btn-check-verified').addEventListener('click', async ()
 
 document.getElementById('btn-resend').addEventListener('click', async () => {
   try {
-    await sendEmailVerification(auth.currentUser, { url: 'https://www.agnicycle.com/signup/' });
+    await sendEmailVerification(auth.currentUser, { url: 'https://www.agnicycle.com/auth-action/?continueUrl=' + encodeURIComponent('https://www.agnicycle.com/signup/'), handleCodeInApp: true });
     setMsg('verify-msg', 'Verification email sent — check your inbox and spam folder.', 'ok');
   } catch (err) {
     const msg = err.code === 'auth/too-many-requests'
