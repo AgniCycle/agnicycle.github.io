@@ -19,16 +19,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/assets/site.css"/>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg: #07090f; --bg2: #0d1320; --surface: #111827; --surface2: #1a2235;
-  --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.12);
-  --text: #e2e8f0; --text2: #94a3b8; --text3: #64748b;
-  --fire: #f97316; --teal: #0ea5b7;
-}
 html, body { height: 100%; overflow: hidden; }
-body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; }
+body { background: var(--bg); display: flex; flex-direction: column; }
 .topbar { display: flex; align-items: center; justify-content: space-between; height: 48px; padding: 0 20px; flex-shrink: 0; background: rgba(7,9,15,0.97); border-bottom: 1px solid var(--border); gap: 12px; }
 .topbar-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .topbar-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text); font-family: 'Sora', sans-serif; font-weight: 700; font-size: 15px; flex-shrink: 0; }
@@ -48,32 +42,12 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 .frame-loading.hidden { opacity: 0; }
 .spinner { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border2); border-top-color: var(--teal); animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-/* ── LIGHT THEME ── */
-[data-theme="light"] {
-  --bg: #f5f7fa; --bg2: #edf1f7; --surface: #ffffff; --surface2: #edf2f8;
-  --border: rgba(0,0,0,0.08); --border2: rgba(0,0,0,0.13);
-  --text: #1e293b; --text2: #475569; --text3: #94a3b8;
-}
 [data-theme="light"] .topbar { background: rgba(245,247,250,0.97); border-bottom-color: rgba(0,0,0,0.07); }
-[data-theme="light"] body { background: var(--bg); }
-#theme-sun { display: none; }
-[data-theme="light"] #theme-moon { display: none; }
-[data-theme="light"] #theme-sun { display: block; }
 .topbar-icon-btn { display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:7px; background:var(--surface2); border:1px solid var(--border); color:var(--text2); cursor:pointer; transition:color 0.2s,background 0.2s; flex-shrink:0; }
-/* ── ANNOUNCEMENT BAR — calm, token-driven, not the old loud gradient ── */
-.announce-bar {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  background: var(--bg2);
-  border-bottom: 1px solid var(--border2);
-  padding: 6px 16px; flex-shrink: 0;
-  font-size: 12px; font-weight: 500; color: var(--text2); text-align: center;
-}
-.announce-bar strong { color: var(--text); font-weight: 700; }
-.announce-bar a { color: var(--fire); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
-.announce-bar a:hover { color: var(--fire-dim, var(--fire)); }
-.announce-dot { width: 5px; height: 5px; background: var(--fire); border-radius: 50%; animation: pulse 2s ease-in-out infinite; flex-shrink: 0; }
-@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
-@media (max-width: 700px) { .announce-desc { display: none; } }
+
+/* ── ANNOUNCEMENT BAR — in-flow, not fixed like site.css's default (this
+   page's topbar+iframe layout has no scroll offset to push down) ── */
+.announce-bar { position: static; flex-shrink: 0; gap: 10px; padding: 6px 16px; font-size: 12px; }
 @media (max-width: 640px) {
   .topbar-sep, .topbar-title, .topbar-badge, .topbar-back-label { display: none; }
   .topbar-back { padding: 5px 8px; }
