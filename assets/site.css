@@ -262,6 +262,7 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
 }
 @media (max-width: 768px) {
   .nav-links { display: none; }
+  .nav-right { display: none; }
   .nav-hamburger { display: flex; }
   .nav { padding: 0 20px; }
 }
