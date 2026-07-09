@@ -229,6 +229,9 @@ document.addEventListener('DOMContentLoaded', function() {
         <svg id="fs-expand" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
         <svg id="fs-shrink" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="3" y2="21"/><line x1="21" y1="3" x2="14" y2="10"/></svg>
       </button>
+      <button class="app-bar-icon-btn" id="signout-btn" style="display:none" aria-label="Sign out" title="Sign out">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
       <a class="app-bar-btn hide-mobile" href="/#about">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         Docs
@@ -267,6 +270,46 @@ document.addEventListener('DOMContentLoaded', function() {
   var token = new URLSearchParams(window.location.search).get('ssoToken');
   document.getElementById('app-frame').src = token ? base + '/?ssoToken=' + encodeURIComponent(token) : base;
 })();
+</script>
+<script type="module">
+// Shell-page sign-out — shares agnicycle.com's own Firebase Auth session
+// (same origin as /account/, so if the user arrived here via the SSO handoff
+// they're already signed in here too) so there's a one-click "Sign out"
+// always visible in the topbar instead of only inside the tool's own menu.
+// Calls the same revokeSessions Cloud Function /account/ uses — works
+// server-side regardless of which origin triggers it, so it still ends the
+// embedded tool's session even though that iframe is a separate origin.
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js';
+import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js';
+import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/12.14.0/firebase-functions.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDztmHfzr9dGh_8AUaxAMhr6oI4DzCWgL4",
+  authDomain: "app.agnicycle.com",
+  projectId: "project-65be7752-c792-4180-b5b",
+  storageBucket: "project-65be7752-c792-4180-b5b.firebasestorage.app",
+  messagingSenderId: "865384871824",
+  appId: "1:865384871824:web:716067ed9142ff3dff2515"
+};
+const fbApp = initializeApp(firebaseConfig);
+const fbAuth = getAuth(fbApp);
+const fbFunctions = getFunctions(fbApp);
+const revokeSessionsFn = httpsCallable(fbFunctions, 'revokeSessions');
+
+const signoutBtn = document.getElementById('signout-btn');
+onAuthStateChanged(fbAuth, (user) => {
+  signoutBtn.style.display = user ? 'flex' : 'none';
+});
+signoutBtn.addEventListener('click', async () => {
+  signoutBtn.disabled = true;
+  try {
+    await revokeSessionsFn();
+  } catch (err) {
+    console.warn('Session revocation failed, signing out locally anyway', err);
+  }
+  await signOut(fbAuth);
+  window.location.href = '/';
+});
 </script>
 <script>
 (function(){ const t=localStorage.getItem('agni-theme')||'light'; document.documentElement.setAttribute('data-theme',t); })();
