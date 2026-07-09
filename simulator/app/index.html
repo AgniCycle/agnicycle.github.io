@@ -252,13 +252,22 @@ document.addEventListener('DOMContentLoaded', function() {
   <iframe
     class="app-frame"
     id="app-frame"
-    src="https://agnicycle-engine-simulator-865384871824.us-west2.run.app"
     title="AgniCycle IC Engine Simulator"
     allow="fullscreen"
     onload="document.getElementById('loading').classList.add('hidden')"
   ></iframe>
 
 </div>
+<script>
+(function(){
+  // Forwards the short-lived SSO token from /account/'s "Open" link onto the
+  // embedded tool so it can sign the user in without asking again — absent
+  // param just falls back to the plain URL, identical to before this existed.
+  var base = 'https://agnicycle-engine-simulator-865384871824.us-west2.run.app';
+  var token = new URLSearchParams(window.location.search).get('ssoToken');
+  document.getElementById('app-frame').src = token ? base + '/?ssoToken=' + encodeURIComponent(token) : base;
+})();
+</script>
 <script>
 (function(){ const t=localStorage.getItem('agni-theme')||'light'; document.documentElement.setAttribute('data-theme',t); })();
 function toggleTheme(){ const n=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light'; document.documentElement.setAttribute('data-theme',n); localStorage.setItem('agni-theme',n); }
