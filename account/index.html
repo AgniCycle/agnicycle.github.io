@@ -521,6 +521,7 @@ const auth = getAuth(app);
 const db = getFirestore(app, "ai-studio-59121fd5-ef27-4a89-87c6-86a6a1726318");
 const functions = getFunctions(app);
 const createSsoTokenFn = httpsCallable(functions, 'createSsoToken');
+const revokeSessionsFn = httpsCallable(functions, 'revokeSessions');
 
 function initials(name) {
   const parts = (name || '').trim().split(/\s+/).filter(Boolean);
@@ -933,8 +934,18 @@ document.getElementById('btn-cancel-change').addEventListener('click', async () 
 });
 
 // ── Sign out buttons ──
+// Also revokes refresh tokens so any tool the user opened via SSO gets signed
+// out too (not instantly — its current session stays valid until it next
+// refreshes — but this is what actually ends it server-side, rather than
+// only clearing the session on this one origin). Best-effort: sign-out here
+// must not be blocked by it failing.
 ['btn-signout-verify', 'btn-signout-noprofile', 'btn-signout-dashboard'].forEach((id) => {
   document.getElementById(id).addEventListener('click', async () => {
+    try {
+      await revokeSessionsFn();
+    } catch (err) {
+      console.warn('Session revocation failed, signing out locally anyway', err);
+    }
     await signOut(auth);
     setMsg('auth-msg', '', 'error');
     showStep('auth');
