@@ -1412,80 +1412,20 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 </div>
 
-<!-- TEAM -->
-<div class="section-full" style="background:var(--bg2);border-top:1px solid var(--border);padding:100px 24px" id="team">
-  <div style="max-width:var(--container-wide);margin:0 auto">
-    <div class="section-center reveal" style="margin-bottom:48px">
-      <div class="eyebrow">The Team</div>
-      <h2 class="section-headline">Built by an active researcher,<br/>not a software house</h2>
-    </div>
-
-    <!-- Full-width founder card -->
-    <div class="reveal" style="background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden">
-
-      <!-- Header banner -->
-      <div style="background:linear-gradient(135deg,#09152a 0%,#0d1f38 55%,#071420 100%);padding:36px 40px;border-bottom:1px solid var(--border);position:relative;overflow:hidden">
-        <div style="position:absolute;inset:0;opacity:0.035;background-image:radial-gradient(var(--teal) 1px,transparent 1px);background-size:22px 22px;pointer-events:none"></div>
-        <div style="display:flex;align-items:flex-start;gap:24px;position:relative;flex-wrap:wrap">
-          <!-- Avatar -->
-          <div style="width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,#1a2fa8,#3b4fc8,#5b6ef5);display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:800;font-size:24px;color:#fff;flex-shrink:0;box-shadow:0 0 0 3px rgba(91,110,245,0.25),0 0 0 6px rgba(91,110,245,0.08),0 8px 28px rgba(59,79,200,0.45)">DK</div>
-          <!-- Name + role -->
-          <div style="flex:1;min-width:200px">
-            <div style="font-size:10.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--teal);margin-bottom:8px">Founder &amp; Developer</div>
-            <div style="font-size:26px;font-weight:800;color:#fff;font-family:'Sora',sans-serif;margin-bottom:10px;line-height:1.1">Dr. Dhananjay Kumar</div>
-            <div style="display:flex;flex-wrap:wrap;gap:8px">
-              <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(14,165,183,0.1);border:1px solid rgba(14,165,183,0.22);color:var(--teal);font-size:12px;font-weight:600;padding:4px 12px;border-radius:7px">Combustion Researcher</span>
-            </div>
-          </div>
-          <!-- Quote — hidden on mobile -->
-          <div style="max-width:260px;flex-shrink:0" class="team-quote">
-            <div style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.75;font-style:italic;border-left:2px solid var(--fire);padding-left:14px">
-              "Every research group deserves access to production-quality combustion tools — not just the ones with GT-Suite licenses."
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Body -->
-      <div style="padding:32px 40px" class="team-body">
-        <!-- Left: bio + tags + links -->
-        <div>
-          <p style="font-size:15px;color:var(--text2);line-height:1.8;margin-bottom:14px">
-            AgniCycle is built and maintained by Dr. Kumar — an active combustion researcher at one of the world's foremost IC engine laboratories. Every tool is grounded in his daily research practice, not abstracted from it.
-          </p>
-          <p style="font-size:15px;color:var(--text2);line-height:1.8;margin-bottom:22px">
-            His work spans <strong style="color:var(--text)">hydrogen &amp; alternative fuel combustion</strong>, <strong style="color:var(--text)">fuel spray characterization</strong>, <strong style="color:var(--text)">in-cylinder CFD</strong>, and <strong style="color:var(--text)">zero-D engine cycle modeling</strong> — the exact physics encoded in these tools.
-          </p>
-
-          <!-- Research area tags -->
-          <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:28px">
-            <span style="font-size:11.5px;padding:4px 10px;border-radius:6px;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.22);color:var(--fire);font-weight:600">H₂ Combustion</span>
-            <span style="font-size:11.5px;padding:4px 10px;border-radius:6px;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.22);color:var(--fire);font-weight:600">NH₃ &amp; DME</span>
-            <span style="font-size:11.5px;padding:4px 10px;border-radius:6px;background:rgba(14,165,183,0.1);border:1px solid rgba(14,165,183,0.22);color:var(--teal);font-weight:600">Spray Physics</span>
-            <span style="font-size:11.5px;padding:4px 10px;border-radius:6px;background:rgba(14,165,183,0.1);border:1px solid rgba(14,165,183,0.22);color:var(--teal);font-weight:600">0-D Thermodynamics</span>
-            <span style="font-size:11.5px;padding:4px 10px;border-radius:6px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.22);color:var(--gold);font-weight:600">CONVERGE CFD</span>
-            <span style="font-size:11.5px;padding:4px 10px;border-radius:6px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.22);color:var(--gold);font-weight:600">Knock Prediction</span>
-            <span style="font-size:11.5px;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text2);font-weight:500">GT-Power</span>
-          </div>
-
-          <!-- Links -->
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <a href="mailto:support@agnicycle.com" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text2);background:var(--surface2);border:1px solid var(--border);padding:7px 14px;border-radius:8px;text-decoration:none;transition:color 0.15s,background 0.15s" onmouseover="this.style.color='var(--text)';this.style.background='#1e2530'" onmouseout="this.style.color='var(--text2)';this.style.background='var(--surface2)'">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>
-              support@agnicycle.com
-            </a>
-            <a href="https://www.linkedin.com/in/dhkrnl" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text2);background:var(--surface2);border:1px solid var(--border);padding:7px 14px;border-radius:8px;text-decoration:none;transition:color 0.15s,background 0.15s" onmouseover="this.style.color='var(--text)';this.style.background='#1e2530'" onmouseout="this.style.color='var(--text2)';this.style.background='var(--surface2)'">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-              LinkedIn
-            </a>
-            <a href="https://dhkrnl.github.io/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text2);background:var(--surface2);border:1px solid var(--border);padding:7px 14px;border-radius:8px;text-decoration:none;transition:color 0.15s,background 0.15s" onmouseover="this.style.color='var(--text)';this.style.background='#1e2530'" onmouseout="this.style.color='var(--text2)';this.style.background='var(--surface2)'">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-              Personal Site
-            </a>
-          </div>
-        </div>
+<!-- TEAM (compact teaser — full bio lives on /about/#team) -->
+<div class="section-full" style="background:var(--bg2);border-top:1px solid var(--border);padding:56px 24px" id="team">
+  <div class="reveal" style="max-width:var(--container-wide);margin:0 auto;display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:16px">
+      <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#1a2fa8,#3b4fc8,#5b6ef5);display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:800;font-size:15px;color:#fff;flex-shrink:0;box-shadow:0 0 0 3px rgba(91,110,245,0.2)">DK</div>
+      <div>
+        <div style="font-size:15px;font-weight:700;color:var(--text)">Built by Dr. Dhananjay Kumar, an active combustion researcher</div>
+        <div style="font-size:13.5px;color:var(--text2)">Every tool reflects his own research practice — not an abstracted demo.</div>
       </div>
     </div>
+    <a href="/about/#team" style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:var(--teal);text-decoration:none;flex-shrink:0">
+      Meet the team
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
   </div>
 </div>
 
