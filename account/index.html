@@ -504,6 +504,7 @@ import {
 import {
   getFirestore, doc, getDoc, setDoc, serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js';
+import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/12.14.0/firebase-functions.js';
 
 document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -518,6 +519,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app, "ai-studio-59121fd5-ef27-4a89-87c6-86a6a1726318");
+const functions = getFunctions(app);
+const createSsoTokenFn = httpsCallable(functions, 'createSsoToken');
 
 function initials(name) {
   const parts = (name || '').trim().split(/\s+/).filter(Boolean);
@@ -576,7 +579,7 @@ function renderStatusRows(uid, data) {
     let action = '';
     let sub = '';
     if (status === 'approved') {
-      action = '<a href="' + meta.link + '" style="font-size:13px; font-weight:700;">Open →</a>';
+      action = '<a href="' + meta.link + '" data-open-link="' + meta.link + '" style="font-size:13px; font-weight:700;">Open →</a>';
       if (expText) sub = '<div class="mono" style="font-size:11px; color:var(--text3); margin-top:4px;">Valid through ' + expText + '</div>';
     } else if (status === 'expired') {
       action = '<button class="btn-ghost" type="button" data-request-key="' + key + '" style="font-size:13px;">Renew Access</button>';
@@ -598,6 +601,27 @@ function renderStatusRows(uid, data) {
   container.querySelectorAll('button[data-request-key]').forEach((btn) => {
     btn.addEventListener('click', () => handleRequestAccess(uid, btn.dataset.requestKey, btn));
   });
+  container.querySelectorAll('a[data-open-link]').forEach((link) => {
+    link.addEventListener('click', (e) => handleOpenTool(e, link.dataset.openLink));
+  });
+}
+
+// Fetches a short-lived SSO token so the tool doesn't ask the user to log in
+// again — purely additive: any failure here just falls through to a plain
+// navigation, identical to today's behavior, so there's no regression risk.
+async function handleOpenTool(e, link) {
+  e.preventDefault();
+  try {
+    const result = await createSsoTokenFn();
+    const token = result.data && result.data.token;
+    if (token) {
+      window.location.href = link + '?ssoToken=' + encodeURIComponent(token);
+      return;
+    }
+  } catch (err) {
+    console.warn('SSO token fetch failed, falling back to plain link', err);
+  }
+  window.location.href = link;
 }
 
 async function handleRequestAccess(uid, key, btn) {
