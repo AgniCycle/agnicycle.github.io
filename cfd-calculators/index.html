@@ -945,7 +945,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </footer>
 
 <script>
-(function(){ const t=localStorage.getItem('agni-theme')||'light'; document.documentElement.setAttribute('data-theme',t); })();
+(function(){ const t=localStorage.getItem('agni-theme')||'dark'; document.documentElement.setAttribute('data-theme',t); })();
 function toggleTheme(){ const n=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light'; document.documentElement.setAttribute('data-theme',n); localStorage.setItem('agni-theme',n); }
 /* ── NAV ── */
 function toggleNav() { document.getElementById('nav-mobile').classList.toggle('open'); }
