@@ -19,12 +19,14 @@
   --fire: #f97316; --teal: #0ea5b7; --green: #22c55e; --red: #dc2626;
   --radius: 10px;
   --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --grid-line: rgba(15,23,42,0.028);
 }
 [data-theme="dark"] {
   --bg: #07090f; --bg2: #0d1320; --surface: #111827; --surface2: #1a2235;
   --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.12);
   --text: #e2e8f0; --text2: #94a3b8; --text3: rgba(255,255,255,0.35); --muted: #64748b;
   --red: #ef4444;
+  --grid-line: rgba(255,255,255,0.035);
   color-scheme: dark;
 }
 [data-theme="dark"] h1, [data-theme="dark"] h2, [data-theme="dark"] h3 { color: var(--text); }
