@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Community Q&amp;A — AgniCycle</title>
+<meta name="description" content="Ask questions and share answers on combustion, CFD, spray dynamics, EV batteries, and the AgniCycle tools. Open to read; approved researchers can post."/>
+<link rel="canonical" href="https://www.agnicycle.com/forum/"/>
+<meta property="og:type"        content="website"/>
+<meta property="og:url"         content="https://www.agnicycle.com/forum/"/>
+<meta property="og:title"       content="Community Q&amp;A — AgniCycle"/>
+<meta property="og:description" content="Ask questions and share answers on combustion, CFD, spray dynamics, and EV batteries."/>
+<meta property="og:image"       content="https://www.agnicycle.com/og-image.png"/>
+<meta name="twitter:card"        content="summary_large_image"/>
+<meta name="twitter:title"       content="Community Q&amp;A — AgniCycle"/>
+<meta name="twitter:description" content="Ask questions and share answers on combustion, CFD, spray dynamics, and EV batteries."/>
+<meta name="robots" content="index, follow"/>
+<meta name="theme-color" content="#0ea5b7"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='92' fill='%230B2536'/><circle cx='256' cy='256' r='200' fill='none' stroke='%230EA5B7' stroke-width='21'/><g transform='translate(456,256) rotate(90)'><path d='M28 0 L-41 -33 L-41 33 Z' fill='%230EA5B7'/></g><g transform='translate(56,256) rotate(270)'><path d='M28 0 L-41 -33 L-41 33 Z' fill='%230EA5B7'/></g><g transform='translate(256,256) scale(3.3) translate(-50,-49)'><path d='M50 8 C53 15 59 20 63 28 C68 36 71 44 71 56 C71 74 62 88 50 88 C38 88 29 74 29 56 C29 44 32 36 37 28 C41 20 47 15 50 8 Z' fill='url(%23fvo)'/><path d='M50 24 C54 31 60 37 62 46 C64.5 55 63 66 58 73 C55.5 77 53 79 50 79 C47 79 44.5 77 42 73 C37 66 35.5 55 38 46 C40 37 46 31 50 24 Z' fill='url(%23fvm)'/><path d='M50 46 C53 52 57 56 57.5 63 C58 70 55 76 50 76 C45 76 42 70 42.5 63 C43 56 47 52 50 46 Z' fill='url(%23fvk)'/><path d='M38 76 C39.5 84 44.5 88 50 88 C55.5 88 60.5 84 62 76 C59 82 54.5 85 50 85 C45.5 85 41 82 38 76 Z' fill='%2322D3EE' opacity='0.85'/></g><defs><linearGradient id='fvo' x1='0' y1='1' x2='0' y2='0'><stop offset='0%25' stop-color='%23F97316'/><stop offset='55%25' stop-color='%23F0570F'/><stop offset='100%25' stop-color='%23D93B06'/></linearGradient><linearGradient id='fvm' x1='0' y1='1' x2='0' y2='0'><stop offset='0%25' stop-color='%23FBBF24'/><stop offset='60%25' stop-color='%23F97316'/><stop offset='100%25' stop-color='%23F0500F'/></linearGradient><linearGradient id='fvk' x1='0' y1='1' x2='0' y2='0'><stop offset='0%25' stop-color='%23FFF6C9'/><stop offset='45%25' stop-color='%23FFE87A'/><stop offset='100%25' stop-color='%23FBBF24'/></linearGradient></defs></svg>" type="image/svg+xml"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/assets/site.css"/>
+<style>
+/* tokens, announce bar, nav, footer come from /assets/site.css —
+   only forum-page-specific CSS below */
+.nav-mobile-cta { margin-top: 16px; padding: 13px 14px; border-radius: 12px; background: var(--teal); color: #fff; font-weight: 600; font-size: 15px; text-align: center; text-decoration: none; display: block; }
+
+.forum-wrap { max-width: var(--container-prose); margin: 0 auto; padding: 140px 20px 100px; }
+
+.forum-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 28px; }
+.forum-title { font-size: clamp(30px, 5vw, 44px); font-weight: 800; letter-spacing: -1px; color: var(--text); margin-bottom: 10px; }
+.forum-sub { font-size: 16px; color: var(--text2); line-height: 1.6; max-width: 460px; }
+.forum-head .btn-primary { flex-shrink: 0; }
+
+.auth-note { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; font-size: 14px; color: var(--text2); margin-bottom: 24px; }
+.auth-note a { color: var(--fire); font-weight: 600; }
+
+/* ── FORM ── */
+.forum-form { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; margin-bottom: 28px; }
+.forum-form label { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text3); margin-bottom: 7px; }
+.forum-form input[type="text"], .forum-form textarea {
+  width: 100%; background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius-sm);
+  color: var(--text); font: inherit; font-size: 14.5px; padding: 11px 14px; margin-bottom: 16px; resize: vertical;
+}
+.forum-form textarea { min-height: 120px; line-height: 1.6; }
+.forum-form input:focus, .forum-form textarea:focus { outline: 2px solid var(--teal-dim); border-color: var(--teal); }
+.forum-form-actions { display: flex; gap: 10px; align-items: center; }
+.forum-hint { font-size: 12px; color: var(--text3); margin-top: -8px; margin-bottom: 16px; }
+
+/* ── QUESTION LIST ── */
+.q-list { display: flex; flex-direction: column; gap: 12px; }
+.q-card { display: block; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; text-decoration: none; transition: border-color 0.18s, transform 0.18s; }
+.q-card:hover { border-color: var(--border2); transform: translateY(-2px); text-decoration: none; }
+.q-card-title { font-size: 17px; font-weight: 700; color: var(--text); line-height: 1.35; margin-bottom: 8px; }
+.q-card-snippet { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.q-card-meta { display: flex; align-items: center; gap: 14px; font-size: 12.5px; color: var(--text3); flex-wrap: wrap; }
+.q-card-meta .q-author { color: var(--teal); font-weight: 600; }
+.q-answers-pill { display: inline-flex; align-items: center; gap: 5px; background: var(--surface2); border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px; font-weight: 600; color: var(--text2); }
+.q-answers-pill.has-answers { color: var(--ev); border-color: var(--ev-dim); background: var(--ev-dim); }
+
+.forum-loading, .forum-empty { text-align: center; padding: 60px 20px; color: var(--text3); font-size: 15px; }
+.forum-empty strong { color: var(--text2); display: block; font-size: 17px; margin-bottom: 6px; }
+
+/* ── THREAD ── */
+.back-to-list { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: var(--text2); text-decoration: none; margin-bottom: 22px; }
+.back-to-list:hover { color: var(--text); text-decoration: none; }
+.thread-question { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; margin-bottom: 32px; }
+.thread-q-title { font-size: clamp(22px, 4vw, 30px); font-weight: 800; letter-spacing: -0.5px; color: var(--text); line-height: 1.25; margin-bottom: 14px; }
+.thread-q-body, .answer-body { font-size: 15px; color: var(--text); line-height: 1.75; white-space: pre-wrap; word-break: break-word; }
+.thread-meta, .answer-meta { display: flex; align-items: center; gap: 12px; font-size: 12.5px; color: var(--text3); margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+.thread-meta .q-author, .answer-meta .q-author { color: var(--teal); font-weight: 600; }
+.del-btn { background: none; border: none; color: var(--text3); font: inherit; font-size: 12.5px; cursor: pointer; padding: 0; margin-left: auto; }
+.del-btn:hover { color: var(--red, #ef4444); }
+
+.answers-heading { font-family: 'Sora', sans-serif; font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 16px; }
+.answer { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; margin-bottom: 12px; }
+.answer-meta { margin-top: 14px; padding-top: 12px; }
+
+.msg { padding: 11px 14px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 500; margin-bottom: 16px; }
+.msg-error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
+.msg-ok { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #86efac; }
+[data-theme="light"] .msg-error { background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.25); color: #b91c1c; }
+[data-theme="light"] .msg-ok { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.3); color: #15803d; }
+</style>
+</head>
+<body>
+<script>(function(){ document.documentElement.setAttribute('data-theme', localStorage.getItem('agni-theme')||'dark'); })();</script>
+
+<!-- ANNOUNCEMENT BAR -->
+<div class="announce-bar">
+  <div class="announce-dot"></div>
+  <strong>Now in Public Beta</strong>
+  <span class="announce-desc"> — Engine Simulator, Spray Calculator &amp; EV Battery Suite. Free for approved researchers.</span>
+  <a href="https://www.agnicycle.com/signup/">Request researcher access →</a>
+</div>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a class="nav-brand" href="/">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="agl0o" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#F97316"/><stop offset="55%" stop-color="#F0570F"/><stop offset="100%" stop-color="#D93B06"/></linearGradient><linearGradient id="agl0m" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#FBBF24"/><stop offset="60%" stop-color="#F97316"/><stop offset="100%" stop-color="#F0500F"/></linearGradient><linearGradient id="agl0k" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#FFF6C9"/><stop offset="45%" stop-color="#FFE87A"/><stop offset="100%" stop-color="#FBBF24"/></linearGradient><radialGradient id="agl0b" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#67E8F9" stop-opacity="0.9"/><stop offset="55%" stop-color="#0EA5B7" stop-opacity="0.5"/><stop offset="100%" stop-color="#0EA5B7" stop-opacity="0"/></radialGradient></defs><g><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="12s" repeatCount="indefinite"/><circle cx="50" cy="50" r="39" fill="none" stroke="#0EA5B7" stroke-width="4.5"/><g transform="translate(89,50) rotate(90)"><path d="M6 0 L-8.5 -7 L-8.5 7 Z" fill="#0EA5B7"/></g><g transform="translate(11,50) rotate(270)"><path d="M6 0 L-8.5 -7 L-8.5 7 Z" fill="#0EA5B7"/></g></g><g transform="translate(50,77.5)"><g><animateTransform attributeName="transform" type="scale" values="1 1;1.05 0.96;0.97 1.04;1.02 0.98;1 1" keyTimes="0;0.28;0.55;0.8;1" dur="1.9s" repeatCount="indefinite"/><g transform="scale(0.62) translate(-50,-88)"><ellipse cx="50" cy="83" rx="16" ry="8.5" fill="url(#agl0b)"/><path d="M50 8 C53 15 59 20 63 28 C68 36 71 44 71 56 C71 74 62 88 50 88 C38 88 29 74 29 56 C29 44 32 36 37 28 C41 20 47 15 50 8 Z" fill="url(#agl0o)"/><path d="M50 24 C54 31 60 37 62 46 C64.5 55 63 66 58 73 C55.5 77 53 79 50 79 C47 79 44.5 77 42 73 C37 66 35.5 55 38 46 C40 37 46 31 50 24 Z" fill="url(#agl0m)"/><path d="M50 46 C53 52 57 56 57.5 63 C58 70 55 76 50 76 C45 76 42 70 42.5 63 C43 56 47 52 50 46 Z" fill="url(#agl0k)"><animate attributeName="opacity" values="1;0.85;1;0.92;1" dur="1.3s" repeatCount="indefinite"/></path><path d="M38 76 C39.5 84 44.5 88 50 88 C55.5 88 60.5 84 62 76 C59 82 54.5 85 50 85 C45.5 85 41 82 38 76 Z" fill="#22D3EE" opacity="0.85"><animate attributeName="opacity" values="0.85;1;0.72;0.85" dur="1.7s" repeatCount="indefinite"/></path></g></g></g></svg>
+    </div>
+    <span>Agni<em>Cycle</em></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/simulator">Engine Simulator</a></li>
+    <li><a href="/spray">Spray Calculator</a></li>
+    <li><a href="/ev-battery/">EV Battery</a></li>
+    <li><a href="/cfd-calculators/">CFD Calculators</a></li>
+    <li><a href="/cfd-training/">CFD Training</a></li>
+    <li><a href="/forum/" class="nav-active">Community</a></li>
+    <li><a href="/about/">About</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="launch-tools-wrap" id="launch-tools-wrap">
+      <button class="launch-tools-btn" id="launch-tools-btn" aria-haspopup="true" aria-expanded="false">
+        Launch Tools
+        <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="launch-tools-menu" id="launch-tools-menu">
+        <a href="/simulator/app/"><span class="dot" style="background:var(--fire)"></span> Engine Simulator</a>
+        <a href="/spray/app/"><span class="dot" style="background:var(--teal)"></span> Spray Calculator</a>
+        <a href="/ev-battery/app/"><span class="dot" style="background:#10b981"></span> EV Battery Suite</a>
+      </div>
+    </div>
+    <button class="nav-icon-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle light / dark">
+      <svg id="theme-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg id="theme-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+    <a class="nav-icon-btn" href="/account/" aria-label="My Account" title="My Account">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+    </a>
+  </div>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu" onclick="toggleNav()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</nav>
+
+<div class="nav-mobile" id="nav-mobile">
+  <a href="/" onclick="closeNav()">🏠 Home</a>
+  <div class="nav-mobile-section">Products</div>
+  <a href="/simulator" onclick="closeNav()"><span style="color:var(--fire)">⚙</span> Engine Simulator</a>
+  <a href="/spray" onclick="closeNav()"><span style="color:var(--teal)">💧</span> Spray Calculator</a>
+  <a href="/ev-battery/" onclick="closeNav()"><span style="color:#10b981">🔋</span> EV Battery Suite</a>
+  <a href="/cfd-calculators/" onclick="closeNav()"><span style="color:var(--teal)">📐</span> CFD Calculators</a>
+  <div class="nav-mobile-section">Community</div>
+  <a href="/forum/" onclick="closeNav()"><span style="color:var(--teal)">💬</span> Community Q&amp;A</a>
+  <a href="/cfd-training/" onclick="closeNav()"><span style="color:var(--gold)">📊</span> CFD Training</a>
+  <div class="nav-mobile-section">Company</div>
+  <a href="/about/" onclick="closeNav()">About AgniCycle</a>
+  <a href="mailto:support@agnicycle.com" onclick="closeNav()">Contact</a>
+  <a href="/account/" onclick="closeNav()">👤 My Account</a>
+</div>
+
+<main class="forum-wrap">
+
+  <!-- ═══ LIST VIEW ═══ -->
+  <section id="view-list">
+    <div class="forum-head">
+      <div>
+        <div class="eyebrow">Community</div>
+        <h1 class="forum-title">Researcher Q&amp;A</h1>
+        <p class="forum-sub">Questions and answers on combustion, CFD, spray dynamics, EV batteries, and the AgniCycle tools. Anyone can read — approved researchers can post.</p>
+      </div>
+      <button class="btn-primary" id="ask-btn" style="display:none">Ask a question</button>
+    </div>
+
+    <div class="auth-note" id="ask-gate" style="display:none"></div>
+
+    <form class="forum-form" id="ask-form" style="display:none" autocomplete="off">
+      <div id="ask-msg"></div>
+      <label for="ask-title">Question title</label>
+      <input type="text" id="ask-title" maxlength="200" placeholder="e.g. How do I pick a y+ target for a wall-resolved LES?" required/>
+      <label for="ask-body">Details</label>
+      <textarea id="ask-body" maxlength="10000" placeholder="Add context — what you tried, what you expect, the physics you're unsure about…" required></textarea>
+      <div class="forum-hint">Be specific. Plain text only; no HTML.</div>
+      <div class="forum-form-actions">
+        <button type="submit" class="btn-primary" id="ask-submit">Post question</button>
+        <button type="button" class="btn-secondary" id="ask-cancel">Cancel</button>
+      </div>
+    </form>
+
+    <div id="list-msg"></div>
+    <div class="q-list" id="q-list"><div class="forum-loading">Loading questions…</div></div>
+  </section>
+
+  <!-- ═══ THREAD VIEW ═══ -->
+  <section id="view-thread" style="display:none">
+    <a class="back-to-list" href="/forum/">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      All questions
+    </a>
+    <div id="thread-question"><div class="forum-loading">Loading…</div></div>
+
+    <h3 class="answers-heading" id="answers-heading" style="display:none">Answers</h3>
+    <div id="answer-list"></div>
+
+    <div class="auth-note" id="answer-gate" style="display:none"></div>
+    <form class="forum-form" id="answer-form" style="display:none" autocomplete="off">
+      <div id="answer-msg"></div>
+      <label for="answer-body">Your answer</label>
+      <textarea id="answer-body" maxlength="10000" placeholder="Share what you know…" required></textarea>
+      <div class="forum-hint">Plain text only; no HTML.</div>
+      <div class="forum-form-actions">
+        <button type="submit" class="btn-primary" id="answer-submit">Post answer</button>
+      </div>
+    </form>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-brand-logo">
+        <div class="nav-logo-mark">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="agl1o" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#F97316"/><stop offset="55%" stop-color="#F0570F"/><stop offset="100%" stop-color="#D93B06"/></linearGradient><linearGradient id="agl1m" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#FBBF24"/><stop offset="60%" stop-color="#F97316"/><stop offset="100%" stop-color="#F0500F"/></linearGradient><linearGradient id="agl1k" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#FFF6C9"/><stop offset="45%" stop-color="#FFE87A"/><stop offset="100%" stop-color="#FBBF24"/></linearGradient><radialGradient id="agl1b" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#67E8F9" stop-opacity="0.9"/><stop offset="55%" stop-color="#0EA5B7" stop-opacity="0.5"/><stop offset="100%" stop-color="#0EA5B7" stop-opacity="0"/></radialGradient></defs><g><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="12s" repeatCount="indefinite"/><circle cx="50" cy="50" r="39" fill="none" stroke="#0EA5B7" stroke-width="4.5"/><g transform="translate(89,50) rotate(90)"><path d="M6 0 L-8.5 -7 L-8.5 7 Z" fill="#0EA5B7"/></g><g transform="translate(11,50) rotate(270)"><path d="M6 0 L-8.5 -7 L-8.5 7 Z" fill="#0EA5B7"/></g></g><g transform="translate(50,77.5)"><g><animateTransform attributeName="transform" type="scale" values="1 1;1.05 0.96;0.97 1.04;1.02 0.98;1 1" keyTimes="0;0.28;0.55;0.8;1" dur="1.9s" repeatCount="indefinite"/><g transform="scale(0.62) translate(-50,-88)"><ellipse cx="50" cy="83" rx="16" ry="8.5" fill="url(#agl1b)"/><path d="M50 8 C53 15 59 20 63 28 C68 36 71 44 71 56 C71 74 62 88 50 88 C38 88 29 74 29 56 C29 44 32 36 37 28 C41 20 47 15 50 8 Z" fill="url(#agl1o)"/><path d="M50 24 C54 31 60 37 62 46 C64.5 55 63 66 58 73 C55.5 77 53 79 50 79 C47 79 44.5 77 42 73 C37 66 35.5 55 38 46 C40 37 46 31 50 24 Z" fill="url(#agl1m)"/><path d="M50 46 C53 52 57 56 57.5 63 C58 70 55 76 50 76 C45 76 42 70 42.5 63 C43 56 47 52 50 46 Z" fill="url(#agl1k)"><animate attributeName="opacity" values="1;0.85;1;0.92;1" dur="1.3s" repeatCount="indefinite"/></path><path d="M38 76 C39.5 84 44.5 88 50 88 C55.5 88 60.5 84 62 76 C59 82 54.5 85 50 85 C45.5 85 41 82 38 76 Z" fill="#22D3EE" opacity="0.85"><animate attributeName="opacity" values="0.85;1;0.72;0.85" dur="1.7s" repeatCount="indefinite"/></path></g></g></g></svg>
+        </div>
+        <span>AgniCycle</span>
+      </div>
+      <p class="footer-tagline">Research-grade combustion engineering tools for researchers and engineers.</p>
+      <div style="font-size:13px;color:var(--muted)"><a href="mailto:support@agnicycle.com" style="color:var(--muted)">support@agnicycle.com</a></div>
+    </div>
+    <div class="footer-col">
+      <h4>Products</h4>
+      <ul>
+        <li><a href="/simulator">Engine Simulator</a></li>
+        <li><a href="/spray">Spray Calculator</a></li>
+        <li><a href="/ev-battery/">EV Battery Suite</a></li>
+        <li><a href="/cfd-calculators/">CFD Calculators</a></li>
+        <li><a href="/cfd-training/">CFD Training</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="/about/">About AgniCycle</a></li>
+        <li><a href="/forum/">Community Q&amp;A</a></li>
+        <li><a href="/terms/">Terms of Use</a></li>
+        <li><a href="/privacy/">Privacy Policy</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <ul>
+        <li><a href="https://www.linkedin.com/in/dhkrnl" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://dhkrnl.github.io/" target="_blank" rel="noopener">Personal Site</a></li>
+        <li><a href="mailto:support@agnicycle.com">support@agnicycle.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© <span id="footer-year"></span> AgniCycle</span>
+    <span>Made with <span style="color:var(--fire)">🔥</span> for engineers</span>
+  </div>
+</footer>
+
+<!-- ── shared nav / theme scripts ── -->
+<script>
+document.getElementById('footer-year').textContent = new Date().getFullYear();
+function toggleTheme() {
+  const n = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', n);
+  localStorage.setItem('agni-theme', n);
+}
+function toggleNav() { document.getElementById('nav-mobile').classList.toggle('open'); }
+function closeNav() { document.getElementById('nav-mobile').classList.remove('open'); }
+window.addEventListener('scroll', function() {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 10);
+});
+(function(){
+  var wrap = document.getElementById('launch-tools-wrap');
+  var btn = document.getElementById('launch-tools-btn');
+  if(!wrap || !btn) return;
+  btn.addEventListener('click', function(e){ e.stopPropagation(); var o = wrap.classList.toggle('open'); btn.setAttribute('aria-expanded', o ? 'true':'false'); });
+  document.addEventListener('click', function(e){ if(!wrap.contains(e.target)){ wrap.classList.remove('open'); btn.setAttribute('aria-expanded','false'); } });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ wrap.classList.remove('open'); btn.setAttribute('aria-expanded','false'); } });
+})();
+</script>
+
+<!-- ── FORUM LOGIC ── -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js';
+import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js';
+import {
+  getFirestore, collection, doc, getDoc, getDocs, addDoc, deleteDoc,
+  query, where, orderBy, limit, serverTimestamp, increment, writeBatch
+} from 'https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDztmHfzr9dGh_8AUaxAMhr6oI4DzCWgL4",
+  authDomain: "app.agnicycle.com",
+  projectId: "project-65be7752-c792-4180-b5b",
+  storageBucket: "project-65be7752-c792-4180-b5b.firebasestorage.app",
+  messagingSenderId: "865384871824",
+  appId: "1:865384871824:web:716067ed9142ff3dff2515"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app, "ai-studio-59121fd5-ef27-4a89-87c6-86a6a1726318");
+
+// ── state ──
+let me = null;          // { uid, emailVerified }
+let myUsername = null;  // resolved from researcherProfiles; null = can't post
+const params = new URLSearchParams(location.search);
+const threadId = params.get('q');
+
+// ── helpers ──
+function fmtDate(ts) {
+  if (!ts || typeof ts.toDate !== 'function') return '';
+  return ts.toDate().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+}
+function el(tag, cls, text) {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text; // textContent = XSS-safe
+  return n;
+}
+function setMsg(id, text, kind) {
+  const c = document.getElementById(id);
+  c.innerHTML = '';
+  if (text) { const m = el('div', 'msg msg-' + kind, text); c.appendChild(m); }
+}
+
+// ── auth ──
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    me = { uid: user.uid, emailVerified: user.emailVerified };
+    if (user.emailVerified) {
+      try {
+        const snap = await getDoc(doc(db, 'researcherProfiles', user.uid));
+        myUsername = snap.exists() ? (snap.data().username || null) : null;
+      } catch { myUsername = null; }
+    }
+  } else {
+    me = null; myUsername = null;
+  }
+  refreshPostControls();
+});
+
+const canPost = () => me && me.emailVerified && myUsername;
+
+function postGateMessage() {
+  if (!me) return 'Reading is open to everyone. <a href="/account/">Sign in</a> or <a href="/signup/">request access</a> to post.';
+  if (!me.emailVerified) return 'Please <a href="/account/">verify your email</a> before posting.';
+  if (!myUsername) return 'Finish setting up your <a href="/account/">researcher profile</a> to post.';
+  return '';
+}
+
+function refreshPostControls() {
+  if (threadId) {
+    const gate = document.getElementById('answer-gate');
+    const form = document.getElementById('answer-form');
+    if (canPost()) { gate.style.display = 'none'; form.style.display = 'block'; }
+    else { form.style.display = 'none'; gate.innerHTML = postGateMessage(); gate.style.display = 'block'; }
+  } else {
+    const askBtn = document.getElementById('ask-btn');
+    const gate = document.getElementById('ask-gate');
+    if (canPost()) { askBtn.style.display = 'inline-flex'; gate.style.display = 'none'; }
+    else { askBtn.style.display = 'none'; gate.innerHTML = postGateMessage(); gate.style.display = 'block'; }
+  }
+}
+
+// ═══════════ LIST VIEW ═══════════
+async function renderList() {
+  document.getElementById('view-list').style.display = '';
+  document.getElementById('view-thread').style.display = 'none';
+  const listEl = document.getElementById('q-list');
+  try {
+    const qs = await getDocs(query(collection(db, 'forumQuestions'), orderBy('createdAt', 'desc'), limit(100)));
+    listEl.innerHTML = '';
+    if (qs.empty) {
+      const empty = el('div', 'forum-empty');
+      empty.appendChild(el('strong', null, 'No questions yet'));
+      empty.appendChild(document.createTextNode('Be the first to start a discussion.'));
+      listEl.appendChild(empty);
+      return;
+    }
+    qs.forEach((d) => listEl.appendChild(questionCard(d.id, d.data())));
+  } catch (err) {
+    console.error(err);
+    setMsg('list-msg', 'Could not load questions. Please refresh.', 'error');
+    listEl.innerHTML = '';
+  }
+}
+
+function questionCard(id, q) {
+  const a = el('a', 'q-card');
+  a.href = '/forum/?q=' + encodeURIComponent(id);
+  a.appendChild(el('div', 'q-card-title', q.title || '(untitled)'));
+  a.appendChild(el('div', 'q-card-snippet', q.body || ''));
+  const meta = el('div', 'q-card-meta');
+  meta.appendChild(el('span', 'q-author', '@' + (q.authorUsername || 'researcher')));
+  meta.appendChild(el('span', null, fmtDate(q.createdAt)));
+  const n = q.answerCount || 0;
+  const pill = el('span', 'q-answers-pill' + (n > 0 ? ' has-answers' : ''), n === 1 ? '1 answer' : n + ' answers');
+  meta.appendChild(pill);
+  a.appendChild(meta);
+  return a;
+}
+
+// ═══════════ THREAD VIEW ═══════════
+async function renderThread(id) {
+  document.getElementById('view-list').style.display = 'none';
+  document.getElementById('view-thread').style.display = '';
+  const qEl = document.getElementById('thread-question');
+  let qData;
+  try {
+    const snap = await getDoc(doc(db, 'forumQuestions', id));
+    if (!snap.exists()) {
+      qEl.innerHTML = '';
+      const nf = el('div', 'forum-empty');
+      nf.appendChild(el('strong', null, 'Question not found'));
+      nf.appendChild(document.createTextNode('It may have been removed.'));
+      qEl.appendChild(nf);
+      return;
+    }
+    qData = snap.data();
+  } catch (err) {
+    console.error(err);
+    qEl.innerHTML = '';
+    qEl.appendChild(el('div', 'forum-empty', 'Could not load this question.'));
+    return;
+  }
+
+  document.title = (qData.title || 'Question') + ' — AgniCycle Community';
+  qEl.innerHTML = '';
+  const card = el('div', 'thread-question');
+  card.appendChild(el('h1', 'thread-q-title', qData.title || '(untitled)'));
+  card.appendChild(el('div', 'thread-q-body', qData.body || ''));
+  card.appendChild(metaRow(qData, id, 'question'));
+  qEl.appendChild(card);
+
+  await renderAnswers(id);
+}
+
+function metaRow(data, docId, kind) {
+  const meta = el('div', kind === 'question' ? 'thread-meta' : 'answer-meta');
+  meta.appendChild(el('span', 'q-author', '@' + (data.authorUsername || 'researcher')));
+  meta.appendChild(el('span', null, fmtDate(data.createdAt)));
+  if (me && (me.uid === data.authorUid)) {
+    const del = el('button', 'del-btn', 'Delete');
+    del.addEventListener('click', () => handleDelete(kind, docId, data));
+    meta.appendChild(del);
+  }
+  return meta;
+}
+
+async function renderAnswers(qid) {
+  const listEl = document.getElementById('answer-list');
+  const heading = document.getElementById('answers-heading');
+  listEl.innerHTML = '<div class="forum-loading">Loading answers…</div>';
+  try {
+    // where-only query (no composite index needed); sort client-side
+    const qs = await getDocs(query(collection(db, 'forumAnswers'), where('questionId', '==', qid)));
+    const answers = [];
+    qs.forEach((d) => answers.push({ id: d.id, ...d.data() }));
+    answers.sort((a, b) => {
+      const ta = a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0;
+      const tb = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
+      return ta - tb;
+    });
+    listEl.innerHTML = '';
+    heading.style.display = '';
+    heading.textContent = answers.length === 1 ? '1 Answer' : answers.length + ' Answers';
+    if (answers.length === 0) {
+      listEl.appendChild(el('div', 'forum-empty', 'No answers yet — be the first to help.'));
+    } else {
+      answers.forEach((ans) => {
+        const box = el('div', 'answer');
+        box.appendChild(el('div', 'answer-body', ans.body || ''));
+        box.appendChild(metaRow(ans, ans.id, 'answer'));
+        listEl.appendChild(box);
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    listEl.innerHTML = '';
+    listEl.appendChild(el('div', 'forum-empty', 'Could not load answers.'));
+  }
+}
+
+// ── posting ──
+document.getElementById('ask-btn').addEventListener('click', () => {
+  document.getElementById('ask-form').style.display = 'block';
+  document.getElementById('ask-btn').style.display = 'none';
+  document.getElementById('ask-title').focus();
+});
+document.getElementById('ask-cancel').addEventListener('click', () => {
+  document.getElementById('ask-form').style.display = 'none';
+  document.getElementById('ask-btn').style.display = 'inline-flex';
+  setMsg('ask-msg', '', 'error');
+});
+
+document.getElementById('ask-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!canPost()) return;
+  const title = document.getElementById('ask-title').value.trim();
+  const body = document.getElementById('ask-body').value.trim();
+  setMsg('ask-msg', '', 'error');
+  if (title.length < 5) { setMsg('ask-msg', 'Title should be at least 5 characters.', 'error'); return; }
+  if (body.length < 10) { setMsg('ask-msg', 'Please add at least a little detail (10+ characters).', 'error'); return; }
+  const btn = document.getElementById('ask-submit');
+  btn.disabled = true; btn.textContent = 'Posting…';
+  try {
+    const ref = await addDoc(collection(db, 'forumQuestions'), {
+      title, body,
+      authorUid: me.uid,
+      authorUsername: myUsername,
+      answerCount: 0,
+      createdAt: serverTimestamp(),
+    });
+    location.href = '/forum/?q=' + encodeURIComponent(ref.id);
+  } catch (err) {
+    console.error(err);
+    setMsg('ask-msg', 'Could not post: ' + (err.message || 'unknown error'), 'error');
+    btn.disabled = false; btn.textContent = 'Post question';
+  }
+});
+
+document.getElementById('answer-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!canPost() || !threadId) return;
+  const body = document.getElementById('answer-body').value.trim();
+  setMsg('answer-msg', '', 'error');
+  if (body.length < 2) { setMsg('answer-msg', 'Please write an answer.', 'error'); return; }
+  const btn = document.getElementById('answer-submit');
+  btn.disabled = true; btn.textContent = 'Posting…';
+  try {
+    const batch = writeBatch(db);
+    const ansRef = doc(collection(db, 'forumAnswers'));
+    batch.set(ansRef, {
+      questionId: threadId, body,
+      authorUid: me.uid, authorUsername: myUsername,
+      createdAt: serverTimestamp(),
+    });
+    batch.update(doc(db, 'forumQuestions', threadId), { answerCount: increment(1) });
+    await batch.commit();
+    document.getElementById('answer-body').value = '';
+    await renderAnswers(threadId);
+  } catch (err) {
+    console.error(err);
+    setMsg('answer-msg', 'Could not post: ' + (err.message || 'unknown error'), 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Post answer';
+  }
+});
+
+async function handleDelete(kind, docId, data) {
+  if (!confirm('Delete this ' + (kind === 'question' ? 'question' : 'answer') + '? This cannot be undone.')) return;
+  try {
+    if (kind === 'question') {
+      await deleteDoc(doc(db, 'forumQuestions', docId));
+      location.href = '/forum/';
+    } else {
+      const batch = writeBatch(db);
+      batch.delete(doc(db, 'forumAnswers', docId));
+      if (threadId) batch.update(doc(db, 'forumQuestions', threadId), { answerCount: increment(-1) });
+      await batch.commit();
+      await renderAnswers(threadId);
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Could not delete: ' + (err.message || 'unknown error'));
+  }
+}
+
+// ── init ──
+if (threadId) renderThread(threadId); else renderList();
+</script>
+</body>
+</html>
