@@ -2484,7 +2484,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeApp(); 
     window.dispatchEvent(new CustomEvent('agni:themechange', { detail: t }));
   }
 
-  setTheme(localStorage.getItem('agni-theme') || 'light');
+  setTheme(localStorage.getItem('agni-theme') || 'dark');
 
   document.getElementById('theme-btn').addEventListener('click', function() {
     setTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
