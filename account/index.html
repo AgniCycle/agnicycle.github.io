@@ -60,6 +60,8 @@ footer { text-align: center; padding: 24px; font-size: 12.5px; color: var(--text
 </style>
 </head>
 <body>
+<script>(function(){ document.documentElement.setAttribute('data-theme', localStorage.getItem('agni-theme')||'dark'); })();</script>
+<script>function toggleTheme(){ const n=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme',n); localStorage.setItem('agni-theme',n); }</script>
 
 <div class="topbar">
   <a class="brand" href="/">
@@ -68,7 +70,13 @@ footer { text-align: center; padding: 24px; font-size: 12.5px; color: var(--text
     </span>
     <span>Agni<em>Cycle</em></span>
   </a>
-  <a class="back-link" href="/">← Back to site</a>
+  <div class="topbar-right">
+    <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle light / dark">
+      <svg id="theme-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg id="theme-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+    <a class="back-link" href="/">← Back to site</a>
+  </div>
 </div>
 
 <!-- STEP: loading -->
