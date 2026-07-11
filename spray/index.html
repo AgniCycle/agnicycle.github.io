@@ -284,9 +284,9 @@ document.addEventListener('DOMContentLoaded', function() {
       <div class="panel">
         <div class="panel-header">
           <div class="panel-dot red"></div><div class="panel-dot yellow"></div><div class="panel-dot green"></div>
-          <span class="panel-title">agnicycle · spray_calculator · hiroyasu · iso-octane</span>
+          <span class="panel-title" data-fuel-title>agnicycle · spray_calculator · hiroyasu · iso-octane</span>
         </div>
-        <video autoplay loop muted playsinline>
+        <video data-fuel-side autoplay loop muted playsinline>
           <source src="../spray_animation.mp4" type="video/mp4">
         </video>
       </div>
@@ -494,6 +494,30 @@ window.addEventListener('scroll', () => { document.getElementById('nav').classLi
 const obs = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 document.getElementById('yr').textContent = new Date().getFullYear();
+
+/* ── FUEL SHOWCASE — cycle hero between spray-breakup correlation captures ── */
+(function () {
+  var CORR = [
+    { label: 'hiroyasu · iso-octane', src: '../spray_animation.mp4' },
+    { label: 'naber-siebers · hydrogen (gaseous H₂)', src: '../assets/fuels/spray-nabersiebers-hydrogen.mp4' },
+  ];
+  var sides = document.querySelectorAll('[data-fuel-side]');
+  var titles = document.querySelectorAll('[data-fuel-title]');
+  if (!sides.length || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var i = 0;
+  function swap(video, src) {
+    var source = video.querySelector('source');
+    source.setAttribute('src', src);
+    video.load();
+    video.play().catch(function () {});
+  }
+  setInterval(function () {
+    i = (i + 1) % CORR.length;
+    var c = CORR[i];
+    sides.forEach(function (v) { swap(v, c.src); });
+    titles.forEach(function (t) { t.textContent = 'agnicycle · spray_calculator · ' + c.label; });
+  }, 8000);
+})();
 
 /* ── PAGE BACKGROUND — Spray Atomization Field ── */
 (function() {

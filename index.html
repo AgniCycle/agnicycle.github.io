@@ -1173,13 +1173,13 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="panel-dot red"></div>
         <div class="panel-dot yellow"></div>
         <div class="panel-dot green"></div>
-        <span class="hero-panel-title">cycle_simulator · diesel · 1500 rpm</span>
+        <span class="hero-panel-title" data-fuel-title>cycle_simulator · diesel · 1500 rpm</span>
       </div>
       <div class="hero-panel-videos">
-        <video class="hero-panel-vid-main" autoplay loop muted playsinline>
+        <video class="hero-panel-vid-main" data-fuel-main autoplay loop muted playsinline>
           <source src="engine_graph.mp4" type="video/mp4">
         </video>
-        <video class="hero-panel-vid-side" autoplay loop muted playsinline>
+        <video class="hero-panel-vid-side" data-fuel-side autoplay loop muted playsinline>
           <source src="engine_cylinder.mp4" type="video/mp4">
         </video>
       </div>
@@ -1229,13 +1229,13 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="prod-visual" style="background:#0a0c12;">
           <div class="panel-header">
             <div class="panel-dot red"></div><div class="panel-dot yellow"></div><div class="panel-dot green"></div>
-            <span class="panel-title">cycle_simulator · diesel · 1500 rpm</span>
+            <span class="panel-title" data-fuel-title>cycle_simulator · diesel · 1500 rpm</span>
           </div>
           <div class="sim-video-layout">
-            <video class="sim-video-main" autoplay loop muted playsinline>
+            <video class="sim-video-main" data-fuel-main autoplay loop muted playsinline>
               <source src="engine_graph.mp4" type="video/mp4">
             </video>
-            <video class="sim-video-side" autoplay loop muted playsinline>
+            <video class="sim-video-side" data-fuel-side autoplay loop muted playsinline>
               <source src="engine_cylinder.mp4" type="video/mp4">
             </video>
           </div>
@@ -2141,6 +2141,38 @@ const counterObs = new IntersectionObserver(entries => {
   });
 }, { threshold: 0.5 });
 document.querySelectorAll('.stat-num[data-target]').forEach(el => counterObs.observe(el));
+
+/* ──────────────────────────────────────────────
+   FUEL SHOWCASE — cycle the hero/bento demo videos
+   through real, matched graph+cylinder captures.
+   Only fuels with BOTH a graph and cylinder video are
+   used here so the two panels never show mismatched
+   fuel labels next to each other.
+────────────────────────────────────────────── */
+(function () {
+  var FUELS = [
+    { label: 'diesel · 1500 rpm', main: 'engine_graph.mp4', side: 'engine_cylinder.mp4' },
+    { label: 'gasoline · 2400 rpm', main: 'assets/fuels/gasoline-2400rpm-graph.mp4', side: 'assets/fuels/gasoline-2400rpm-cylinder.mp4' },
+  ];
+  var mains = document.querySelectorAll('[data-fuel-main]');
+  var sides = document.querySelectorAll('[data-fuel-side]');
+  var titles = document.querySelectorAll('[data-fuel-title]');
+  if (!mains.length || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var i = 0;
+  function swap(video, src) {
+    var source = video.querySelector('source');
+    source.setAttribute('src', src);
+    video.load();
+    video.play().catch(function () {});
+  }
+  setInterval(function () {
+    i = (i + 1) % FUELS.length;
+    var f = FUELS[i];
+    mains.forEach(function (v) { swap(v, f.main); });
+    sides.forEach(function (v) { swap(v, f.side); });
+    titles.forEach(function (t) { t.textContent = 'cycle_simulator · ' + f.label; });
+  }, 8000);
+})();
 
 /* ──────────────────────────────────────────────
    SIGNUP FORM
