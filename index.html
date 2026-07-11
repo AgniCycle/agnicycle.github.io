@@ -754,6 +754,75 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
 }
 
 /* ──────────────────────────────────────────────
+   SCROLL-DRIVEN FOUR-STROKE CYCLE (signature)
+────────────────────────────────────────────── */
+.cyc-scroll { position: relative; height: 340vh; background: var(--bg); }
+.cyc-sticky {
+  position: sticky; top: 0; height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 84px 24px 24px; overflow: hidden;
+}
+.cyc-inner { max-width: var(--container-wide, 1100px); margin: 0 auto; width: 100%; }
+.cyc-head { text-align: center; margin-bottom: 18px; }
+.cyc-head .section-headline { font-size: clamp(22px, 3.2vw, 34px); margin-bottom: 8px; }
+.cyc-head .section-sub { font-size: 14.5px; margin: 0 auto; max-width: 560px; }
+.cyc-phases { display: flex; justify-content: center; gap: 8px; margin: 14px 0 18px; flex-wrap: wrap; }
+.cyc-phase-pill {
+  font-family: var(--mono, 'JetBrains Mono', monospace); font-size: 10.5px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 5px 13px; border-radius: 999px;
+  border: 1px solid var(--border); color: var(--text3);
+  transition: color 0.3s, border-color 0.3s, background 0.3s;
+}
+.cyc-phase-pill.active { color: var(--fire); border-color: rgba(249,115,22,0.5); background: rgba(249,115,22,0.08); }
+.cyc-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 28px; align-items: center; }
+.cyc-panel {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 16px; position: relative;
+}
+.cyc-panel-label {
+  font-family: var(--mono, 'JetBrains Mono', monospace); font-size: 10.5px; color: var(--text3);
+  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px;
+}
+.cyc-svg { width: 100%; height: auto; display: block; }
+.cyc-readout {
+  font-family: var(--mono, 'JetBrains Mono', monospace); font-size: 12px; color: var(--text2);
+  display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px;
+}
+.cyc-readout strong { color: var(--fire); font-weight: 700; }
+.cyc-phase-copy { position: relative; min-height: 74px; margin-top: 12px; }
+.cyc-phase-block { position: absolute; inset: 0; opacity: 0; transition: opacity 0.35s; pointer-events: none; }
+.cyc-phase-block.active { opacity: 1; }
+.cyc-phase-block h3 { font-size: 15px; margin-bottom: 5px; color: var(--text); }
+.cyc-phase-block p { font-size: 13.5px; line-height: 1.6; color: var(--text2); margin: 0; }
+.cyc-cta { text-align: center; margin-top: 16px; }
+.cyc-cta a { font-size: 14px; font-weight: 700; }
+.cyc-hint {
+  position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+  font-family: var(--mono, 'JetBrains Mono', monospace); font-size: 11px; color: var(--text3);
+  transition: opacity 0.4s;
+}
+@media (max-width: 860px) {
+  .cyc-scroll { height: 300vh; }
+  .cyc-grid { grid-template-columns: 1fr; gap: 12px; }
+  .cyc-sticky { padding-top: 112px; justify-content: flex-start; overflow-y: auto; }
+  .cyc-head .section-sub { display: none; }
+  .cyc-phase-copy { min-height: 92px; }
+  .cyc-svg { width: auto; max-width: 100%; margin: 0 auto; }
+  #cyc-engine { max-height: 32vh; }
+  #cyc-pv { max-height: 32vh; }
+  .cyc-hint { display: none; }
+  .cyc-panel { padding: 12px; }
+  .cyc-phases { margin: 8px 0 10px; }
+  .cyc-head { margin-bottom: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cyc-scroll { height: auto; }
+  .cyc-sticky { position: static; height: auto; }
+  .cyc-hint { display: none; }
+}
+
+/* ──────────────────────────────────────────────
    RESPONSIVE
 ────────────────────────────────────────────── */
 /* ── Tablet ── */
@@ -1330,6 +1399,257 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
   </div>
 </section>
+
+<!-- SCROLL-DRIVEN FOUR-STROKE CYCLE -->
+<div class="cyc-scroll" id="cycle">
+  <div class="cyc-sticky">
+    <div class="cyc-inner">
+      <div class="cyc-head">
+        <div class="eyebrow" style="justify-content:center">Scroll The Cycle</div>
+        <h2 class="section-headline">Four strokes. One <span class="hl-accent">controlled burn</span>.</h2>
+        <p class="section-sub">Scroll to turn the crank — the log&nbsp;p&nbsp;·&nbsp;log&nbsp;V trace is computed live from the same first-law energy balance the simulator solves.</p>
+      </div>
+      <div class="cyc-phases" id="cyc-pills">
+        <span class="cyc-phase-pill" data-phase="0">Intake</span>
+        <span class="cyc-phase-pill" data-phase="1">Compression</span>
+        <span class="cyc-phase-pill active" data-phase="2">Power</span>
+        <span class="cyc-phase-pill" data-phase="3">Exhaust</span>
+      </div>
+      <div class="cyc-grid">
+        <div class="cyc-panel">
+          <div class="cyc-panel-label">cylinder · slider-crank kinematics</div>
+          <svg class="cyc-svg" id="cyc-engine" viewBox="0 0 300 420" xmlns="http://www.w3.org/2000/svg" aria-label="Animated four-stroke engine cross-section">
+            <defs>
+              <radialGradient id="cycFlame" cx="50%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#FFF6C9"/>
+                <stop offset="35%" stop-color="#FBBF24"/>
+                <stop offset="75%" stop-color="#F97316"/>
+                <stop offset="100%" stop-color="#D93B06" stop-opacity="0.6"/>
+              </radialGradient>
+              <clipPath id="cycBore"><rect x="92" y="113" width="116" height="162"/></clipPath>
+            </defs>
+            <!-- head -->
+            <rect x="84" y="86" width="132" height="26" rx="3" fill="none" stroke="var(--border2, #334155)" stroke-width="2"/>
+            <!-- injector -->
+            <rect x="145" y="74" width="10" height="40" rx="2" fill="none" stroke="var(--border2, #334155)" stroke-width="2"/>
+            <!-- valves -->
+            <g id="cyc-valve-in">
+              <line x1="122" y1="88" x2="122" y2="108" stroke="var(--teal, #0ea5b7)" stroke-width="3"/>
+              <rect x="108" y="108" width="28" height="5" rx="2.5" fill="var(--teal, #0ea5b7)"/>
+            </g>
+            <g id="cyc-valve-ex">
+              <line x1="178" y1="88" x2="178" y2="108" stroke="var(--text3, #64748b)" stroke-width="3"/>
+              <rect x="164" y="108" width="28" height="5" rx="2.5" fill="var(--text3, #64748b)"/>
+            </g>
+            <text x="122" y="80" text-anchor="middle" font-size="8" fill="var(--text3, #64748b)" font-family="JetBrains Mono, monospace">IN</text>
+            <text x="178" y="80" text-anchor="middle" font-size="8" fill="var(--text3, #64748b)" font-family="JetBrains Mono, monospace">EX</text>
+            <!-- charge / gas -->
+            <rect id="cyc-charge" x="92" y="113" width="116" height="48" fill="rgba(249,115,22,0.28)"/>
+            <!-- flame kernel (clipped to the bore) -->
+            <circle id="cyc-flame" cx="150" cy="120" r="44" fill="url(#cycFlame)" opacity="0.5" clip-path="url(#cycBore)"/>
+            <!-- cylinder walls -->
+            <line x1="90" y1="100" x2="90" y2="292" stroke="var(--border2, #334155)" stroke-width="4"/>
+            <line x1="210" y1="100" x2="210" y2="292" stroke="var(--border2, #334155)" stroke-width="4"/>
+            <!-- piston -->
+            <g id="cyc-piston" transform="translate(0,161.3)">
+              <rect x="93" y="0" width="114" height="40" rx="4" fill="var(--surface2, #1e293b)" stroke="var(--border2, #334155)" stroke-width="2"/>
+              <line x1="93" y1="8" x2="207" y2="8" stroke="var(--border2, #334155)" stroke-width="1.5"/>
+              <line x1="93" y1="14" x2="207" y2="14" stroke="var(--border2, #334155)" stroke-width="1.5"/>
+              <circle cx="150" cy="28" r="5" fill="none" stroke="var(--border2, #334155)" stroke-width="2"/>
+            </g>
+            <!-- connecting rod -->
+            <line id="cyc-rod" x1="150" y1="189.3" x2="180.9" y2="303.2" stroke="var(--text3, #64748b)" stroke-width="6" stroke-linecap="round"/>
+            <!-- crank -->
+            <circle cx="150" cy="340" r="48" fill="none" stroke="var(--border, #1e293b)" stroke-width="2" stroke-dasharray="4 5"/>
+            <line id="cyc-web" x1="150" y1="340" x2="180.9" y2="303.2" stroke="var(--text2, #94a3b8)" stroke-width="8" stroke-linecap="round"/>
+            <circle cx="150" cy="340" r="7" fill="var(--surface2, #1e293b)" stroke="var(--text3, #64748b)" stroke-width="2"/>
+            <circle id="cyc-pin" cx="180.9" cy="303.2" r="5.5" fill="var(--fire, #f97316)"/>
+            <!-- TDC/BDC ticks -->
+            <text x="222" y="150" font-size="8" fill="var(--text3, #64748b)" font-family="JetBrains Mono, monospace">TDC</text>
+            <text x="222" y="246" font-size="8" fill="var(--text3, #64748b)" font-family="JetBrains Mono, monospace">BDC</text>
+            <line x1="212" y1="146" x2="218" y2="146" stroke="var(--text3, #64748b)" stroke-width="1.5"/>
+            <line x1="212" y1="242" x2="218" y2="242" stroke="var(--text3, #64748b)" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="cyc-panel">
+          <div class="cyc-panel-label">log p – log V · heat-release analysis view</div>
+          <svg class="cyc-svg" id="cyc-pv" viewBox="0 0 320 300" xmlns="http://www.w3.org/2000/svg" aria-label="Live pressure-volume diagram">
+            <line x1="46" y1="258" x2="310" y2="258" stroke="var(--border2, #334155)" stroke-width="1.5"/>
+            <line x1="46" y1="18" x2="46" y2="258" stroke="var(--border2, #334155)" stroke-width="1.5"/>
+            <text x="178" y="286" text-anchor="middle" font-size="10" fill="var(--text3, #64748b)" font-family="JetBrains Mono, monospace">log V →</text>
+            <text x="20" y="140" text-anchor="middle" font-size="10" fill="var(--text3, #64748b)" font-family="JetBrains Mono, monospace" transform="rotate(-90 20 140)">log p →</text>
+            <text x="50" y="30" font-size="8.5" fill="var(--text3, #64748b)" font-family="JetBrains Mono, monospace" id="cyc-pmax-label"></text>
+            <path id="cyc-ghost" d="" fill="none" stroke="var(--border2, #334155)" stroke-width="1" stroke-dasharray="3 4" opacity="0.7"/>
+            <path id="cyc-trace" d="" fill="none" stroke="var(--fire, #f97316)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+            <circle id="cyc-dot" cx="0" cy="0" r="5" fill="var(--fire, #f97316)" opacity="0"/>
+          </svg>
+          <div class="cyc-readout">
+            <span>θ = <strong id="cyc-theta">400°</strong></span>
+            <span>p = <strong id="cyc-p">—</strong></span>
+            <span>V/V<sub>c</sub> = <strong id="cyc-v">—</strong></span>
+          </div>
+          <div class="cyc-phase-copy" id="cyc-copy">
+            <div class="cyc-phase-block" data-phase="0">
+              <h3>Intake · 0–180°</h3>
+              <p>The intake valve opens and the descending piston draws in fresh charge at ≈0.95 bar. Volume expands 16:1 at nearly constant pressure — the flat lower line of the loop.</p>
+            </div>
+            <div class="cyc-phase-block" data-phase="1">
+              <h3>Compression · 180–360°</h3>
+              <p>Both valves seal. The rising piston compresses the charge polytropically (pVⁿ = const, n ≈ 1.33) — a straight line in log-log space. Pressure climbs ~40× toward autoignition.</p>
+            </div>
+            <div class="cyc-phase-block active" data-phase="2">
+              <h3>Power · 360–540°</h3>
+              <p>Fuel burns following the Wiebe function above; pressure spikes past 60 bar and drives the piston down. The clockwise loop area <em>is</em> the net work — the same convention as the arrows in our logo.</p>
+            </div>
+            <div class="cyc-phase-block" data-phase="3">
+              <h3>Exhaust · 540–720°</h3>
+              <p>The exhaust valve opens at BDC — blowdown collapses the pressure — and the rising piston pushes out the burned gas. 720° of crank rotation, ready to repeat.</p>
+            </div>
+          </div>
+          <div class="cyc-cta">
+            <a href="/simulator/">Run this cycle with 12+ real fuel models →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cyc-hint" id="cyc-hint">⇣ keep scrolling — you're turning the crank</div>
+  </div>
+</div>
+<script>
+(function () {
+  'use strict';
+  var STEP = 0.5, N = Math.round(720 / STEP) + 1;
+  var CR = 16, RL = 3.5, GAMMA = 1.33, QTOT = 340;
+  var TH0 = 352, DTH = 48, WA = 5, WM = 2;
+  var th = new Float64Array(N), V = new Float64Array(N), P = new Float64Array(N);
+  function vol(deg) {
+    var a = deg * Math.PI / 180;
+    return 1 + (CR - 1) / 2 * (RL + 1 - Math.cos(a) - Math.sqrt(RL * RL - Math.sin(a) * Math.sin(a)));
+  }
+  function wiebe(deg) {
+    if (deg <= TH0) return 0;
+    var y = (deg - TH0) / DTH;
+    if (y >= 1) return 1;
+    return 1 - Math.exp(-WA * Math.pow(y, WM + 1));
+  }
+  (function build() {
+    var i, d, p = 0.95, pmax = 0;
+    for (i = 0; i < N; i++) { th[i] = i * STEP; V[i] = vol(th[i]); }
+    for (i = 0; i < N; i++) {
+      d = th[i];
+      if (d <= 180) { p = 0.95; }
+      else if (d <= 540) {
+        var dV = V[i] - V[i - 1];
+        var dQ = QTOT * (wiebe(d) - wiebe(d - STEP));
+        p += (GAMMA - 1) / V[i] * dQ - GAMMA * p / V[i] * dV;
+      } else {
+        var target = 1.05;
+        p = target + (P[i - 1] - target) * Math.exp(-STEP / 8);
+      }
+      P[i] = p;
+      if (p > pmax) pmax = p;
+    }
+    var lbl = document.getElementById('cyc-pmax-label');
+    if (lbl) lbl.textContent = 'p_max = ' + pmax.toFixed(0) + ' bar';
+  })();
+  var PMIN = 0.85, PMAX = 80;
+  function px(v) { return 46 + Math.log(v) / Math.log(CR) * 254; }
+  function py(p) {
+    var c = Math.max(PMIN, Math.min(PMAX, p));
+    return 258 - Math.log(c / PMIN) / Math.log(PMAX / PMIN) * 238;
+  }
+  var ghostD = '';
+  (function () {
+    var parts = [];
+    for (var i = 0; i < N; i += 4) parts.push((i ? 'L' : 'M') + px(V[i]).toFixed(1) + ' ' + py(P[i]).toFixed(1));
+    parts.push('Z');
+    ghostD = parts.join('');
+    var g = document.getElementById('cyc-ghost');
+    if (g) g.setAttribute('d', ghostD);
+  })();
+  var $ = function (id) { return document.getElementById(id); };
+  var elPiston = $('cyc-piston'), elRod = $('cyc-rod'), elWeb = $('cyc-web'), elPin = $('cyc-pin'),
+      elCharge = $('cyc-charge'), elFlame = $('cyc-flame'), elVin = $('cyc-valve-in'), elVex = $('cyc-valve-ex'),
+      elTrace = $('cyc-trace'), elDot = $('cyc-dot'),
+      elTheta = $('cyc-theta'), elP = $('cyc-p'), elV = $('cyc-v'),
+      pills = document.querySelectorAll('#cyc-pills .cyc-phase-pill'),
+      blocks = document.querySelectorAll('#cyc-copy .cyc-phase-block'),
+      hint = $('cyc-hint'), scrollEl = document.getElementById('cycle');
+  if (!elPiston || !scrollEl) return;
+  var CRANK_R = 48, ROD_L = 118, CY = 340, PISTON_OFF = 28;
+  var lastPhase = -1;
+  function update(theta) {
+    var i = Math.max(0, Math.min(N - 1, Math.round(theta / STEP)));
+    var d = th[i], a = d * Math.PI / 180;
+    var ext = CRANK_R * Math.cos(a) + Math.sqrt(ROD_L * ROD_L - CRANK_R * CRANK_R * Math.sin(a) * Math.sin(a));
+    var piny = CY - ext;
+    var ptop = piny - PISTON_OFF;
+    elPiston.setAttribute('transform', 'translate(0,' + ptop.toFixed(1) + ')');
+    var pinx = 150 + CRANK_R * Math.sin(a), pinyc = CY - CRANK_R * Math.cos(a);
+    elRod.setAttribute('x1', '150'); elRod.setAttribute('y1', piny.toFixed(1));
+    elRod.setAttribute('x2', pinx.toFixed(1)); elRod.setAttribute('y2', pinyc.toFixed(1));
+    elWeb.setAttribute('x2', pinx.toFixed(1)); elWeb.setAttribute('y2', pinyc.toFixed(1));
+    elPin.setAttribute('cx', pinx.toFixed(1)); elPin.setAttribute('cy', pinyc.toFixed(1));
+    elCharge.setAttribute('height', Math.max(2, ptop - 113).toFixed(1));
+    var phase = d < 180 ? 0 : d < 360 ? 1 : d < 540 ? 2 : 3;
+    var fills = ['rgba(14,165,183,0.16)', 'rgba(251,191,36,0.18)', 'rgba(249,115,22,0.30)', 'rgba(148,163,184,0.15)'];
+    if (phase === 1) {
+      var t = (d - 180) / 180;
+      elCharge.setAttribute('fill', 'rgba(' + Math.round(14 + t * 237) + ',' + Math.round(165 + t * 26) + ',' + Math.round(183 - t * 147) + ',' + (0.12 + t * 0.1).toFixed(2) + ')');
+    } else {
+      elCharge.setAttribute('fill', fills[phase]);
+    }
+    var fl = 0, fr = 0;
+    if (d > 348 && d < 435) {
+      var ft = (d - 348) / 87;
+      fr = 46 * Math.min(1, wiebe(d) * 1.4 + 0.15);
+      fl = ft < 0.35 ? 0.95 : 0.95 * (1 - (ft - 0.35) / 0.65);
+    }
+    elFlame.setAttribute('r', fr.toFixed(1));
+    elFlame.setAttribute('cy', (113 + Math.max(2, ptop - 113) * 0.35).toFixed(1));
+    elFlame.setAttribute('opacity', fl.toFixed(2));
+    var lin = 0, lex = 0;
+    if (d < 190) lin = 12 * Math.sin(Math.PI * d / 190);
+    if (d > 530) lex = 12 * Math.sin(Math.PI * (d - 530) / 190);
+    elVin.setAttribute('transform', 'translate(0,' + lin.toFixed(1) + ')');
+    elVex.setAttribute('transform', 'translate(0,' + lex.toFixed(1) + ')');
+    var parts = [];
+    for (var k = 0; k <= i; k += 3) parts.push((k ? 'L' : 'M') + px(V[k]).toFixed(1) + ' ' + py(P[k]).toFixed(1));
+    if (i % 3) parts.push('L' + px(V[i]).toFixed(1) + ' ' + py(P[i]).toFixed(1));
+    elTrace.setAttribute('d', parts.join(''));
+    elDot.setAttribute('cx', px(V[i]).toFixed(1)); elDot.setAttribute('cy', py(P[i]).toFixed(1));
+    elDot.setAttribute('opacity', '1');
+    var phaseColors = ['var(--teal, #0ea5b7)', 'var(--gold, #fbbf24)', 'var(--fire, #f97316)', 'var(--text3, #64748b)'];
+    elDot.setAttribute('fill', phaseColors[phase]);
+    elTheta.textContent = Math.round(d) + '°';
+    elP.textContent = P[i] < 10 ? P[i].toFixed(2) + ' bar' : P[i].toFixed(1) + ' bar';
+    elV.textContent = V[i].toFixed(1);
+    if (phase !== lastPhase) {
+      lastPhase = phase;
+      pills.forEach(function (p2) { p2.classList.toggle('active', +p2.dataset.phase === phase); });
+      blocks.forEach(function (b) { b.classList.toggle('active', +b.dataset.phase === phase); });
+    }
+  }
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) { update(400); return; }
+  var ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      ticking = false;
+      var rect = scrollEl.getBoundingClientRect();
+      var total = rect.height - window.innerHeight;
+      var prog = total > 0 ? Math.max(0, Math.min(1, -rect.top / total)) : 0;
+      update(prog * 719.5);
+      if (hint) hint.style.opacity = prog > 0.03 && prog < 0.97 ? '0.85' : '0';
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
 
 <!-- WHO IT'S FOR -->
 <section class="persona-section" id="persona">
