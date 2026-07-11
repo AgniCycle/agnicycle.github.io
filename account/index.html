@@ -175,6 +175,9 @@ footer { text-align: center; padding: 24px; font-size: 12.5px; color: var(--text
             <div class="readonly-row"><span class="rl-label">Access Valid Until</span><span class="rl-value" id="ro-validity"></span></div>
           </div>
 
+          <button class="btn-ghost" type="button" id="btn-edit-profile" style="margin-bottom:16px;">Edit Profile ↓</button>
+
+          <div id="profile-form-wrap" style="display:none;">
           <form id="profile-form">
             <div class="field">
               <label for="d-name">Full name</label>
@@ -411,6 +414,7 @@ footer { text-align: center; padding: 24px; font-size: 12.5px; color: var(--text
           <p id="cancel-change-wrap" style="margin-top:10px; text-align:center; display:none;">
             <button class="btn-ghost" type="button" id="btn-cancel-change">Cancel Request</button>
           </p>
+          </div>
         </div>
 
         <div class="panel">
@@ -623,16 +627,23 @@ function populateProfileForm(data) {
   const banner = document.getElementById('pending-change-banner');
   const cancelWrap = document.getElementById('cancel-change-wrap');
   const saveBtn = document.getElementById('btn-profile-save');
+  const formWrap = document.getElementById('profile-form-wrap');
+  const editBtn = document.getElementById('btn-edit-profile');
   if (pcr) {
     const at = pcr.requestedAt && typeof pcr.requestedAt.toDate === 'function' ? pcr.requestedAt.toDate() : null;
     banner.textContent = 'Profile change request pending review' + (at ? ' since ' + at.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : '') + '. The fields below show what you requested — resubmit to change it, or cancel below.';
     banner.style.display = '';
     cancelWrap.style.display = '';
     saveBtn.textContent = 'Resubmit Change Request';
+    // A pending request is worth surfacing without an extra click.
+    formWrap.style.display = '';
+    editBtn.textContent = 'Hide Edit Profile ↑';
   } else {
     banner.style.display = 'none';
     cancelWrap.style.display = 'none';
     saveBtn.textContent = 'Submit Change Request';
+    formWrap.style.display = 'none';
+    editBtn.textContent = 'Edit Profile ↓';
   }
 }
 
@@ -805,6 +816,15 @@ document.getElementById('btn-resend').addEventListener('click', async () => {
       : 'Could not resend: ' + (err.message || 'unknown error');
     setMsg('verify-msg', msg, 'error');
   }
+});
+
+// ── Edit Profile toggle ──
+document.getElementById('btn-edit-profile').addEventListener('click', () => {
+  const wrap = document.getElementById('profile-form-wrap');
+  const btn = document.getElementById('btn-edit-profile');
+  const opening = wrap.style.display === 'none';
+  wrap.style.display = opening ? '' : 'none';
+  btn.textContent = opening ? 'Hide Edit Profile ↑' : 'Edit Profile ↓';
 });
 
 // ── Profile save ──
