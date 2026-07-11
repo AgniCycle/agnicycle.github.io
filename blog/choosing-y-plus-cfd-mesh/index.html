@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>How to choose y+ for your CFD mesh — AgniCycle Blog</title>
+<meta name="description" content="A practical guide to picking a y+ target for CFD: wall-resolved vs wall functions, the buffer layer to avoid, and how to turn a target y+ into a first cell height."/>
+<link rel="canonical" href="https://www.agnicycle.com/blog/choosing-y-plus-cfd-mesh/"/>
+<meta property="og:type"        content="article"/>
+<meta property="og:url"         content="https://www.agnicycle.com/blog/choosing-y-plus-cfd-mesh/"/>
+<meta property="og:title"       content="How to choose y+ for your CFD mesh"/>
+<meta property="og:description" content="Wall-resolved vs wall functions, the buffer layer to avoid, and how to turn a target y+ into a first cell height."/>
+<meta property="og:image"       content="https://www.agnicycle.com/og-image.png"/>
+<meta name="twitter:card"        content="summary_large_image"/>
+<meta name="twitter:title"       content="How to choose y+ for your CFD mesh"/>
+<meta name="twitter:description" content="A practical guide to picking a y+ target and turning it into a first cell height."/>
+<meta name="robots" content="index, follow"/>
+<meta name="theme-color" content="#0ea5b7"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='92' fill='%230B2536'/><circle cx='256' cy='256' r='200' fill='none' stroke='%230EA5B7' stroke-width='21'/><g transform='translate(456,256) rotate(90)'><path d='M28 0 L-41 -33 L-41 33 Z' fill='%230EA5B7'/></g><g transform='translate(56,256) rotate(270)'><path d='M28 0 L-41 -33 L-41 33 Z' fill='%230EA5B7'/></g><g transform='translate(256,256) scale(3.3) translate(-50,-49)'><path d='M50 8 C53 15 59 20 63 28 C68 36 71 44 71 56 C71 74 62 88 50 88 C38 88 29 74 29 56 C29 44 32 36 37 28 C41 20 47 15 50 8 Z' fill='url(%23fvo)'/><path d='M50 24 C54 31 60 37 62 46 C64.5 55 63 66 58 73 C55.5 77 53 79 50 79 C47 79 44.5 77 42 73 C37 66 35.5 55 38 46 C40 37 46 31 50 24 Z' fill='url(%23fvm)'/><path d='M50 46 C53 52 57 56 57.5 63 C58 70 55 76 50 76 C45 76 42 70 42.5 63 C43 56 47 52 50 46 Z' fill='url(%23fvk)'/><path d='M38 76 C39.5 84 44.5 88 50 88 C55.5 88 60.5 84 62 76 C59 82 54.5 85 50 85 C45.5 85 41 82 38 76 Z' fill='%2322D3EE' opacity='0.85'/></g><defs><linearGradient id='fvo' x1='0' y1='1' x2='0' y2='0'><stop offset='0%25' stop-color='%23F97316'/><stop offset='55%25' stop-color='%23F0570F'/><stop offset='100%25' stop-color='%23D93B06'/></linearGradient><linearGradient id='fvm' x1='0' y1='1' x2='0' y2='0'><stop offset='0%25' stop-color='%23FBBF24'/><stop offset='60%25' stop-color='%23F97316'/><stop offset='100%25' stop-color='%23F0500F'/></linearGradient><linearGradient id='fvk' x1='0' y1='1' x2='0' y2='0'><stop offset='0%25' stop-color='%23FFF6C9'/><stop offset='45%25' stop-color='%23FFE87A'/><stop offset='100%25' stop-color='%23FBBF24'/></linearGradient></defs></svg>" type="image/svg+xml"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/assets/site.css"/>
+<style>
+.nav-mobile-cta { margin-top: 16px; padding: 13px 14px; border-radius: 12px; background: var(--teal); color: #fff; font-weight: 600; font-size: 15px; text-align: center; text-decoration: none; display: block; }
+
+.post { max-width: var(--container-prose); margin: 0 auto; padding: 130px 24px 90px; }
+.back-to-blog { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: var(--text2); text-decoration: none; margin-bottom: 28px; }
+.back-to-blog:hover { color: var(--text); text-decoration: none; }
+.post-eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal); margin-bottom: 16px; }
+.post-h1 { font-size: clamp(30px, 5vw, 44px); font-weight: 800; letter-spacing: -1px; color: var(--text); line-height: 1.2; margin-bottom: 18px; }
+.post-meta { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--text3); font-family: var(--mono); padding-bottom: 26px; margin-bottom: 34px; border-bottom: 1px solid var(--border); }
+.post-meta .q-author { color: var(--teal); font-weight: 600; }
+
+.post-body { font-size: 17px; color: var(--text); line-height: 1.8; }
+.post-body p { margin-bottom: 22px; color: var(--text2); }
+.post-body h2 { font-family: 'Sora', sans-serif; font-size: 24px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; margin: 40px 0 16px; }
+.post-body strong { color: var(--text); font-weight: 700; }
+.post-body a { color: var(--fire); font-weight: 500; }
+.post-body ul { margin: 0 0 22px; padding-left: 4px; list-style: none; }
+.post-body li { color: var(--text2); margin-bottom: 12px; padding-left: 26px; position: relative; }
+.post-body li::before { content: ''; position: absolute; left: 0; top: 10px; width: 9px; height: 9px; border-radius: 50%; background: var(--teal); }
+.post-body code { font-family: var(--mono); font-size: 0.9em; background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; color: var(--text); }
+.post-lead { font-size: 19px; color: var(--text) !important; line-height: 1.7; }
+.formula { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--teal); border-radius: var(--radius-sm); padding: 16px 20px; margin: 0 0 22px; font-family: var(--mono); font-size: 15px; color: var(--text); overflow-x: auto; }
+.formula .cmt { color: var(--text3); }
+
+.callout { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius); padding: 18px 20px; margin: 0 0 22px; font-size: 15px; color: var(--text2); }
+.callout strong { color: var(--text); }
+
+.post-cta { margin-top: 44px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; text-align: center; }
+.post-cta h3 { font-family: 'Sora', sans-serif; font-size: 19px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.post-cta p { font-size: 14.5px; color: var(--text2); margin-bottom: 18px; }
+.post-cta .btn-secondary { margin-left: 8px; }
+</style>
+</head>
+<body>
+<script>(function(){ document.documentElement.setAttribute('data-theme', localStorage.getItem('agni-theme')||'dark'); })();</script>
+
+<div class="announce-bar">
+  <div class="announce-dot"></div>
+  <strong>Now in Public Beta</strong>
+  <span class="announce-desc"> — Engine Simulator, Spray Calculator &amp; EV Battery Suite. Free for approved researchers.</span>
+  <a href="https://www.agnicycle.com/signup/">Request researcher access →</a>
+</div>
+
+<nav class="nav" id="nav">
+  <a class="nav-brand" href="/">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="agl0o" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#F97316"/><stop offset="55%" stop-color="#F0570F"/><stop offset="100%" stop-color="#D93B06"/></linearGradient><linearGradient id="agl0m" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#FBBF24"/><stop offset="60%" stop-color="#F97316"/><stop offset="100%" stop-color="#F0500F"/></linearGradient><linearGradient id="agl0k" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#FFF6C9"/><stop offset="45%" stop-color="#FFE87A"/><stop offset="100%" stop-color="#FBBF24"/></linearGradient><radialGradient id="agl0b" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#67E8F9" stop-opacity="0.9"/><stop offset="55%" stop-color="#0EA5B7" stop-opacity="0.5"/><stop offset="100%" stop-color="#0EA5B7" stop-opacity="0"/></radialGradient></defs><g><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="12s" repeatCount="indefinite"/><circle cx="50" cy="50" r="39" fill="none" stroke="#0EA5B7" stroke-width="4.5"/><g transform="translate(89,50) rotate(90)"><path d="M6 0 L-8.5 -7 L-8.5 7 Z" fill="#0EA5B7"/></g><g transform="translate(11,50) rotate(270)"><path d="M6 0 L-8.5 -7 L-8.5 7 Z" fill="#0EA5B7"/></g></g><g transform="translate(50,77.5)"><g><animateTransform attributeName="transform" type="scale" values="1 1;1.05 0.96;0.97 1.04;1.02 0.98;1 1" keyTimes="0;0.28;0.55;0.8;1" dur="1.9s" repeatCount="indefinite"/><g transform="scale(0.62) translate(-50,-88)"><ellipse cx="50" cy="83" rx="16" ry="8.5" fill="url(#agl0b)"/><path d="M50 8 C53 15 59 20 63 28 C68 36 71 44 71 56 C71 74 62 88 50 88 C38 88 29 74 29 56 C29 44 32 36 37 28 C41 20 47 15 50 8 Z" fill="url(#agl0o)"/><path d="M50 24 C54 31 60 37 62 46 C64.5 55 63 66 58 73 C55.5 77 53 79 50 79 C47 79 44.5 77 42 73 C37 66 35.5 55 38 46 C40 37 46 31 50 24 Z" fill="url(#agl0m)"/><path d="M50 46 C53 52 57 56 57.5 63 C58 70 55 76 50 76 C45 76 42 70 42.5 63 C43 56 47 52 50 46 Z" fill="url(#agl0k)"><animate attributeName="opacity" values="1;0.85;1;0.92;1" dur="1.3s" repeatCount="indefinite"/></path><path d="M38 76 C39.5 84 44.5 88 50 88 C55.5 88 60.5 84 62 76 C59 82 54.5 85 50 85 C45.5 85 41 82 38 76 Z" fill="#22D3EE" opacity="0.85"><animate attributeName="opacity" values="0.85;1;0.72;0.85" dur="1.7s" repeatCount="indefinite"/></path></g></g></g></svg>
+    </div>
+    <span>Agni<em>Cycle</em></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/simulator">Engine Simulator</a></li>
+    <li><a href="/spray">Spray Calculator</a></li>
+    <li><a href="/ev-battery/">EV Battery</a></li>
+    <li><a href="/cfd-calculators/">CFD Calculators</a></li>
+    <li><a href="/cfd-training/">CFD Training</a></li>
+    <li><a href="/forum/">Community</a></li>
+    <li><a href="/about/">About</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="nav-icon-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle light / dark">
+      <svg id="theme-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg id="theme-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+    <a class="nav-icon-btn" href="/account/" aria-label="My Account" title="My Account">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </a>
+  </div>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu" onclick="toggleNav()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</nav>
+
+<div class="nav-mobile" id="nav-mobile">
+  <a href="/" onclick="closeNav()">🏠 Home</a>
+  <div class="nav-mobile-section">Products</div>
+  <a href="/simulator" onclick="closeNav()"><span style="color:var(--fire)">⚙</span> Engine Simulator</a>
+  <a href="/spray" onclick="closeNav()"><span style="color:var(--teal)">💧</span> Spray Calculator</a>
+  <a href="/ev-battery/" onclick="closeNav()"><span style="color:#10b981">🔋</span> EV Battery Suite</a>
+  <a href="/cfd-calculators/" onclick="closeNav()"><span style="color:var(--teal)">📐</span> CFD Calculators</a>
+  <div class="nav-mobile-section">Community</div>
+  <a href="/forum/" onclick="closeNav()"><span style="color:var(--teal)">💬</span> Community Q&amp;A</a>
+  <a href="/blog/" onclick="closeNav()"><span style="color:var(--gold)">📝</span> Blog</a>
+  <a href="/cfd-training/" onclick="closeNav()"><span style="color:var(--gold)">📊</span> CFD Training</a>
+  <div class="nav-mobile-section">Company</div>
+  <a href="/about/" onclick="closeNav()">About AgniCycle</a>
+  <a href="mailto:support@agnicycle.com" onclick="closeNav()">Contact</a>
+  <a href="/account/" onclick="closeNav()">👤 My Account</a>
+</div>
+
+<article class="post">
+  <a class="back-to-blog" href="/blog/">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    All posts
+  </a>
+
+  <div class="post-eyebrow">CFD · Meshing</div>
+  <h1 class="post-h1">How to choose y⁺ for your CFD mesh</h1>
+  <div class="post-meta">
+    <span class="q-author">Dr. Dhananjay Kumar</span><span>·</span><span>Jul 2026</span><span>·</span><span>7 min read</span>
+  </div>
+
+  <div class="post-body">
+    <p class="post-lead">The single number that decides whether your near-wall physics is real or a polite fiction is <code>y⁺</code>. Pick it well and your mesh resolves the boundary layer honestly; pick it badly and your drag, heat transfer, and separation are all quietly wrong.</p>
+
+    <p>If you've ever asked "how fine does my first cell near the wall need to be?" — this is the number that answers it. Here's a practical way to choose a target and turn it into an actual cell height.</p>
+
+    <h2>What y⁺ actually is</h2>
+    <p>y⁺ is a <strong>dimensionless wall distance</strong>. It measures how far the first grid point sits from the wall, but in units scaled by the near-wall turbulence rather than millimetres:</p>
+    <div class="formula">y⁺ = (u<sub>τ</sub> · y) / ν <span class="cmt">&nbsp;&nbsp;// u<sub>τ</sub> = friction velocity, y = wall distance, ν = kinematic viscosity</span></div>
+    <p>The friction velocity <code>u<sub>τ</sub> = √(τ<sub>w</sub> / ρ)</code> is built from the wall shear stress. Because it folds in the local flow, y⁺ tells you <em>which part of the boundary layer your first cell lands in</em> — and that's what your turbulence model cares about.</p>
+
+    <h2>The boundary layer has zones — put your cell in the right one</h2>
+    <p>Very close to a wall, a turbulent boundary layer splits into regions:</p>
+    <ul>
+      <li><strong>Viscous sublayer (y⁺ &lt; 5):</strong> viscosity dominates; velocity varies linearly with distance.</li>
+      <li><strong>Buffer layer (5 &lt; y⁺ &lt; 30):</strong> the messy transition where neither the linear nor the log law holds cleanly.</li>
+      <li><strong>Log-law region (30 &lt; y⁺ &lt; ~300):</strong> velocity follows the logarithmic "law of the wall."</li>
+    </ul>
+    <p>Your meshing strategy is really a choice of which zone the first cell centroid sits in.</p>
+
+    <h2>Two strategies: resolve the wall, or model it</h2>
+    <p><strong>Wall-resolved (target y⁺ ≈ 1).</strong> You put the first cell deep inside the viscous sublayer and let the mesh capture the steep near-wall gradient directly. This is what low-Reynolds-number turbulence models and LES generally want. It's the accurate route for separation, transition, and heat transfer — but it's expensive, because tiny first cells mean lots of prism layers.</p>
+    <p><strong>Wall functions (target y⁺ ≈ 30–300).</strong> You place the first cell out in the log-law region and let an analytical wall function bridge the gap to the wall. Far cheaper, and perfectly reasonable for attached, high-Reynolds flows where you don't need the sublayer resolved.</p>
+    <div class="callout"><strong>The one rule everyone breaks:</strong> don't land your first cell in the buffer layer (5 &lt; y⁺ &lt; 30). Both models are at their worst there. Aim for y⁺ ≈ 1, or comfortably above 30 — not in between.</div>
+
+    <h2>Turning a target y⁺ into a first cell height</h2>
+    <p>You can't measure y⁺ until you've run the case — it depends on the solution. So we estimate it ahead of time from a flat-plate boundary-layer correlation. The recipe:</p>
+    <ul>
+      <li><strong>1. Reynolds number:</strong> <code>Re<sub>L</sub> = U · L / ν</code>, with <code>L</code> a representative length.</li>
+      <li><strong>2. Skin-friction estimate</strong> (turbulent flat plate): <code>C<sub>f</sub> ≈ 0.058 · Re<sub>L</sub><sup>−0.2</sup></code>.</li>
+      <li><strong>3. Wall shear stress:</strong> <code>τ<sub>w</sub> = ½ · C<sub>f</sub> · ρ · U²</code>.</li>
+      <li><strong>4. Friction velocity:</strong> <code>u<sub>τ</sub> = √(τ<sub>w</sub> / ρ)</code>.</li>
+      <li><strong>5. First cell distance</strong> for your target: <code>Δy = y⁺<sub>target</sub> · ν / u<sub>τ</sub></code>.</li>
+    </ul>
+    <p>That <code>Δy</code> is the wall distance of the first node. It's an <em>estimate</em> — the real y⁺ won't be exactly your target because the correlation is approximate and the local shear varies over the geometry. That's fine: you set the mesh from the estimate, run, then check the actual y⁺ field in post-processing and refine if a critical region drifted into the buffer layer.</p>
+
+    <h2>A sane default workflow</h2>
+    <ul>
+      <li>Decide the strategy from the physics: separation / transition / heat transfer → <strong>wall-resolved, y⁺ ≈ 1</strong>. Attached high-Re aero/duct flow where cost matters → <strong>wall functions, y⁺ ≈ 30–100</strong>.</li>
+      <li>Estimate <code>Δy</code> with the recipe above.</li>
+      <li>Grow the prism layers off that first cell with a modest expansion ratio (≈ 1.2) until they blend into the core mesh.</li>
+      <li>Run, then <strong>plot the y⁺ field</strong> and confirm it's where you intended everywhere that matters.</li>
+      <li>Refine locally where it isn't.</li>
+    </ul>
+
+    <p>The estimate is arithmetic, not art — which is exactly why it's worth having a calculator do it so you can sweep operating conditions in seconds instead of re-deriving each time.</p>
+
+    <div class="post-cta">
+      <h3>Skip the arithmetic</h3>
+      <p>The AgniCycle y⁺ calculator turns your flow conditions and target y⁺ into a first cell height — free, no sign-in, in your browser.</p>
+      <a class="btn-primary" href="/cfd-calculators/y-plus/">Open the y⁺ calculator</a>
+      <a class="btn-secondary" href="/cfd-training/">CFD Training</a>
+    </div>
+  </div>
+</article>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-brand-logo">
+        <div class="nav-logo-mark">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="agl1o" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#F97316"/><stop offset="55%" stop-color="#F0570F"/><stop offset="100%" stop-color="#D93B06"/></linearGradient><linearGradient id="agl1m" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#FBBF24"/><stop offset="60%" stop-color="#F97316"/><stop offset="100%" stop-color="#F0500F"/></linearGradient><linearGradient id="agl1k" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#FFF6C9"/><stop offset="45%" stop-color="#FFE87A"/><stop offset="100%" stop-color="#FBBF24"/></linearGradient><radialGradient id="agl1b" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#67E8F9" stop-opacity="0.9"/><stop offset="55%" stop-color="#0EA5B7" stop-opacity="0.5"/><stop offset="100%" stop-color="#0EA5B7" stop-opacity="0"/></radialGradient></defs><g><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="12s" repeatCount="indefinite"/><circle cx="50" cy="50" r="39" fill="none" stroke="#0EA5B7" stroke-width="4.5"/><g transform="translate(89,50) rotate(90)"><path d="M6 0 L-8.5 -7 L-8.5 7 Z" fill="#0EA5B7"/></g><g transform="translate(11,50) rotate(270)"><path d="M6 0 L-8.5 -7 L-8.5 7 Z" fill="#0EA5B7"/></g></g><g transform="translate(50,77.5)"><g><animateTransform attributeName="transform" type="scale" values="1 1;1.05 0.96;0.97 1.04;1.02 0.98;1 1" keyTimes="0;0.28;0.55;0.8;1" dur="1.9s" repeatCount="indefinite"/><g transform="scale(0.62) translate(-50,-88)"><ellipse cx="50" cy="83" rx="16" ry="8.5" fill="url(#agl1b)"/><path d="M50 8 C53 15 59 20 63 28 C68 36 71 44 71 56 C71 74 62 88 50 88 C38 88 29 74 29 56 C29 44 32 36 37 28 C41 20 47 15 50 8 Z" fill="url(#agl1o)"/><path d="M50 24 C54 31 60 37 62 46 C64.5 55 63 66 58 73 C55.5 77 53 79 50 79 C47 79 44.5 77 42 73 C37 66 35.5 55 38 46 C40 37 46 31 50 24 Z" fill="url(#agl1m)"/><path d="M50 46 C53 52 57 56 57.5 63 C58 70 55 76 50 76 C45 76 42 70 42.5 63 C43 56 47 52 50 46 Z" fill="url(#agl1k)"><animate attributeName="opacity" values="1;0.85;1;0.92;1" dur="1.3s" repeatCount="indefinite"/></path><path d="M38 76 C39.5 84 44.5 88 50 88 C55.5 88 60.5 84 62 76 C59 82 54.5 85 50 85 C45.5 85 41 82 38 76 Z" fill="#22D3EE" opacity="0.85"><animate attributeName="opacity" values="0.85;1;0.72;0.85" dur="1.7s" repeatCount="indefinite"/></path></g></g></g></svg>
+        </div>
+        <span>AgniCycle</span>
+      </div>
+      <p class="footer-tagline">Research-grade combustion engineering tools for researchers and engineers.</p>
+      <div style="font-size:13px;color:var(--muted)"><a href="mailto:support@agnicycle.com" style="color:var(--muted)">support@agnicycle.com</a></div>
+    </div>
+    <div class="footer-col">
+      <h4>Products</h4>
+      <ul>
+        <li><a href="/simulator">Engine Simulator</a></li>
+        <li><a href="/spray">Spray Calculator</a></li>
+        <li><a href="/ev-battery/">EV Battery Suite</a></li>
+        <li><a href="/cfd-calculators/">CFD Calculators</a></li>
+        <li><a href="/cfd-training/">CFD Training</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="/about/">About AgniCycle</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/forum/">Community Q&amp;A</a></li>
+        <li><a href="/terms/">Terms of Use</a></li>
+        <li><a href="/privacy/">Privacy Policy</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <ul>
+        <li><a href="https://www.linkedin.com/in/dhkrnl" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://dhkrnl.github.io/" target="_blank" rel="noopener">Personal Site</a></li>
+        <li><a href="mailto:support@agnicycle.com">support@agnicycle.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© <span id="footer-year"></span> AgniCycle</span>
+    <span>Made with <span style="color:var(--fire)">🔥</span> for engineers</span>
+  </div>
+</footer>
+
+<script>
+document.getElementById('footer-year').textContent = new Date().getFullYear();
+function toggleTheme() { const n = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; document.documentElement.setAttribute('data-theme', n); localStorage.setItem('agni-theme', n); }
+function toggleNav() { document.getElementById('nav-mobile').classList.toggle('open'); }
+function closeNav() { document.getElementById('nav-mobile').classList.remove('open'); }
+window.addEventListener('scroll', function() { document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 10); });
+</script>
+</body>
+</html>

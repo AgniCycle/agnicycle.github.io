@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Blog — AgniCycle</title>
+<meta name="description" content="Notes from the lab: combustion, CFD, spray dynamics, EV batteries, and the engineering behind the AgniCycle tools — written by an active researcher."/>
+<link rel="canonical" href="https://www.agnicycle.com/blog/"/>
+<meta property="og:type"        content="website"/>
+<meta property="og:url"         content="https://www.agnicycle.com/blog/"/>
+<meta property="og:title"       content="Blog — AgniCycle"/>
+<meta property="og:description" content="Notes from the lab: combustion, CFD, spray dynamics, and the engineering behind the AgniCycle tools."/>
+<meta property="og:image"       content="https://www.agnicycle.com/og-image.png"/>
+<meta name="twitter:card"        content="summary_large_image"/>
+<meta name="twitter:title"       content="Blog — AgniCycle"/>
+<meta name="twitter:description" content="Notes from the lab: combustion, CFD, spray dynamics, and the engineering behind AgniCycle."/>
+<meta name="robots" content="index, follow"/>
+<meta name="theme-color" content="#0ea5b7"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='92' fill='%230B2536'/><circle cx='256' cy='256' r='200' fill='none' stroke='%230EA5B7' stroke-width='21'/><g transform='translate(456,256) rotate(90)'><path d='M28 0 L-41 -33 L-41 33 Z' fill='%230EA5B7'/></g><g transform='translate(56,256) rotate(270)'><path d='M28 0 L-41 -33 L-41 33 Z' fill='%230EA5B7'/></g><g transform='translate(256,256) scale(3.3) translate(-50,-49)'><path d='M50 8 C53 15 59 20 63 28 C68 36 71 44 71 56 C71 74 62 88 50 88 C38 88 29 74 29 56 C29 44 32 36 37 28 C41 20 47 15 50 8 Z' fill='url(%23fvo)'/><path d='M50 24 C54 31 60 37 62 46 C64.5 55 63 66 58 73 C55.5 77 53 79 50 79 C47 79 44.5 77 42 73 C37 66 35.5 55 38 46 C40 37 46 31 50 24 Z' fill='url(%23fvm)'/><path d='M50 46 C53 52 57 56 57.5 63 C58 70 55 76 50 76 C45 76 42 70 42.5 63 C43 56 47 52 50 46 Z' fill='url(%23fvk)'/><path d='M38 76 C39.5 84 44.5 88 50 88 C55.5 88 60.5 84 62 76 C59 82 54.5 85 50 85 C45.5 85 41 82 38 76 Z' fill='%2322D3EE' opacity='0.85'/></g><defs><linearGradient id='fvo' x1='0' y1='1' x2='0' y2='0'><stop offset='0%25' stop-color='%23F97316'/><stop offset='55%25' stop-color='%23F0570F'/><stop offset='100%25' stop-color='%23D93B06'/></linearGradient><linearGradient id='fvm' x1='0' y1='1' x2='0' y2='0'><stop offset='0%25' stop-color='%23FBBF24'/><stop offset='60%25' stop-color='%23F97316'/><stop offset='100%25' stop-color='%23F0500F'/></linearGradient><linearGradient id='fvk' x1='0' y1='1' x2='0' y2='0'><stop offset='0%25' stop-color='%23FFF6C9'/><stop offset='45%25' stop-color='%23FFE87A'/><stop offset='100%25' stop-color='%23FBBF24'/></linearGradient></defs></svg>" type="image/svg+xml"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/assets/site.css"/>
+<style>
+.nav-mobile-cta { margin-top: 16px; padding: 13px 14px; border-radius: 12px; background: var(--teal); color: #fff; font-weight: 600; font-size: 15px; text-align: center; text-decoration: none; display: block; }
+
+.blog-wrap { max-width: var(--container-wide); margin: 0 auto; padding: 140px 24px 100px; }
+.blog-head { text-align: center; margin-bottom: 52px; }
+.blog-title { font-size: clamp(32px, 5vw, 48px); font-weight: 800; letter-spacing: -1px; color: var(--text); margin-bottom: 14px; }
+.blog-sub { font-size: 17px; color: var(--text2); line-height: 1.7; max-width: 560px; margin: 0 auto; }
+
+.post-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+.post-card { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; text-decoration: none; transition: border-color 0.2s, transform 0.2s; }
+.post-card:hover { border-color: var(--border2); transform: translateY(-3px); text-decoration: none; }
+.post-tag { display: inline-flex; align-self: flex-start; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 11px; border-radius: 999px; margin-bottom: 16px; }
+.post-tag.brand { background: rgba(249,115,22,0.12); color: var(--fire); }
+.post-tag.cfd { background: rgba(14,165,183,0.12); color: var(--teal); }
+.post-card h2 { font-size: 21px; font-weight: 800; letter-spacing: -0.4px; color: var(--text); line-height: 1.3; margin-bottom: 12px; }
+.post-card p { font-size: 14.5px; color: var(--text2); line-height: 1.65; margin-bottom: 20px; flex: 1; }
+.post-card-meta { display: flex; align-items: center; gap: 12px; font-size: 12.5px; color: var(--text3); font-family: var(--mono); }
+.post-card-meta .read-arrow { margin-left: auto; color: var(--fire); font-weight: 600; font-family: 'Inter', sans-serif; }
+</style>
+</head>
+<body>
+<script>(function(){ document.documentElement.setAttribute('data-theme', localStorage.getItem('agni-theme')||'dark'); })();</script>
+
+<div class="announce-bar">
+  <div class="announce-dot"></div>
+  <strong>Now in Public Beta</strong>
+  <span class="announce-desc"> — Engine Simulator, Spray Calculator &amp; EV Battery Suite. Free for approved researchers.</span>
+  <a href="https://www.agnicycle.com/signup/">Request researcher access →</a>
+</div>
+
+<nav class="nav" id="nav">
+  <a class="nav-brand" href="/">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="agl0o" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#F97316"/><stop offset="55%" stop-color="#F0570F"/><stop offset="100%" stop-color="#D93B06"/></linearGradient><linearGradient id="agl0m" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#FBBF24"/><stop offset="60%" stop-color="#F97316"/><stop offset="100%" stop-color="#F0500F"/></linearGradient><linearGradient id="agl0k" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#FFF6C9"/><stop offset="45%" stop-color="#FFE87A"/><stop offset="100%" stop-color="#FBBF24"/></linearGradient><radialGradient id="agl0b" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#67E8F9" stop-opacity="0.9"/><stop offset="55%" stop-color="#0EA5B7" stop-opacity="0.5"/><stop offset="100%" stop-color="#0EA5B7" stop-opacity="0"/></radialGradient></defs><g><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="12s" repeatCount="indefinite"/><circle cx="50" cy="50" r="39" fill="none" stroke="#0EA5B7" stroke-width="4.5"/><g transform="translate(89,50) rotate(90)"><path d="M6 0 L-8.5 -7 L-8.5 7 Z" fill="#0EA5B7"/></g><g transform="translate(11,50) rotate(270)"><path d="M6 0 L-8.5 -7 L-8.5 7 Z" fill="#0EA5B7"/></g></g><g transform="translate(50,77.5)"><g><animateTransform attributeName="transform" type="scale" values="1 1;1.05 0.96;0.97 1.04;1.02 0.98;1 1" keyTimes="0;0.28;0.55;0.8;1" dur="1.9s" repeatCount="indefinite"/><g transform="scale(0.62) translate(-50,-88)"><ellipse cx="50" cy="83" rx="16" ry="8.5" fill="url(#agl0b)"/><path d="M50 8 C53 15 59 20 63 28 C68 36 71 44 71 56 C71 74 62 88 50 88 C38 88 29 74 29 56 C29 44 32 36 37 28 C41 20 47 15 50 8 Z" fill="url(#agl0o)"/><path d="M50 24 C54 31 60 37 62 46 C64.5 55 63 66 58 73 C55.5 77 53 79 50 79 C47 79 44.5 77 42 73 C37 66 35.5 55 38 46 C40 37 46 31 50 24 Z" fill="url(#agl0m)"/><path d="M50 46 C53 52 57 56 57.5 63 C58 70 55 76 50 76 C45 76 42 70 42.5 63 C43 56 47 52 50 46 Z" fill="url(#agl0k)"><animate attributeName="opacity" values="1;0.85;1;0.92;1" dur="1.3s" repeatCount="indefinite"/></path><path d="M38 76 C39.5 84 44.5 88 50 88 C55.5 88 60.5 84 62 76 C59 82 54.5 85 50 85 C45.5 85 41 82 38 76 Z" fill="#22D3EE" opacity="0.85"><animate attributeName="opacity" values="0.85;1;0.72;0.85" dur="1.7s" repeatCount="indefinite"/></path></g></g></g></svg>
+    </div>
+    <span>Agni<em>Cycle</em></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/simulator">Engine Simulator</a></li>
+    <li><a href="/spray">Spray Calculator</a></li>
+    <li><a href="/ev-battery/">EV Battery</a></li>
+    <li><a href="/cfd-calculators/">CFD Calculators</a></li>
+    <li><a href="/cfd-training/">CFD Training</a></li>
+    <li><a href="/forum/">Community</a></li>
+    <li><a href="/about/">About</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="nav-icon-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle light / dark">
+      <svg id="theme-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg id="theme-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+    <a class="nav-icon-btn" href="/account/" aria-label="My Account" title="My Account">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </a>
+  </div>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu" onclick="toggleNav()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</nav>
+
+<div class="nav-mobile" id="nav-mobile">
+  <a href="/" onclick="closeNav()">🏠 Home</a>
+  <div class="nav-mobile-section">Products</div>
+  <a href="/simulator" onclick="closeNav()"><span style="color:var(--fire)">⚙</span> Engine Simulator</a>
+  <a href="/spray" onclick="closeNav()"><span style="color:var(--teal)">💧</span> Spray Calculator</a>
+  <a href="/ev-battery/" onclick="closeNav()"><span style="color:#10b981">🔋</span> EV Battery Suite</a>
+  <a href="/cfd-calculators/" onclick="closeNav()"><span style="color:var(--teal)">📐</span> CFD Calculators</a>
+  <div class="nav-mobile-section">Community</div>
+  <a href="/forum/" onclick="closeNav()"><span style="color:var(--teal)">💬</span> Community Q&amp;A</a>
+  <a href="/blog/" onclick="closeNav()"><span style="color:var(--gold)">📝</span> Blog</a>
+  <a href="/cfd-training/" onclick="closeNav()"><span style="color:var(--gold)">📊</span> CFD Training</a>
+  <div class="nav-mobile-section">Company</div>
+  <a href="/about/" onclick="closeNav()">About AgniCycle</a>
+  <a href="mailto:support@agnicycle.com" onclick="closeNav()">Contact</a>
+  <a href="/account/" onclick="closeNav()">👤 My Account</a>
+</div>
+
+<main class="blog-wrap">
+  <div class="blog-head">
+    <div class="eyebrow" style="justify-content:center">Blog</div>
+    <h1 class="blog-title">Notes from the lab</h1>
+    <p class="blog-sub">Combustion, CFD, spray dynamics, EV batteries, and the engineering behind the AgniCycle tools — written by an active researcher.</p>
+  </div>
+
+  <div class="post-grid">
+
+    <a class="post-card" href="/blog/choosing-y-plus-cfd-mesh/">
+      <span class="post-tag cfd">CFD · Meshing</span>
+      <h2>How to choose y⁺ for your CFD mesh</h2>
+      <p>Wall-resolved or wall-function? The y⁺ you target decides your first cell height, your mesh count, and whether your near-wall physics is real or a fudge. A practical guide with the numbers that matter.</p>
+      <div class="post-card-meta">
+        <span>Jul 2026</span><span>·</span><span>7 min read</span>
+        <span class="read-arrow">Read →</span>
+      </div>
+    </a>
+
+    <a class="post-card" href="/blog/agnicycle-logo-thermodynamic-diagram/">
+      <span class="post-tag brand">Brand · Design</span>
+      <h2>The AgniCycle logo is a thermodynamic diagram</h2>
+      <p>The flame, the ring, the two arrowheads — none of it is decoration. Every element maps to a real piece of engine physics. Here's what the mark actually encodes, and why we drew it that way.</p>
+      <div class="post-card-meta">
+        <span>Jul 2026</span><span>·</span><span>4 min read</span>
+        <span class="read-arrow">Read →</span>
+      </div>
+    </a>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-brand-logo">
+        <div class="nav-logo-mark">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="agl1o" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#F97316"/><stop offset="55%" stop-color="#F0570F"/><stop offset="100%" stop-color="#D93B06"/></linearGradient><linearGradient id="agl1m" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#FBBF24"/><stop offset="60%" stop-color="#F97316"/><stop offset="100%" stop-color="#F0500F"/></linearGradient><linearGradient id="agl1k" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#FFF6C9"/><stop offset="45%" stop-color="#FFE87A"/><stop offset="100%" stop-color="#FBBF24"/></linearGradient><radialGradient id="agl1b" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#67E8F9" stop-opacity="0.9"/><stop offset="55%" stop-color="#0EA5B7" stop-opacity="0.5"/><stop offset="100%" stop-color="#0EA5B7" stop-opacity="0"/></radialGradient></defs><g><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="12s" repeatCount="indefinite"/><circle cx="50" cy="50" r="39" fill="none" stroke="#0EA5B7" stroke-width="4.5"/><g transform="translate(89,50) rotate(90)"><path d="M6 0 L-8.5 -7 L-8.5 7 Z" fill="#0EA5B7"/></g><g transform="translate(11,50) rotate(270)"><path d="M6 0 L-8.5 -7 L-8.5 7 Z" fill="#0EA5B7"/></g></g><g transform="translate(50,77.5)"><g><animateTransform attributeName="transform" type="scale" values="1 1;1.05 0.96;0.97 1.04;1.02 0.98;1 1" keyTimes="0;0.28;0.55;0.8;1" dur="1.9s" repeatCount="indefinite"/><g transform="scale(0.62) translate(-50,-88)"><ellipse cx="50" cy="83" rx="16" ry="8.5" fill="url(#agl1b)"/><path d="M50 8 C53 15 59 20 63 28 C68 36 71 44 71 56 C71 74 62 88 50 88 C38 88 29 74 29 56 C29 44 32 36 37 28 C41 20 47 15 50 8 Z" fill="url(#agl1o)"/><path d="M50 24 C54 31 60 37 62 46 C64.5 55 63 66 58 73 C55.5 77 53 79 50 79 C47 79 44.5 77 42 73 C37 66 35.5 55 38 46 C40 37 46 31 50 24 Z" fill="url(#agl1m)"/><path d="M50 46 C53 52 57 56 57.5 63 C58 70 55 76 50 76 C45 76 42 70 42.5 63 C43 56 47 52 50 46 Z" fill="url(#agl1k)"><animate attributeName="opacity" values="1;0.85;1;0.92;1" dur="1.3s" repeatCount="indefinite"/></path><path d="M38 76 C39.5 84 44.5 88 50 88 C55.5 88 60.5 84 62 76 C59 82 54.5 85 50 85 C45.5 85 41 82 38 76 Z" fill="#22D3EE" opacity="0.85"><animate attributeName="opacity" values="0.85;1;0.72;0.85" dur="1.7s" repeatCount="indefinite"/></path></g></g></g></svg>
+        </div>
+        <span>AgniCycle</span>
+      </div>
+      <p class="footer-tagline">Research-grade combustion engineering tools for researchers and engineers.</p>
+      <div style="font-size:13px;color:var(--muted)"><a href="mailto:support@agnicycle.com" style="color:var(--muted)">support@agnicycle.com</a></div>
+    </div>
+    <div class="footer-col">
+      <h4>Products</h4>
+      <ul>
+        <li><a href="/simulator">Engine Simulator</a></li>
+        <li><a href="/spray">Spray Calculator</a></li>
+        <li><a href="/ev-battery/">EV Battery Suite</a></li>
+        <li><a href="/cfd-calculators/">CFD Calculators</a></li>
+        <li><a href="/cfd-training/">CFD Training</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="/about/">About AgniCycle</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/forum/">Community Q&amp;A</a></li>
+        <li><a href="/terms/">Terms of Use</a></li>
+        <li><a href="/privacy/">Privacy Policy</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <ul>
+        <li><a href="https://www.linkedin.com/in/dhkrnl" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://dhkrnl.github.io/" target="_blank" rel="noopener">Personal Site</a></li>
+        <li><a href="mailto:support@agnicycle.com">support@agnicycle.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© <span id="footer-year"></span> AgniCycle</span>
+    <span>Made with <span style="color:var(--fire)">🔥</span> for engineers</span>
+  </div>
+</footer>
+
+<script>
+document.getElementById('footer-year').textContent = new Date().getFullYear();
+function toggleTheme() { const n = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; document.documentElement.setAttribute('data-theme', n); localStorage.setItem('agni-theme', n); }
+function toggleNav() { document.getElementById('nav-mobile').classList.toggle('open'); }
+function closeNav() { document.getElementById('nav-mobile').classList.remove('open'); }
+window.addEventListener('scroll', function() { document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 10); });
+</script>
+</body>
+</html>
