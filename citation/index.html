@@ -91,6 +91,12 @@
 .author-note { padding: 8px 24px 80px; }
 .author-note-inner { max-width: 820px; margin: 0 auto; font-size: 13.5px; color: var(--text3); line-height: 1.7; }
 .author-note-inner a { color: var(--teal); }
+.orcid-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  color: var(--text3) !important; text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+}
+.orcid-badge:hover { color: #A6CE39 !important; }
+.orcid-badge svg { width: 15px; height: 15px; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -281,7 +287,11 @@
 
 <div class="author-note">
   <div class="author-note-inner">
-    AgniCycle is designed and developed by <strong style="color:var(--text)">Dr. Dhananjay Kumar</strong>, an active combustion researcher — see the <a href="/about/">About page</a> for background. Publishing a larger study built on AgniCycle? <a href="mailto:support@agnicycle.com">Reach out</a> — happy to help with methodology descriptions or answer questions a reviewer might raise about the underlying models.
+    AgniCycle is designed and developed by <strong style="color:var(--text)">Dr. Dhananjay Kumar</strong>, an active combustion researcher
+    (<a class="orcid-badge" href="https://orcid.org/0000-0003-1167-9672" target="_blank" rel="noopener me">
+      <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><circle cx="128" cy="128" r="128" fill="#A6CE39"/><path fill="#fff" d="M86.3 186.2H70.9V79.1h15.4v107.1z"/><path fill="#fff" d="M108.9 79.1h41.6c39.6 0 57 28.3 57 53.6 0 27.5-21.5 53.6-56.8 53.6h-41.8V79.1zm15.4 93.3h24.5c34.9 0 42.9-26.5 42.9-39.7 0-21.5-13.7-39.7-43.7-39.7h-23.7v79.4z"/><path fill="#fff" d="M88.7 56.8c0 5.5-4.5 10.1-10.1 10.1s-10.1-4.6-10.1-10.1c0-5.6 4.5-10.1 10.1-10.1s10.1 4.5 10.1 10.1z"/></svg>
+      orcid.org/0000-0003-1167-9672
+    </a>) — see the <a href="/about/">About page</a> for background. Publishing a larger study built on AgniCycle? <a href="mailto:support@agnicycle.com">Reach out</a> — happy to help with methodology descriptions or answer questions a reviewer might raise about the underlying models.
   </div>
 </div>
 
