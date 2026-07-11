@@ -26,12 +26,9 @@
 <style>
 /* tokens, announce bar, nav, footer, .feat-card now come from
    /assets/site.css — only Engine-Simulator-page-specific CSS below */
-[data-theme="light"] #page-bg-canvas { mix-blend-mode: multiply; opacity: 0.08; }
 [data-theme="light"] .hero h1 { color: #0f172a; }
 [data-theme="light"] .launch-cta { background: linear-gradient(135deg, #e8ecf1 0%, #edf2f8 50%, #e8ecf1 100%); }
 [data-theme="light"] .launch-cta h2 { color: #0f172a; }
-body { background: transparent; }
-#page-bg-canvas { position:fixed; inset:0; width:100%; height:100%; z-index:50; pointer-events:none; mix-blend-mode:screen; }
 
 /* ── HERO ── */
 .hero {
@@ -253,7 +250,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </head>
 <body>
-<canvas id="page-bg-canvas" aria-hidden="true"></canvas>
 
 <!-- ANNOUNCEMENT BAR -->
 <div class="announce-bar">
@@ -832,87 +828,6 @@ const obs = new IntersectionObserver(entries => entries.forEach(e => { if (e.isI
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 document.getElementById('yr').textContent = new Date().getFullYear();
 
-/* ── PAGE BACKGROUND — Thermodynamic Oscilloscope ── */
-(function() {
-  const canvas = document.getElementById('page-bg-canvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  let W, H, t = 0, running = false, animId, rT;
-
-  function resize() {
-    clearTimeout(rT);
-    rT = setTimeout(() => { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }, 100);
-  }
-  W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight;
-  window.addEventListener('resize', resize, {passive:true});
-
-  const WAVES = [
-    {amp:.11,freq:1.0,spd:.018,ph:0,   col:'#f97316',lw:2.0,glow:true},
-    {amp:.07,freq:2.1,spd:.015,ph:1.3, col:'#fbbf24',lw:1.4,glow:false},
-    {amp:.05,freq:.7, spd:.010,ph:2.8, col:'#0ea5b7',lw:1.1,glow:false},
-    {amp:.04,freq:3.4,spd:.022,ph:.6,  col:'#22c55e',lw:.8, glow:false},
-    {amp:.03,freq:5.2,spd:.03, ph:1.9, col:'#a78bfa',lw:.6, glow:false},
-  ];
-  const PV = Array.from({length:3},(_,i)=>({
-    cx:(.18+i*.28)*W, cy:(.22+i*.15)*H,
-    rx:55+i*18, ry:35+i*12,
-    prog:i/3, spd:.0025+i*.0007,
-    col:['#f97316','#fbbf24','#0ea5b7'][i], trail:[],
-  }));
-  const spikes=[];let spikeT=0;
-
-  function render() {
-    ctx.clearRect(0,0,W,H);
-    /* Grid */
-    ctx.save(); ctx.strokeStyle='rgba(14,165,183,0.04)'; ctx.lineWidth=.5;
-    for(let x=0;x<=W;x+=W/20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-    for(let y=0;y<=H;y+=H/10){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-    ctx.restore();
-    /* Waves */
-    WAVES.forEach((w,wi)=>{
-      const yB=H*(.28+wi*.12);
-      ctx.save();
-      if(w.glow){ctx.shadowColor=w.col;ctx.shadowBlur=16;}
-      ctx.strokeStyle=w.col; ctx.lineWidth=w.lw; ctx.globalAlpha=.28;
-      ctx.beginPath();
-      for(let x=0;x<=W;x+=2){
-        const y=yB-Math.sin(x/W*Math.PI*2*w.freq+t*w.spd+w.ph)*H*w.amp;
-        x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-      }
-      ctx.stroke(); ctx.restore();
-    });
-    /* P-V loops */
-    PV.forEach(pv=>{
-      pv.prog+=pv.spd; if(pv.prog>1){pv.prog=0;pv.trail=[];}
-      const a=pv.prog*Math.PI*2;
-      const x=pv.cx+pv.rx*Math.cos(a), y=pv.cy+pv.ry*Math.sin(a)*(1+.35*Math.sin(a*2));
-      pv.trail.push({x,y}); if(pv.trail.length>220)pv.trail.shift();
-      ctx.save();
-      ctx.globalAlpha=.14; ctx.strokeStyle=pv.col; ctx.lineWidth=1.1;
-      ctx.beginPath(); pv.trail.forEach((pt,i)=>i===0?ctx.moveTo(pt.x,pt.y):ctx.lineTo(pt.x,pt.y)); ctx.stroke();
-      ctx.globalAlpha=.65; ctx.fillStyle=pv.col; ctx.shadowColor=pv.col; ctx.shadowBlur=10;
-      ctx.beginPath(); ctx.arc(x,y,2.8,0,Math.PI*2); ctx.fill();
-      ctx.restore();
-    });
-    /* Ignition spikes */
-    spikeT++;
-    if(spikeT>100+Math.random()*160){spikes.push({x:W*(.1+Math.random()*.8),y:H*.35,life:0,dur:35+Math.random()*25});spikeT=0;}
-    for(let k=spikes.length-1;k>=0;k--){
-      const s=spikes[k]; s.life++;
-      if(s.life>s.dur){spikes.splice(k,1);continue;}
-      const pr=s.life/s.dur, h=H*.15*(1-pr);
-      ctx.save(); ctx.globalAlpha=(1-pr)*.55;
-      ctx.strokeStyle='#fbbf24'; ctx.lineWidth=1.8; ctx.shadowColor='#fbbf24'; ctx.shadowBlur=18;
-      ctx.beginPath(); ctx.moveTo(s.x,s.y); ctx.lineTo(s.x-9,s.y-h*.45); ctx.lineTo(s.x,s.y-h); ctx.lineTo(s.x+9,s.y-h*.45); ctx.lineTo(s.x,s.y); ctx.stroke();
-      ctx.restore();
-    }
-    t++;
-  }
-  function startLoop(){if(running)return;running=true;(function loop(){if(!running)return;render();animId=requestAnimationFrame(loop);})();}
-  function stopLoop(){running=false;cancelAnimationFrame(animId);}
-  document.addEventListener('visibilitychange',()=>document.hidden?stopLoop():startLoop());
-  startLoop();
-})();
 (function(){
   var btn=document.getElementById('fullscreen-btn');
   if(!btn)return;
