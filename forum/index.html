@@ -82,6 +82,29 @@
 .msg-ok { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #86efac; }
 [data-theme="light"] .msg-error { background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.25); color: #b91c1c; }
 [data-theme="light"] .msg-ok { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.3); color: #15803d; }
+
+/* question count under the title */
+.q-count { font-family: var(--mono); font-size: 13px; color: var(--text3); margin-top: 4px; }
+
+/* character counter */
+.char-count { font-size: 11.5px; font-family: var(--mono); color: var(--text3); text-align: right; margin: -10px 0 14px; }
+.char-count.near { color: var(--gold); }
+.char-count.over { color: var(--red, #ef4444); }
+.kbd-hint { font-size: 11.5px; color: var(--text3); }
+.kbd-hint kbd { font-family: var(--mono); font-size: 10.5px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 4px; padding: 1px 5px; }
+
+/* loading skeleton */
+.skel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; }
+.skel-line { height: 12px; border-radius: 6px; background: linear-gradient(90deg, var(--surface2) 0%, var(--border) 50%, var(--surface2) 100%); background-size: 200% 100%; animation: skel 1.3s ease-in-out infinite; }
+.skel-line.t { height: 17px; width: 65%; margin-bottom: 12px; }
+.skel-line.s { width: 100%; margin-bottom: 8px; }
+.skel-line.s2 { width: 80%; margin-bottom: 14px; }
+.skel-line.m { height: 10px; width: 40%; }
+@keyframes skel { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* richer empty state with example prompts */
+.example-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 560px; margin: 20px auto 0; }
+.example-chip { font-size: 12.5px; color: var(--text2); background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 7px 14px; }
 </style>
 </head>
 <body>
@@ -166,6 +189,7 @@
         <div class="eyebrow">Community</div>
         <h1 class="forum-title">Researcher Q&amp;A</h1>
         <p class="forum-sub">Questions and answers on combustion, CFD, spray dynamics, EV batteries, and the AgniCycle tools. Anyone can read — approved researchers can post.</p>
+        <div class="q-count" id="q-count"></div>
       </div>
       <button class="btn-primary" id="ask-btn" style="display:none">Ask a question</button>
     </div>
@@ -176,12 +200,15 @@
       <div id="ask-msg"></div>
       <label for="ask-title">Question title</label>
       <input type="text" id="ask-title" maxlength="200" placeholder="e.g. How do I pick a y+ target for a wall-resolved LES?" required/>
+      <div class="char-count" id="ask-title-count"></div>
       <label for="ask-body">Details</label>
       <textarea id="ask-body" maxlength="10000" placeholder="Add context — what you tried, what you expect, the physics you're unsure about…" required></textarea>
+      <div class="char-count" id="ask-body-count"></div>
       <div class="forum-hint">Be specific. Plain text only; no HTML.</div>
       <div class="forum-form-actions">
         <button type="submit" class="btn-primary" id="ask-submit">Post question</button>
         <button type="button" class="btn-secondary" id="ask-cancel">Cancel</button>
+        <span class="kbd-hint">or <kbd>⌘</kbd> <kbd>↵</kbd></span>
       </div>
     </form>
 
@@ -205,9 +232,11 @@
       <div id="answer-msg"></div>
       <label for="answer-body">Your answer</label>
       <textarea id="answer-body" maxlength="10000" placeholder="Share what you know…" required></textarea>
+      <div class="char-count" id="answer-body-count"></div>
       <div class="forum-hint">Plain text only; no HTML.</div>
       <div class="forum-form-actions">
         <button type="submit" class="btn-primary" id="answer-submit">Post answer</button>
+        <span class="kbd-hint">or <kbd>⌘</kbd> <kbd>↵</kbd></span>
       </div>
     </form>
   </section>
@@ -315,6 +344,23 @@ function fmtDate(ts) {
   if (!ts || typeof ts.toDate !== 'function') return '';
   return ts.toDate().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
 }
+function relTime(ts) {
+  if (!ts || typeof ts.toDate !== 'function') return '';
+  const d = ts.toDate(), s = (Date.now() - d.getTime()) / 1000;
+  if (s < 45) return 'just now';
+  if (s < 90) return '1 min ago';
+  if (s < 3600) return Math.round(s / 60) + ' min ago';
+  if (s < 5400) return '1 hour ago';
+  if (s < 86400) return Math.round(s / 3600) + ' hours ago';
+  if (s < 172800) return 'yesterday';
+  if (s < 2592000) return Math.round(s / 86400) + ' days ago';
+  return fmtDate(ts);
+}
+function dateSpan(ts) {
+  const sp = el('span', null, relTime(ts));
+  if (ts && typeof ts.toDate === 'function') sp.title = ts.toDate().toLocaleString();
+  return sp;
+}
 function el(tag, cls, text) {
   const n = document.createElement(tag);
   if (cls) n.className = cls;
@@ -367,25 +413,54 @@ function refreshPostControls() {
 }
 
 // ═══════════ LIST VIEW ═══════════
+function skeletons(n) {
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < n; i++) {
+    const s = el('div', 'skel');
+    s.appendChild(el('div', 'skel-line t'));
+    s.appendChild(el('div', 'skel-line s'));
+    s.appendChild(el('div', 'skel-line s2'));
+    s.appendChild(el('div', 'skel-line m'));
+    frag.appendChild(s);
+  }
+  return frag;
+}
+
+const EXAMPLE_PROMPTS = [
+  'Picking a y⁺ target for a wall-resolved LES',
+  'Diesel vs. gasoline Wiebe shape factors',
+  'Hydrogen laminar flame speed at high EGR',
+  'SMD correlation choice for GDI sprays',
+  'LFP vs. NMC thermal-runaway onset',
+];
+
 async function renderList() {
   document.getElementById('view-list').style.display = '';
   document.getElementById('view-thread').style.display = 'none';
   const listEl = document.getElementById('q-list');
+  const countEl = document.getElementById('q-count');
+  listEl.innerHTML = '';
+  listEl.appendChild(skeletons(3));
   try {
     const qs = await getDocs(query(collection(db, 'forumQuestions'), orderBy('createdAt', 'desc'), limit(100)));
     listEl.innerHTML = '';
+    countEl.textContent = qs.size ? (qs.size === 1 ? '1 question' : qs.size + ' questions') : '';
     if (qs.empty) {
       const empty = el('div', 'forum-empty');
       empty.appendChild(el('strong', null, 'No questions yet'));
-      empty.appendChild(document.createTextNode('Be the first to start a discussion.'));
+      empty.appendChild(document.createTextNode('Be the first to start a discussion — a few ideas to spark one:'));
+      const chips = el('div', 'example-chips');
+      EXAMPLE_PROMPTS.forEach((p) => chips.appendChild(el('span', 'example-chip', p)));
+      empty.appendChild(chips);
       listEl.appendChild(empty);
       return;
     }
     qs.forEach((d) => listEl.appendChild(questionCard(d.id, d.data())));
   } catch (err) {
     console.error(err);
-    setMsg('list-msg', 'Could not load questions. Please refresh.', 'error');
     listEl.innerHTML = '';
+    countEl.textContent = '';
+    setMsg('list-msg', 'Could not load questions. Please refresh.', 'error');
   }
 }
 
@@ -396,7 +471,7 @@ function questionCard(id, q) {
   a.appendChild(el('div', 'q-card-snippet', q.body || ''));
   const meta = el('div', 'q-card-meta');
   meta.appendChild(el('span', 'q-author', '@' + (q.authorUsername || 'researcher')));
-  meta.appendChild(el('span', null, fmtDate(q.createdAt)));
+  meta.appendChild(dateSpan(q.createdAt));
   const n = q.answerCount || 0;
   const pill = el('span', 'q-answers-pill' + (n > 0 ? ' has-answers' : ''), n === 1 ? '1 answer' : n + ' answers');
   meta.appendChild(pill);
@@ -442,7 +517,7 @@ async function renderThread(id) {
 function metaRow(data, docId, kind) {
   const meta = el('div', kind === 'question' ? 'thread-meta' : 'answer-meta');
   meta.appendChild(el('span', 'q-author', '@' + (data.authorUsername || 'researcher')));
-  meta.appendChild(el('span', null, fmtDate(data.createdAt)));
+  meta.appendChild(dateSpan(data.createdAt));
   if (me && (me.uid === data.authorUid)) {
     const del = el('button', 'del-btn', 'Delete');
     del.addEventListener('click', () => handleDelete(kind, docId, data));
@@ -454,7 +529,8 @@ function metaRow(data, docId, kind) {
 async function renderAnswers(qid) {
   const listEl = document.getElementById('answer-list');
   const heading = document.getElementById('answers-heading');
-  listEl.innerHTML = '<div class="forum-loading">Loading answers…</div>';
+  listEl.innerHTML = '';
+  listEl.appendChild(skeletons(2));
   try {
     // where-only query (no composite index needed); sort client-side
     const qs = await getDocs(query(collection(db, 'forumAnswers'), where('questionId', '==', qid)));
@@ -569,6 +645,37 @@ async function handleDelete(kind, docId, data) {
     alert('Could not delete: ' + (err.message || 'unknown error'));
   }
 }
+
+// ── character counters ──
+function wireCounter(inputId, countId, max) {
+  const inp = document.getElementById(inputId);
+  const cnt = document.getElementById(countId);
+  if (!inp || !cnt) return;
+  const update = () => {
+    const n = inp.value.length;
+    cnt.textContent = n + ' / ' + max;
+    cnt.classList.toggle('near', n >= max * 0.9 && n < max);
+    cnt.classList.toggle('over', n >= max);
+  };
+  inp.addEventListener('input', update);
+  update();
+}
+wireCounter('ask-title', 'ask-title-count', 200);
+wireCounter('ask-body', 'ask-body-count', 10000);
+wireCounter('answer-body', 'answer-body-count', 10000);
+
+// ── Cmd/Ctrl+Enter submits the surrounding form ──
+['ask-title', 'ask-body', 'answer-body'].forEach((id) => {
+  const node = document.getElementById(id);
+  if (!node) return;
+  node.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      const form = node.closest('form');
+      if (form) form.requestSubmit();
+    }
+  });
+});
 
 // ── init ──
 if (threadId) renderThread(threadId); else renderList();
