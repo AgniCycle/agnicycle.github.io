@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+<link rel="stylesheet" href="/assets/calc-guide.css"/>
 </head>
 <body>
 <div class="announce-bar">
@@ -89,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <span>Agni<span class="brand-em">Cycle</span></span>
     </a>
     <span class="topbar-sep">/</span>
-    <span class="topbar-title">Turbulence Properties Calculator</span>
+    <h1 class="topbar-title">Turbulence Properties Calculator</h1>
   </div>
   <div class="topbar-right">
     <button class="topbar-icon-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark" style="margin-right:4px">
@@ -101,6 +102,10 @@ document.addEventListener('DOMContentLoaded', function() {
       <svg id="fs-shrink" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="3" y2="21"/><line x1="21" y1="3" x2="14" y2="10"/></svg>
     </button>
     <span class="topbar-badge">CFD Tool</span>
+    <a class="topbar-back" href="#guide">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+      <span class="topbar-back-label">Guide</span>
+    </a>
     <a class="topbar-back" href="/cfd-calculators/">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       <span class="topbar-back-label">All Calculators</span>
@@ -119,6 +124,86 @@ document.addEventListener('DOMContentLoaded', function() {
     onload="document.getElementById('loader').classList.add('hidden')"
   ></iframe>
 </div>
+
+<section class="guide" id="guide" aria-labelledby="guide-title">
+
+<p class="guide-eyebrow">Guide</p>
+<h2 id="guide-title">Setting turbulence inlet boundary conditions</h2>
+<p class="guide-lead">Two-equation RANS models need turbulence quantities at every inlet: the turbulent kinetic energy k and a dissipation quantity (ε or ω). You rarely measure these directly. You know a turbulence intensity and a length scale, or a viscosity ratio. This calculator converts what you know into the values your solver needs, and produces ready-to-paste boundary-condition snippets.</p>
+
+<h2>The relationships</h2>
+<p>With freestream velocity U, turbulence intensity I (as a fraction), turbulent length scale L<sub>t</sub> and the model constant C<sub>μ</sub> = 0.09:</p>
+<div class="formula">k = 1.5 (U · I)²<br>
+ε = C<sub>μ</sub><sup>3/4</sup> · k<sup>3/2</sup> / L<sub>t</sub><br>
+ω = k<sup>1/2</sup> / (C<sub>μ</sub><sup>1/4</sup> · L<sub>t</sub>) = ε / (C<sub>μ</sub> k)<br>
+μ<sub>t</sub> / μ = ρ C<sub>μ</sub> k² / (μ ε)</div>
+<ul>
+<li><strong>k</strong> (m²/s²) is the kinetic energy of the velocity fluctuations, assuming they are isotropic with RMS value U·I.</li>
+<li><strong>ε</strong> (m²/s³) is the dissipation rate used by k-ε models.</li>
+<li><strong>ω</strong> (1/s) is the specific dissipation rate used by k-ω and k-ω SST.</li>
+<li><strong>μ<sub>t</sub>/μ</strong>, the eddy-to-molecular viscosity ratio, is a useful sanity check on the combination you chose.</li>
+</ul>
+
+<h2>Three ways to specify the inlet</h2>
+<p>Pick whichever pair of quantities you actually have:</p>
+<ol class="steps">
+<li><strong>Intensity + length scale (I and L<sub>t</sub>).</strong> The most common choice. Use it when you have a sensible estimate of the size of the energy-containing eddies.</li>
+<li><strong>Intensity + viscosity ratio (I and μ<sub>t</sub>/μ).</strong> Popular for external aerodynamics and in Fluent, where a viscosity ratio of 1 to 10 is common in the freestream.</li>
+<li><strong>Viscosity ratio + length scale (μ<sub>t</sub>/μ and L<sub>t</sub>).</strong> Useful when intensity is unknown but you know the desired eddy viscosity and eddy size.</li>
+</ol>
+<p>The calculator derives k, ε, ω and the remaining quantity consistently from the pair you provide.</p>
+
+<h2>Choosing intensity and length scale</h2>
+<table class="guide-table">
+<thead><tr><th>Situation</th><th>Turbulence intensity I</th><th>Length scale L<sub>t</sub></th></tr></thead>
+<tbody>
+<tr><td>Wind tunnel, clean freestream, external aerodynamics</td><td>0.1 – 1 %</td><td>A few percent of the body length is a common assumption</td></tr>
+<tr><td>Fully developed pipe or duct flow</td><td>Estimate: I ≈ 0.16 Re<sub>D<sub>h</sub></sub><sup>−1/8</sup> (roughly 3–5 % for Re from 10⁴ to 10⁶)</td><td>L<sub>t</sub> ≈ 0.07 D<sub>h</sub></td></tr>
+<tr><td>Flow behind grids, in turbomachinery, in combustors and engine ports</td><td>5 – 20 %</td><td>Set by the size of the upstream obstruction or passage</td></tr>
+<tr><td>Atmospheric boundary layer, urban flows</td><td>10 – 30 % near the ground</td><td>Depends on the height above ground and roughness</td></tr>
+</tbody>
+</table>
+<p>The factor 0.07 is based on the maximum mixing length in fully developed turbulent pipe flow, which is why it is applied to the pipe or hydraulic diameter. When you have no information, 5 % intensity with a length scale of about 5–10 % of the inlet dimension is a common default, but the results are then only as good as that assumption.</p>
+
+<h2>Worked examples</h2>
+<table class="guide-table">
+<thead><tr><th></th><th>Air, external flow</th><th>Water in a 100 mm pipe</th></tr></thead>
+<tbody>
+<tr><th scope="row">Inputs</th><td>U = 10 m/s, I = 5 %, L<sub>t</sub> = 0.05 m; ρ = 1.2047 kg/m³, μ = 1.8205×10⁻⁵ Pa·s</td><td>U = 3 m/s, D<sub>h</sub> = 0.1 m; ρ = 998.2 kg/m³, μ = 1.0×10⁻³ Pa·s</td></tr>
+<tr><th scope="row">Intensity, length</th><td>I = 5 %, L<sub>t</sub> = 0.05 m</td><td>Re = 2.99×10⁵, so I ≈ 3.3 %; L<sub>t</sub> = 0.07 D<sub>h</sub> = 7 mm</td></tr>
+<tr><th scope="row">k</th><td>0.375 m²/s²</td><td>0.0148 m²/s²</td></tr>
+<tr><th scope="row">ε</th><td>0.755 m²/s³</td><td>0.0422 m²/s³</td></tr>
+<tr><th scope="row">ω</th><td>22.4 1/s</td><td>31.7 1/s</td></tr>
+<tr><th scope="row">μ<sub>t</sub>/μ</th><td>≈ 1,110</td><td>—</td></tr>
+</tbody>
+</table>
+<p>The first column is a good illustration of a common surprise: at 5 % intensity and a 5 cm length scale in air, the inlet eddy-to-molecular viscosity ratio is above 1,000, far above the 1 to 10 typical of a clean freestream. That much eddy viscosity thickens boundary layers and can trigger early transition. If it is unrealistic for your case, lower the intensity or the length scale.</p>
+
+<h2>Solver export</h2>
+<p>Different codes use different but equivalent conventions. The calculator generates inlet entries for:</p>
+<ul>
+<li><strong>OpenFOAM:</strong> <code>fixedValue</code> entries for <code>k</code> and <code>epsilon</code> or <code>omega</code>, plus the <code>turbulentMixingLengthDissipationRateInlet</code> alternative.</li>
+<li><strong>ANSYS Fluent:</strong> text-interface commands for the inlet turbulence specification.</li>
+<li><strong>ANSYS CFX:</strong> CEL expressions for the inlet.</li>
+</ul>
+<p>Always check that the snippet matches your model variant (k-ε versus k-ω SST) and your solver version’s naming.</p>
+
+<h2>Frequently asked questions</h2>
+<details class="faq"><summary>What is a sensible turbulence intensity if I don’t know it?</summary><p>For internal flows use the pipe estimate I ≈ 0.16 Re<sup>−1/8</sup>, which gives roughly 3 to 5 % for Reynolds numbers between 10⁴ and 10⁶. For clean external flows 0.1 to 1 % is typical. If your inlet is downstream of a fan, valve or bend, expect 5 to 10 % or more.</p></details>
+<details class="faq"><summary>What is the difference between the ε formulas?</summary><p>Solvers use slightly different definitions of the dissipation rate, some with C<sub>μ</sub><sup>3/4</sup> and some with other empirical constants. The calculator lists the variants so you can pick the one that matches your code. If your solver documentation gives a formula, use that one.</p></details>
+<details class="faq"><summary>Does the inlet turbulence matter much?</summary><p>For separated or free-shear flows and transitional boundary layers it can change results significantly. For fully turbulent internal flows it mainly affects the development length near the inlet, since the turbulence quickly adjusts to the wall-generated field.</p></details>
+<details class="faq"><summary>Which C<sub>μ</sub> is used?</summary><p>The standard value 0.09 used by the standard k-ε and by k-ω SST. You can reset to defaults in the calculator.</p></details>
+
+<h2>Related calculators</h2>
+<div class="related"><a class="related-card" href="/cfd-calculators/y-plus/"><strong>Y⁺ Calculator</strong><span>First cell height for a target y⁺</span></a><a class="related-card" href="/cfd-calculators/reynolds-number/"><strong>Reynolds Number & Hydraulic Diameter</strong><span>Flow regime for ducts, pipes and plates</span></a><a class="related-card" href="/cfd-calculators/non-dimensional-numbers/"><strong>Non-Dimensional Numbers</strong><span>Nine dimensionless groups with formulas and regimes</span></a></div>
+<p class="guide-more"><a href="/cfd-calculators/">← All CFD calculators</a> · <a href="/blog/">AgniCycle blog</a></p>
+<h2>References</h2>
+<ul class="refs"><li>D. C. Wilcox, <em>Turbulence Modeling for CFD</em>, DCW Industries.</li>
+<li>S. B. Pope, <em>Turbulent Flows</em>, Cambridge University Press, 2000.</li>
+<li>F. R. Menter, “Two-equation eddy-viscosity turbulence models for engineering applications”, <em>AIAA Journal</em> 32(8), 1994.</li>
+<li>Solver documentation for inlet turbulence specification: OpenFOAM, ANSYS Fluent and ANSYS CFX user guides.</li></ul>
+</section>
+
 <script>
 (function(){ const t=localStorage.getItem("agni-theme")||"dark"; document.documentElement.setAttribute("data-theme",t); })();
 function toggleTheme(){ const n=document.documentElement.getAttribute("data-theme")==="light"?"dark":"light"; document.documentElement.setAttribute("data-theme",n); localStorage.setItem("agni-theme",n); }
