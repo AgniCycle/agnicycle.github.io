@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+<link rel="stylesheet" href="/assets/calc-guide.css"/>
 </head>
 <body>
 <div class="announce-bar">
@@ -85,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <span>Agni<span class="brand-em">Cycle</span></span>
     </a>
     <span class="topbar-sep">/</span>
-    <span class="topbar-title">Non-Dimensional Numbers Calculator</span>
+    <h1 class="topbar-title">Non-Dimensional Numbers Calculator</h1>
   </div>
   <div class="topbar-right">
     <button class="topbar-icon-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark" style="margin-right:4px">
@@ -97,6 +98,10 @@ document.addEventListener('DOMContentLoaded', function() {
       <svg id="fs-shrink" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="3" y2="21"/><line x1="21" y1="3" x2="14" y2="10"/></svg>
     </button>
     <span class="topbar-badge">CFD Tool</span>
+    <a class="topbar-back" href="#guide">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+      <span class="topbar-back-label">Guide</span>
+    </a>
     <a class="topbar-back" href="/cfd-calculators/">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       <span class="topbar-back-label">All Calculators</span>
@@ -115,6 +120,74 @@ document.addEventListener('DOMContentLoaded', function() {
     onload="document.getElementById('loader').classList.add('hidden')"
   ></iframe>
 </div>
+
+<section class="guide" id="guide" aria-labelledby="guide-title">
+
+<p class="guide-eyebrow">Guide</p>
+<h2 id="guide-title">Dimensionless numbers for fluid, heat and mass transfer</h2>
+<p class="guide-lead">Non-dimensional numbers describe a flow independently of units. They tell you which physical effect dominates, which model is appropriate, and whether a laboratory model will behave like the full-scale system. The calculator above covers nine of the most useful ones, with formulas, definitions and regime thresholds. This page is a quick reference.</p>
+
+<h2>Why dimensionless numbers matter</h2>
+<p>If you write the governing equations in terms of scaled variables, only a few dimensionless groups remain. Two systems that share the same values of these groups are dynamically similar, whatever their size or fluid, which is the idea behind the Buckingham Π theorem. That is why you can test a scale model in a wind tunnel or water channel and apply the result to the real thing, and why a CFD case is often more informative when its results are reported as dimensionless quantities.</p>
+
+<h2>Quick reference</h2>
+<table class="guide-table">
+<thead><tr><th>Number</th><th>Definition</th><th>Meaning</th><th>Rules of thumb</th></tr></thead>
+<tbody>
+<tr><td><strong>Reynolds</strong> Re</td><td>ρUL / μ</td><td>Inertial to viscous forces</td><td>Pipe: laminar below about 2,300; turbulent above about 2,900. Flat plate: transition near 5×10⁵</td></tr>
+<tr><td><strong>Mach</strong> Ma</td><td>U / a</td><td>Flow speed to speed of sound (compressibility)</td><td>Below 0.3 essentially incompressible; 0.8–1.2 transonic; above 1 supersonic; above 5 hypersonic</td></tr>
+<tr><td><strong>Prandtl</strong> Pr</td><td>c<sub>p</sub>μ / k = ν / α</td><td>Momentum to thermal diffusivity</td><td>Air ≈ 0.71; water ≈ 7 at 20 °C; liquid metals ≪ 1; oils ≫ 100</td></tr>
+<tr><td><strong>Schmidt</strong> Sc</td><td>ν / D</td><td>Momentum to mass diffusivity</td><td>Gases ≈ 0.2–2; liquids around 10²–10³</td></tr>
+<tr><td><strong>Péclet</strong> Pe</td><td>UL / α (thermal) or UL / D (mass) = Re·Pr or Re·Sc</td><td>Advection to diffusion</td><td>Pe ≫ 1: advection dominated; Pe ≪ 1: diffusion dominated</td></tr>
+<tr><td><strong>Strouhal</strong> St</td><td>fL / U</td><td>Unsteady oscillation to convective time</td><td>Vortex shedding behind a cylinder: St ≈ 0.2 over a wide range of Re</td></tr>
+<tr><td><strong>Froude</strong> Fr</td><td>U / √(gL)</td><td>Inertia to gravity</td><td>Free-surface flows: Fr &lt; 1 subcritical, Fr &gt; 1 supercritical</td></tr>
+<tr><td><strong>Weber</strong> We</td><td>ρU²L / σ</td><td>Inertia to surface tension</td><td>Droplet secondary breakup begins near We ≈ 12; higher We means more violent breakup</td></tr>
+<tr><td><strong>Knudsen</strong> Kn</td><td>λ / L</td><td>Molecular mean free path to length scale</td><td>Kn &lt; 0.01 continuum; 0.01–0.1 slip; 0.1–10 transitional; above 10 free molecular</td></tr>
+</tbody>
+</table>
+<p>Symbols: ρ density, U velocity, L characteristic length, μ dynamic viscosity, ν kinematic viscosity, a speed of sound, c<sub>p</sub> specific heat, k thermal conductivity, α thermal diffusivity, D mass diffusivity, f frequency, g gravitational acceleration, σ surface tension, λ molecular mean free path.</p>
+
+<h2>Where each one comes up in CFD and combustion work</h2>
+<ul>
+<li><strong>Reynolds:</strong> choosing laminar or turbulent modelling, sizing the mesh and setting inlet turbulence. Try the <a href="/cfd-calculators/reynolds-number/">Reynolds number calculator</a>.</li>
+<li><strong>Mach:</strong> deciding between incompressible and compressible solvers. In engine intake ports, valves and injectors, local Mach numbers can approach or reach 1.</li>
+<li><strong>Prandtl and Schmidt:</strong> relative thickness of thermal and species boundary layers, and turbulent Prandtl/Schmidt numbers in RANS models.</li>
+<li><strong>Péclet:</strong> numerical stability of convection-diffusion schemes. High cell Péclet numbers need upwind or other stabilised discretisation.</li>
+<li><strong>Strouhal:</strong> vortex shedding, acoustic resonance and cyclic flow in engines, and choosing a time step that resolves the dominant frequency.</li>
+<li><strong>Froude:</strong> free-surface flows, water tunnels and open channels.</li>
+<li><strong>Weber:</strong> the breakup regime of liquid fuel jets and droplets. See the <a href="/spray/">AgniCycle Spray Calculator</a> for spray characterisation.</li>
+<li><strong>Knudsen:</strong> microscale and rarefied gas flows, where the continuum Navier-Stokes assumption fails.</li>
+</ul>
+
+<h2>Worked examples</h2>
+<table class="guide-table">
+<thead><tr><th>Example</th><th>Calculation</th><th>Result</th></tr></thead>
+<tbody>
+<tr><td>Airflow at 100 m/s in air at 20 °C (a ≈ 343 m/s)</td><td>Ma = 100 / 343</td><td>Ma ≈ 0.29: at the edge of the incompressible range</td></tr>
+<tr><td>Vortex shedding from a 20 mm cylinder in a 5 m/s flow</td><td>f = St U / L = 0.2 × 5 / 0.02</td><td>≈ 50 Hz</td></tr>
+<tr><td>Water at 20 °C: ν = 1.0×10⁻⁶ m²/s, α = 1.43×10⁻⁷ m²/s</td><td>Pr = ν / α</td><td>≈ 7: the thermal boundary layer is thinner than the velocity boundary layer</td></tr>
+<tr><td>Diesel droplet, ρ = 830 kg/m³, U = 100 m/s, d = 50 µm, σ = 0.028 N/m</td><td>We = ρU²d / σ</td><td>≈ 1.5×10⁴: far above the breakup threshold</td></tr>
+</tbody>
+</table>
+
+<h2>Using dimensionless numbers for scaling</h2>
+<p>To scale an experiment, list the dimensionless groups relevant to your physics (for example Re for viscous flow, Fr for free surfaces, We for droplets) and try to match them between model and prototype. It is usually impossible to match all of them at once. In practice you match the dominant group and confirm that the others lie in the same regime. The calculator’s <em>Theory</em> tab explains each group, and the <em>Calculator</em> tab lets you compute values from your own inputs.</p>
+
+<h2>Frequently asked questions</h2>
+<details class="faq"><summary>Which characteristic length should I use?</summary><p>Use the length that governs the physics and state it clearly: hydraulic diameter for ducts, plate length for boundary layers, cylinder diameter for bluff bodies, droplet diameter for We and Oh. Published thresholds assume specific definitions.</p></details>
+<details class="faq"><summary>What is the relation between Péclet, Reynolds, Prandtl and Schmidt?</summary><p>The thermal Péclet number equals Re × Pr, and the mass-transfer Péclet number equals Re × Sc.</p></details>
+<details class="faq"><summary>Does the calculator handle other numbers such as Nusselt or Ohnesorge?</summary><p>The current version covers the nine numbers listed above. If you would like others added, get in touch through the <a href="/forum/">community forum</a>.</p></details>
+
+<h2>Related calculators</h2>
+<div class="related"><a class="related-card" href="/cfd-calculators/y-plus/"><strong>Y⁺ Calculator</strong><span>First cell height for a target y⁺</span></a><a class="related-card" href="/cfd-calculators/reynolds-number/"><strong>Reynolds Number & Hydraulic Diameter</strong><span>Flow regime for ducts, pipes and plates</span></a><a class="related-card" href="/cfd-calculators/turbulence-properties/"><strong>Turbulence Properties</strong><span>k, ε, ω and μₜ/μ for inlet boundary conditions</span></a></div>
+<p class="guide-more"><a href="/cfd-calculators/">← All CFD calculators</a> · <a href="/blog/">AgniCycle blog</a></p>
+<h2>References</h2>
+<ul class="refs"><li>F. M. White, <em>Fluid Mechanics</em>, McGraw-Hill.</li>
+<li>F. P. Incropera et al., <em>Fundamentals of Heat and Mass Transfer</em>, Wiley.</li>
+<li>A. H. Lefebvre &amp; V. G. McDonell, <em>Atomization and Sprays</em>, CRC Press.</li>
+<li>E. Buckingham, “On physically similar systems; illustrations of the use of dimensional equations”, <em>Physical Review</em> 4, 1914.</li></ul>
+</section>
+
 <script>
 (function(){ const t=localStorage.getItem("agni-theme")||"dark"; document.documentElement.setAttribute("data-theme",t); })();
 function toggleTheme(){ const n=document.documentElement.getAttribute("data-theme")==="light"?"dark":"light"; document.documentElement.setAttribute("data-theme",n); localStorage.setItem("agni-theme",n); }

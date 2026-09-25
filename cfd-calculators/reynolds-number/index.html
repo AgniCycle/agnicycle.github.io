@@ -118,6 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+<link rel="stylesheet" href="/assets/calc-guide.css"/>
 </head>
 <body>
 <div class="announce-bar">
@@ -136,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <span>Agni<span class="brand-em">Cycle</span></span>
     </a>
     <span class="topbar-sep">/</span>
-    <span class="topbar-title">Reynolds Number &amp; Hydraulic Diameter Calculator</span>
+    <h1 class="topbar-title">Reynolds Number &amp; Hydraulic Diameter Calculator</h1>
   </div>
   <div class="topbar-right">
     <button class="topbar-icon-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark" style="margin-right:4px">
@@ -148,6 +149,10 @@ document.addEventListener('DOMContentLoaded', function() {
       <svg id="fs-shrink" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="3" y2="21"/><line x1="21" y1="3" x2="14" y2="10"/></svg>
     </button>
     <span class="topbar-badge">CFD Tool</span>
+    <a class="topbar-back" href="#guide">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+      <span class="topbar-back-label">Guide</span>
+    </a>
     <a class="topbar-back" href="/cfd-calculators/">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       <span class="topbar-back-label">All Calculators</span>
@@ -167,6 +172,75 @@ document.addEventListener('DOMContentLoaded', function() {
     onload="document.getElementById('loader').classList.add('hidden')"
   ></iframe>
 </div>
+
+<section class="guide" id="guide" aria-labelledby="guide-title">
+
+<p class="guide-eyebrow">Guide</p>
+<h2 id="guide-title">Reynolds number and hydraulic diameter for CFD setup</h2>
+<p class="guide-lead">The Reynolds number tells you whether a flow is dominated by inertia or by viscosity, and therefore whether you should expect laminar, transitional or turbulent behaviour. Checking it takes seconds, and it decides your turbulence model, mesh strategy and solver settings.</p>
+
+<h2>The equations</h2>
+<div class="formula">Re = ρ · U · L / μ = U · L / ν</div>
+<p>ρ is density, μ dynamic viscosity, ν = μ/ρ kinematic viscosity, U a characteristic velocity and L a characteristic length. For flow in a non-circular duct, the length is the <strong>hydraulic diameter</strong>:</p>
+<div class="formula">D<sub>h</sub> = 4A / P</div>
+<p>A is the flow cross-section area and P the wetted perimeter. This reduces to familiar forms:</p>
+<ul>
+<li><strong>Circular pipe of diameter D:</strong> D<sub>h</sub> = D.</li>
+<li><strong>Square duct of side a:</strong> D<sub>h</sub> = a.</li>
+<li><strong>Rectangular duct a × b:</strong> D<sub>h</sub> = 2ab / (a + b).</li>
+</ul>
+<p>The calculator handles all three shapes, converts between SI and imperial units, and can also run in reverse: choose <em>Solve Velocity</em> to find the speed that gives a target Reynolds number, for instance to see how fast a fluid must move before it leaves the laminar regime.</p>
+
+<h2>Flow regimes</h2>
+<table class="guide-table">
+<thead><tr><th>Flow</th><th>Laminar</th><th>Transitional</th><th>Turbulent</th></tr></thead>
+<tbody>
+<tr><td>Internal (pipe or duct, Re based on D<sub>h</sub>)</td><td>Re &lt; 2,300</td><td>2,300 – 2,900 (sensitive to disturbances)</td><td>Re &gt; 2,900</td></tr>
+<tr><td>External (flat plate, Re based on length)</td><td>Re &lt; 5×10⁵</td><td>Around 5×10⁵</td><td>Re &gt; 5×10⁵</td></tr>
+</tbody>
+</table>
+<p>These are rules of thumb. The actual transition point depends on inlet turbulence, wall roughness, pressure gradient, surface curvature and vibration. Clean, disturbance-free pipe flow can stay laminar well beyond 2,300, while a noisy inlet can trip transition early. Around the threshold, treat the flow as uncertain and consider a transition-capable model.</p>
+
+<h2>Worked examples</h2>
+<table class="guide-table">
+<thead><tr><th></th><th>Water in a round pipe</th><th>Air in a rectangular duct</th></tr></thead>
+<tbody>
+<tr><th scope="row">Fluid (20 °C)</th><td>Water: ρ = 998.2 kg/m³, μ = 1.00×10⁻³ Pa·s</td><td>Air: ρ = 1.205 kg/m³, μ = 1.82×10⁻⁵ Pa·s</td></tr>
+<tr><th scope="row">Geometry</th><td>D = 50 mm, so D<sub>h</sub> = 0.05 m</td><td>300 mm × 100 mm, so D<sub>h</sub> = 2(0.3)(0.1)/0.4 = 0.15 m</td></tr>
+<tr><th scope="row">Velocity</th><td>2 m/s</td><td>5 m/s</td></tr>
+<tr><th scope="row">Reynolds number</th><td>99,820</td><td>49,657</td></tr>
+<tr><th scope="row">Regime</th><td>Turbulent</td><td>Turbulent</td></tr>
+</tbody>
+</table>
+<p>Using solve-velocity mode for the same pipe at Re = 2,300, the velocity is U = Re μ / (ρ D<sub>h</sub>) ≈ 0.046 m/s. Water in a 50 mm pipe is turbulent at almost any practical speed.</p>
+
+<h2>Using the result in a CFD setup</h2>
+<ul>
+<li><strong>Turbulence model:</strong> laminar solver below the transition threshold; a RANS model (k-ω SST, k-ε) for fully turbulent flow; consider a transition model such as γ-Re<sub>θ</sub> near the threshold.</li>
+<li><strong>Mesh:</strong> Re sets the boundary-layer thickness and hence how many prism layers you need. Pass Re and your target y⁺ to the <a href="/cfd-calculators/y-plus/">Y⁺ calculator</a> for the first cell height.</li>
+<li><strong>Inlet turbulence:</strong> once you know Re and D<sub>h</sub>, the <a href="/cfd-calculators/turbulence-properties/">Turbulence Properties calculator</a> gives k, ε and ω for the inlet.</li>
+<li><strong>Time step and scheme:</strong> higher Re means smaller eddies and steeper gradients; upwind-biased schemes are more forgiving, while low-dissipation schemes need finer meshes.</li>
+<li><strong>Similarity:</strong> for scale-model testing, matching Re gives dynamic similarity for viscous flows. See the <a href="/cfd-calculators/non-dimensional-numbers/">non-dimensional numbers</a> guide for other groups that may also need matching.</li>
+</ul>
+
+<h2>Fluid property presets</h2>
+<p>The calculator includes ready-to-use properties at 20 °C for air, water, SAE 30 engine oil, glycerin, ethylene glycol and seawater, or you can enter your own density and viscosity. For gases and for temperature-sensitive liquids such as oil, viscosity changes strongly with temperature, so use values at your operating temperature rather than the room-temperature presets.</p>
+
+<h2>Frequently asked questions</h2>
+<details class="faq"><summary>Which length should I use for an external flow?</summary><p>Use the length along the flow direction for a flat plate (Re<sub>L</sub> or Re<sub>x</sub> at a location). For bluff bodies use the diameter or frontal dimension, for example the cylinder diameter or a car’s height, and note which convention you follow since published transition values assume a specific one.</p></details>
+<details class="faq"><summary>Why is the hydraulic diameter 4A/P?</summary><p>It makes the formula reproduce the pipe diameter for a circle (4 · πD²/4 ÷ πD = D). For other shapes it gives an equivalent length that collapses friction and transition behaviour reasonably well, though it is less accurate for very high aspect ratios or laminar flow in unusual shapes.</p></details>
+<details class="faq"><summary>What about partially filled pipes and annuli?</summary><p>The same definition applies: compute the flow area and the wetted perimeter of the actual geometry, and use them in D<sub>h</sub> = 4A/P. For an annulus, D<sub>h</sub> = D<sub>outer</sub> − D<sub>inner</sub>.</p></details>
+<details class="faq"><summary>Does compressibility change the Reynolds number?</summary><p>The definition stays the same, but ρ and μ vary with temperature and pressure, so use the local values. At high Mach number, check the Mach number as well (see the non-dimensional numbers calculator).</p></details>
+
+<h2>Related calculators</h2>
+<div class="related"><a class="related-card" href="/cfd-calculators/y-plus/"><strong>Y⁺ Calculator</strong><span>First cell height for a target y⁺</span></a><a class="related-card" href="/cfd-calculators/turbulence-properties/"><strong>Turbulence Properties</strong><span>k, ε, ω and μₜ/μ for inlet boundary conditions</span></a><a class="related-card" href="/cfd-calculators/non-dimensional-numbers/"><strong>Non-Dimensional Numbers</strong><span>Nine dimensionless groups with formulas and regimes</span></a></div>
+<p class="guide-more"><a href="/cfd-calculators/">← All CFD calculators</a> · <a href="/blog/">AgniCycle blog</a></p>
+<h2>References</h2>
+<ul class="refs"><li>F. M. White, <em>Fluid Mechanics</em>, McGraw-Hill.</li>
+<li>Y. A. Çengel &amp; J. M. Cimbala, <em>Fluid Mechanics: Fundamentals and Applications</em>, McGraw-Hill.</li>
+<li>O. Reynolds, “An experimental investigation of the circumstances which determine whether the motion of water shall be direct or sinuous…”, <em>Phil. Trans. R. Soc.</em> 174, 1883.</li></ul>
+</section>
+
 
 <script>
 (function(){ const t=localStorage.getItem("agni-theme")||"dark"; document.documentElement.setAttribute("data-theme",t); })();

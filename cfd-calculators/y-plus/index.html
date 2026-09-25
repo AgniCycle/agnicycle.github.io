@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+<link rel="stylesheet" href="/assets/calc-guide.css"/>
 </head>
 <body>
 <div class="announce-bar">
@@ -85,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <span>Agni<span class="brand-em">Cycle</span></span>
     </a>
     <span class="topbar-sep">/</span>
-    <span class="topbar-title">Y⁺ Calculator</span>
+    <h1 class="topbar-title">Y⁺ Calculator</h1>
   </div>
   <div class="topbar-right">
     <button class="topbar-icon-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark" style="margin-right:4px">
@@ -97,6 +98,10 @@ document.addEventListener('DOMContentLoaded', function() {
       <svg id="fs-shrink" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="3" y2="21"/><line x1="21" y1="3" x2="14" y2="10"/></svg>
     </button>
     <span class="topbar-badge">CFD Tool</span>
+    <a class="topbar-back" href="#guide">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+      <span class="topbar-back-label">Guide</span>
+    </a>
     <a class="topbar-back" href="/cfd-calculators/">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       <span class="topbar-back-label">All Calculators</span>
@@ -115,6 +120,91 @@ document.addEventListener('DOMContentLoaded', function() {
     onload="document.getElementById('loader').classList.add('hidden')"
   ></iframe>
 </div>
+
+<section class="guide" id="guide" aria-labelledby="guide-title">
+
+<p class="guide-eyebrow">Guide</p>
+<h2 id="guide-title">Choosing a first cell height for a target y⁺</h2>
+<p class="guide-lead">y⁺ is the dimensionless distance from a wall to the centre of your first mesh cell. It tells you whether that cell is thin enough for the wall treatment of the turbulence model you picked. The calculator above takes your flow conditions and a target y⁺ and returns the first cell thickness to use when building prism (inflation) layers.</p>
+
+<h2>What y⁺ is and why it matters</h2>
+<p>Near a wall, a turbulent boundary layer has distinct regions. Its structure is set by the wall shear stress τ<sub>w</sub>, which defines the friction velocity <code>u<sub>τ</sub> = √(τ<sub>w</sub>/ρ)</code> and the wall-scaled distance:</p>
+<div class="formula">y⁺ = ρ · u<sub>τ</sub> · y / μ</div>
+<p>Where y is the height of the cell centre above the wall. Because both ρ and μ appear, the same y⁺ needs a much thinner first cell in water than in air, and at high speed than at low speed.</p>
+<ul>
+<li><strong>Viscous sublayer (y⁺ &lt; 5):</strong> viscosity dominates and velocity varies linearly with distance (u⁺ = y⁺).</li>
+<li><strong>Buffer layer (5 &lt; y⁺ &lt; 30):</strong> viscous and turbulent stresses are comparable and the profile is hard to model.</li>
+<li><strong>Log-law region (about 30 &lt; y⁺ &lt; 300):</strong> the mean velocity follows u⁺ = (1/κ) ln y⁺ + B with κ ≈ 0.41 and B ≈ 5.</li>
+<li><strong>Outer layer (y⁺ &gt; 300):</strong> the wall-function assumptions no longer hold.</li>
+</ul>
+
+<h2>Which y⁺ should I target?</h2>
+<table class="guide-table">
+<thead><tr><th>Target</th><th>Wall treatment</th><th>Typical models</th></tr></thead>
+<tbody>
+<tr><td>y⁺ ≈ 1 (below 5)</td><td>Resolve the boundary layer down to the wall</td><td>k-ω SST, low-Re k-ε, Spalart-Allmaras (fine mesh), transition models</td></tr>
+<tr><td>30 ≤ y⁺ ≤ 300</td><td>Wall functions bridge the wall region</td><td>Standard or realizable k-ε with wall functions</td></tr>
+<tr><td>5 &lt; y⁺ &lt; 30</td><td>Avoid: the first cell sits in the buffer layer</td><td>—</td></tr>
+</tbody>
+</table>
+<p>Most modern solvers offer blended or “all-y⁺” wall treatments that tolerate a range of y⁺, but the safest practice is still to aim clearly at one of the two ranges above. Choose y⁺ ≈ 1 when you need wall heat transfer, separation onset or skin friction. y⁺ ≈ 30 to 100 is a pragmatic choice for external aerodynamics and internal flows where the overall pressure drop matters more than the detailed near-wall physics.</p>
+
+<h2>How the calculator computes the first cell height</h2>
+<p>The calculator estimates wall shear stress from a skin-friction correlation, then inverts the y⁺ definition:</p>
+<ol class="steps">
+<li><strong>Reynolds number:</strong> <code>Re = ρ U L / μ</code>, with L the plate length (external flow) or the pipe/duct diameter (internal flow).</li>
+<li><strong>Skin friction.</strong> External flat plate, turbulent (Schlichting): <code>C<sub>f</sub> = [2 log<sub>10</sub>(Re) − 0.65]<sup>−2.3</sup></code>. Internal smooth pipe, turbulent (Blasius): Darcy friction factor <code>f = 0.316 Re<sup>−0.25</sup></code>.</li>
+<li><strong>Wall shear stress:</strong> <code>τ<sub>w</sub> = C<sub>f</sub> · ½ρU²</code> for external flow, and <code>τ<sub>w</sub> = (f/8) ρU²</code> for internal flow.</li>
+<li><strong>Friction velocity:</strong> <code>u<sub>τ</sub> = √(τ<sub>w</sub> / ρ)</code>.</li>
+<li><strong>First cell thickness:</strong> <code>y = y⁺ μ / (ρ u<sub>τ</sub>)</code>.</li>
+</ol>
+<p>The calculator shows every step with your numbers substituted, so you can check the arithmetic or copy the values into a report. It also warns you when Re falls outside the range where the chosen correlation is valid (for example, below Re ≈ 5×10⁵ for the flat-plate formula, or above Re ≈ 10⁵ for Blasius).</p>
+
+<h2>Worked examples</h2>
+<table class="guide-table">
+<thead><tr><th></th><th>External: flat plate in air</th><th>Internal: water in a pipe</th></tr></thead>
+<tbody>
+<tr><th scope="row">Conditions</th><td>Air 20 °C, U = 50 m/s, L = 1 m</td><td>Water 20 °C, U = 2 m/s, D = 50 mm</td></tr>
+<tr><th scope="row">Fluid properties</th><td>ρ = 1.2047 kg/m³, μ = 1.8205×10⁻⁵ Pa·s</td><td>ρ = 998.2 kg/m³, μ = 1.0016×10⁻³ Pa·s</td></tr>
+<tr><th scope="row">Reynolds number</th><td>3.31×10⁶</td><td>9.97×10⁴</td></tr>
+<tr><th scope="row">Friction coefficient</th><td>C<sub>f</sub> = 0.003062</td><td>f = 0.01779</td></tr>
+<tr><th scope="row">Wall shear stress</th><td>4.61 Pa</td><td>8.88 Pa</td></tr>
+<tr><th scope="row">Friction velocity</th><td>1.956 m/s</td><td>0.0943 m/s</td></tr>
+<tr><th scope="row">First cell, y⁺ = 1</th><td>7.7 µm</td><td>10.6 µm</td></tr>
+<tr><th scope="row">First cell, y⁺ = 30</th><td>232 µm</td><td>319 µm</td></tr>
+<tr><th scope="row">First cell, y⁺ = 100</th><td>772 µm</td><td>1.06 mm</td></tr>
+</tbody>
+</table>
+<p>The cost of y⁺ ≈ 1 shows up in layer count. For the flat plate, the turbulent boundary-layer thickness at the trailing edge is roughly δ ≈ 0.37 L Re<sup>−1/5</sup> ≈ 18 mm. Growing from a 7.7 µm first cell at a ratio of 1.2 takes about 34 layers to span it, whereas a y⁺ ≈ 30 first cell of 232 µm needs only about 16.</p>
+
+<h2>Practical tips for prism layers</h2>
+<ul>
+<li><strong>Treat the result as a starting point.</strong> The correlations are for smooth flat plates and straight pipes. Curvature, pressure gradients, roughness and separation change τ<sub>w</sub>, so check the actual y⁺ field in your solution and refine if needed.</li>
+<li><strong>External flows use a plate-average C<sub>f</sub>.</strong> Wall shear is higher near the leading edge and at high-velocity regions, so local y⁺ can exceed the average there. Size the first cell for the worst region.</li>
+<li><strong>Layer height versus cell centre:</strong> the calculator returns the wall distance y for your target y⁺. If your mesher takes the first layer’s full height, remember that the cell centre sits at about half of it (see the FAQ below).</li>
+<li><strong>Growth ratio:</strong> 1.1 to 1.2 between layers, with enough layers to cover the boundary layer so that the last prism cell size matches the first core cell.</li>
+<li><strong>Keep a first cell in one regime.</strong> Avoid a mesh whose y⁺ varies from 3 to 60 across a surface with a wall-function-only model.</li>
+<li><strong>Rough walls and heat transfer</strong> have their own requirements. Consult your solver documentation for roughness-modified wall functions.</li>
+</ul>
+
+<h2>Frequently asked questions</h2>
+<details class="faq"><summary>What is the difference between y and y⁺?</summary><p>y is a physical distance (metres). y⁺ scales that distance by the local viscous length ν/u<sub>τ</sub>, so it compares the cell height with the thickness of the viscous region. A first cell of 0.1 mm can be y⁺ = 1 in one flow and y⁺ = 300 in another.</p></details>
+<details class="faq"><summary>Is the result the height of the first cell or the distance to its centre?</summary><p>The formula gives the wall distance y at which y⁺ equals your target. Solvers evaluate y⁺ at the centre of the wall-adjacent cell, so if your mesher asks for the full first-layer height, that height is about twice the centre distance, and using the calculator’s value directly as the layer height would give roughly half your target y⁺ at the cell centre. Check what your mesher’s input means and, if in doubt, verify the achieved y⁺ in the solution.</p></details>
+<details class="faq"><summary>What y⁺ should I use for k-ω SST?</summary><p>Aim for y⁺ ≈ 1 (below 5) with at least 10 to 15 layers across the boundary layer. k-ω SST also has an automatic wall treatment in many codes that tolerates y⁺ up to about 30, but it is most accurate when the sublayer is resolved.</p></details>
+<details class="faq"><summary>Why does the calculator warn about my Reynolds number?</summary><p>The skin-friction correlations are calibrated for turbulent flow. If Re is below the transition range, the estimate of τ<sub>w</sub> can be inaccurate, and the first cell you get may be far from the y⁺ you intended. Use the laminar relations, or a detailed simulation, for low Re.</p></details>
+<details class="faq"><summary>Can I use it for imperial units?</summary><p>Yes. Switch the unit system in the calculator and the inputs and results convert automatically.</p></details>
+<p class="guide-more">See also the AgniCycle article <a href="/blog/choosing-y-plus-cfd-mesh/">Choosing y⁺ for your CFD mesh</a>.</p>
+
+<h2>Related calculators</h2>
+<div class="related"><a class="related-card" href="/cfd-calculators/reynolds-number/"><strong>Reynolds Number & Hydraulic Diameter</strong><span>Flow regime for ducts, pipes and plates</span></a><a class="related-card" href="/cfd-calculators/turbulence-properties/"><strong>Turbulence Properties</strong><span>k, ε, ω and μₜ/μ for inlet boundary conditions</span></a><a class="related-card" href="/cfd-calculators/non-dimensional-numbers/"><strong>Non-Dimensional Numbers</strong><span>Nine dimensionless groups with formulas and regimes</span></a></div>
+<p class="guide-more"><a href="/cfd-calculators/">← All CFD calculators</a> · <a href="/blog/">AgniCycle blog</a></p>
+<h2>References</h2>
+<ul class="refs"><li>H. Schlichting &amp; K. Gersten, <em>Boundary-Layer Theory</em>, Springer.</li>
+<li>F. M. White, <em>Viscous Fluid Flow</em>, McGraw-Hill.</li>
+<li>S. B. Pope, <em>Turbulent Flows</em>, Cambridge University Press, 2000.</li>
+<li>F. R. Menter, “Two-equation eddy-viscosity turbulence models for engineering applications”, <em>AIAA Journal</em> 32(8), 1994.</li></ul>
+</section>
+
 <script>
 (function(){ const t=localStorage.getItem("agni-theme")||"dark"; document.documentElement.setAttribute("data-theme",t); })();
 function toggleTheme(){ const n=document.documentElement.getAttribute("data-theme")==="light"?"dark":"light"; document.documentElement.setAttribute("data-theme",n); localStorage.setItem("agni-theme",n); }
