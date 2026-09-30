@@ -7,12 +7,12 @@
 <meta name="description" content="Browser-native zero-D thermodynamic IC engine cycle simulator. Real-time P-V diagrams, heat release, knock prediction, and emissions. No install."/>
 <link rel="canonical" href="https://www.agnicycle.com/simulator/"/>
 <meta property="og:title"       content="Engine Simulator — AgniCycle"/>
-<meta property="og:description" content="2,881 equations per cylinder. Under 20ms. Browser-native IC engine simulator."/>
+<meta property="og:description" content="Browser-native 0-D engine modeling with crank-angle steps down to 0.25°. Free during beta for approved users."/>
 <meta property="og:url"         content="https://www.agnicycle.com/simulator/"/>
 <meta property="og:image"       content="https://www.agnicycle.com/og-image.png"/>
 <meta name="twitter:card"        content="summary_large_image"/>
 <meta name="twitter:title"       content="Engine Simulator — AgniCycle"/>
-<meta name="twitter:description" content="2,881 equations per cylinder. Under 20ms. Browser-native IC engine simulator."/>
+<meta name="twitter:description" content="Browser-native 0-D engine modeling with crank-angle steps down to 0.25°. Free during beta for approved users."/>
 <meta name="twitter:image"       content="https://www.agnicycle.com/og-image.png"/>
 <meta name="robots" content="index, follow"/>
 <meta name="theme-color" content="#f97316"/>
@@ -233,6 +233,7 @@
 
 /* announce bar now in /assets/site.css */
 @media (max-width: 600px) { .announce-desc { display: none; } }
+.access-note { color:var(--text2); font-size:13px; line-height:1.7; margin:0 0 22px; }
 </style>
 <!-- Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NB63ZYGBT7"></script>
@@ -248,6 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+<link rel="stylesheet" href="/assets/responsive.css?v=20260930-2"/>
 </head>
 <body>
 
@@ -338,18 +340,19 @@ document.addEventListener('DOMContentLoaded', function() {
       <div class="hero-eyebrow"><div class="status-dot"></div> Live · v1.3</div>
       <h1>AgniCycle™<br/><em>Engine</em> Simulator</h1>
       <p class="hero-sub">
-        A transient 0-D thermodynamic solver resolving pressure, temperature, and emissions at <strong style="color:var(--text)">0.25° crank-angle resolution</strong> across all four strokes — 2,881 equations per cylinder, finishing in under 20 ms. In your browser.
+        A transient 0-D thermodynamic solver for pressure, temperature, heat release, and emissions estimates. Select crank-angle steps down to <strong style="color:var(--text)">0.25°</strong> across a 720° four-stroke cycle, directly in your browser.
       </p>
       <div class="hero-ctas">
         <a href="/simulator/app/" class="btn-primary">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           Launch Simulator
         </a>
-        <a href="/about/" class="btn-secondary">Learn the science</a>
+        <a href="/#model-limits" class="btn-secondary">Model scope</a>
       </div>
+      <p class="access-note">Approved Engine Simulator access is required. <a href="/signup/">Request researcher access →</a></p>
       <div class="hero-badges">
         <span class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>No install</span>
-        <span class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Peer-validated physics</span>
+        <span class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Literature-based models</span>
         <span class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Runs in any browser</span>
       </div>
     </div>
@@ -376,16 +379,16 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="specs-strip">
   <div class="specs-inner">
     <div class="spec reveal">
-      <div class="spec-val">&lt; 20ms</div>
-      <div class="spec-label">Full transient cycle</div>
+      <div class="spec-val">0-D</div>
+      <div class="spec-label">Cylinder model</div>
     </div>
     <div class="spec reveal reveal-d1">
       <div class="spec-val">2,881</div>
-      <div class="spec-label">Equations per cylinder</div>
+      <div class="spec-label">Samples at 0.25°</div>
     </div>
     <div class="spec reveal reveal-d1">
       <div class="spec-val">0.25°</div>
-      <div class="spec-label">Crank-angle resolution</div>
+      <div class="spec-label">Finest crank-angle step</div>
     </div>
     <div class="spec reveal reveal-d2">
       <div class="spec-val">720°</div>
@@ -404,7 +407,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="reveal">
       <span class="section-label">What it does</span>
       <h2 class="section-title">Research-grade physics,<br/>zero setup time</h2>
-      <p class="section-sub">Every model is peer-validated. Every parameter is adjustable. No black-box sliders.</p>
+      <p class="section-sub">Explore adjustable combustion and thermodynamic models. Check assumptions and calibrate predictions against measurements for your application.</p>
     </div>
     <div class="feat-grid">
       <div class="feat-card reveal">
@@ -484,12 +487,12 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
       <div class="reveal reveal-delay-1">
         <p style="color:var(--text2);font-size:15.5px;line-height:1.8;margin-bottom:20px">
-          That heat-release rate feeds directly into a first-law energy balance on the cylinder control volume, solved across <strong style="color:var(--text)">2,881 crank-angle steps</strong> per cycle using JANAF/NASA polynomial thermochemistry for each fuel — not constant specific heats.
+          That heat-release rate feeds directly into a first-law energy balance on the cylinder control volume, solved across <strong style="color:var(--text)">2,881 samples at the finest 0.25° setting</strong> over a 720° cycle using JANAF/NASA polynomial thermochemistry for each fuel — not constant specific heats.
         </p>
         <div class="physics-stats">
-          <div><div class="physics-stat-num">2,881</div><div class="physics-stat-label">Crank-angle steps</div></div>
+          <div><div class="physics-stat-num">2,881</div><div class="physics-stat-label">Samples at 0.25°</div></div>
           <div><div class="physics-stat-num">12+</div><div class="physics-stat-label">Calibrated fuel models</div></div>
-          <div><div class="physics-stat-num">0-D</div><div class="physics-stat-label">Fast, not approximate</div></div>
+          <div><div class="physics-stat-num">0-D</div><div class="physics-stat-label">Model dimensionality</div></div>
         </div>
       </div>
     </div>
@@ -755,7 +758,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <section class="launch-cta">
   <div class="reveal">
     <h2>Ready to run your first simulation?</h2>
-    <p>No install. Works on any browser. Your first run takes under 60 seconds from sign-up.</p>
+    <p>No install required. Sign in with an approved Engine Simulator account, or request access with your researcher profile.</p>
     <a href="/simulator/app/" class="btn-primary" style="display:inline-flex;font-size:16px;padding:15px 32px">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
       Launch Engine Simulator

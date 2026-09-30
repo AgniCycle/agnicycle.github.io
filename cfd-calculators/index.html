@@ -324,6 +324,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+<link rel="stylesheet" href="/assets/responsive.css?v=20260930-2"/>
 </head>
 <body>
 <canvas id="page-bg-canvas" aria-hidden="true"></canvas>
@@ -825,7 +826,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <div class="formula-card reveal">
         <div class="formula-card-title">Reynolds Number</div>
         <div class="formula-eq" id="eq-re"></div>
-        <div class="formula-note">D_h = 4A/P for non-circular ducts. Laminar: Re &lt; 2300, Turbulent: Re &gt; 4000.</div>
+        <div class="formula-note">D_h = 4A/P for non-circular ducts. The current pipe-flow calculator uses Re &lt; 2300 for laminar and Re &gt; 2900 for turbulent. Transition depends on inlet disturbances and roughness; consult the calculator guide near either threshold.</div>
       </div>
       <div class="formula-card reveal reveal-delay-1">
         <div class="formula-card-title">Turbulent Kinetic Energy</div>

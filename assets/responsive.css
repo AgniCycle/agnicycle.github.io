@@ -1,0 +1,117 @@
+/* Shared responsive rules, loaded after each page's local styles. */
+.hero-inner > *, .products-bento > *, .prod-featured > *,
+.physics-grid > *, .equation-row > *, .footer-inner > *,
+.feat-grid > *, .calc-row > *, .persona-grid > *, .model-limits-grid > * {
+  min-width: 0;
+}
+.products-bento, .prod-featured, .footer-inner { max-width: 100%; }
+.panel, .hero-product-panel, .prod-visual, .prod-card-body { min-width: 0; }
+.panel-title, .hero-panel-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.equation-display, .formula-eq { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.footer-inner { grid-template-columns: minmax(0,2fr) repeat(3,minmax(0,1fr)); }
+.footer-inner a, .access-note, .faq-answer { overflow-wrap: anywhere; }
+.nav { gap: 8px; padding-inline: clamp(16px,2.5vw,40px); }
+.nav-brand { margin-right: clamp(8px,1.5vw,24px); }
+.nav .nav-right { flex-shrink: 0; }
+.nav .nav-hamburger { flex-shrink: 0; align-items: center; justify-content: center; width: 44px; height: 44px; }
+.nav-mobile { overscroll-behavior: contain; padding-bottom: max(40px,env(safe-area-inset-bottom)); }
+.nav-mobile a { min-height: 44px; }
+
+/* The full product navigation needs more space than a laptop's narrow window. */
+@media (max-width: 1480px) {
+  .nav .nav-links { display: none; }
+  .nav .nav-right { display: flex; margin-left: auto; }
+  .nav .nav-hamburger { display: flex; margin-left: 0; }
+  .announce-bar .announce-desc { display: none; }
+}
+@media (min-width: 1481px) { .nav-mobile.open { display: none; } }
+
+.home-page .hero-inner { grid-template-columns: repeat(2,minmax(0,1fr)); gap: clamp(28px,4vw,56px); }
+.home-page .products-bento { grid-template-columns: repeat(4,minmax(0,1fr)); }
+.home-page .prod-featured { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.home-page .prod-card-body { padding: clamp(22px,3vw,40px); }
+.home-page .hero-text { gap: 22px; }
+.home-page .hero-text .access-note { margin: 0; }
+.home-page .hero-panel-footer { flex-wrap: wrap; gap: 6px 10px; }
+.home-page .sim-video-main { width: 100%; min-width: 0; }
+.home-page .hero h1 { font-size: clamp(34px,4.2vw,62px); letter-spacing: -0.04em; }
+
+@media (max-width: 1100px) {
+  .home-page .products-bento { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .home-page .prod-featured { grid-template-columns: minmax(0,1fr); }
+  .home-page .prod-visual { border-left: 0; border-top: 1px solid var(--border); }
+  .home-page .prod-desc-lg { max-width: 65ch; }
+  .home-page .prod-actions { flex-wrap: wrap; }
+  .hero-inner { gap: 32px; }
+  .footer-inner { gap: 28px; }
+}
+@media (max-width: 960px) {
+  .home-page .hero-inner { grid-template-columns: minmax(0,1fr); gap: 32px; }
+  .home-page .hero h1 { font-size: clamp(34px,6.5vw,60px); }
+  .home-page .hero { min-height: auto; padding-top: 140px; padding-bottom: 48px; }
+  .home-page .hero-scroll { display: none; }
+  .footer-inner { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 640px) {
+  .nav .nav-cta, .nav .launch-tools-wrap { display: none; }
+  .nav .nav-brand { margin-right: 0; }
+  .nav .nav-right { gap: 6px; }
+  .announce-bar { min-height: 38px; padding: 8px 12px; gap: 8px; font-size: 11px; }
+  .announce-bar .announce-dot { display: none; }
+  .announce-bar strong, .announce-bar a { white-space: nowrap; }
+  .home-page .hero { padding: 120px 20px 40px; }
+  .home-page .hero-product-panel { display: block; }
+  .home-page .hero-text { align-items: stretch; text-align: left; gap: 20px; }
+  .home-page .hero h1 { font-size: clamp(32px,8.5vw,48px); }
+  .home-page .hero-sub { font-size: 16px; margin: 0; }
+  .home-page .hero-eyebrow { font-size: 11px; letter-spacing: 0.2px; width: fit-content; }
+  .home-page .hero-ctas { align-items: stretch; width: 100%; gap: 12px; }
+  .home-page .hero-ctas a { min-height: 48px; }
+  .home-page .hero-badges { justify-content: flex-start; gap: 12px 16px; }
+  .home-page .top-countries { margin-top: 0; }
+  .home-page .products-bento { grid-template-columns: minmax(0,1fr); }
+  .home-page .prod-actions a { min-height: 44px; }
+  .home-page .model-limits { padding: 48px 20px; }
+  .hero-inner, .physics-grid, .equation-row { grid-template-columns: minmax(0,1fr); }
+  .hero h1, .section-headline, .section-title { overflow-wrap: break-word; }
+  .signup-form { width: 100%; }
+  .signup-form input { min-width: 0; width: 100%; font-size: 16px; }
+  .footer-inner { grid-template-columns: minmax(0,1fr); gap: 28px; }
+  .app-shell { height: 100dvh; }
+  .app-bar { padding-inline: 12px; }
+  .app-bar-version { display: none; }
+  .app-bar-divider { margin-inline: 8px; }
+  .app-bar-actions { gap: 4px; }
+  .app-bar-btn { padding-inline: 8px; font-size: 11px; }
+  .topbar-badge { display: none; }
+  .topbar { padding-inline: 12px; }
+  .topbar-right { gap: 8px; }
+  .topbar:has(.brand) { flex-wrap: wrap; gap: 12px; height: auto; }
+  .topbar:has(.brand) .topbar-right { flex-wrap: wrap; }
+  .wrap .card, .center-wrap .card { padding: 24px 20px; }
+}
+@media (max-width: 480px) {
+  .nav #install-btn, .nav #fullscreen-btn { display: none; }
+  .nav .nav-brand { font-size: 16px; gap: 8px; }
+  .nav .nav-logo-mark { width: 30px; height: 30px; }
+  .nav .nav-icon-btn { width: 38px; height: 38px; }
+  .home-page .hero-product-panel { display: block; }
+  .home-page .hero-panel-videos { height: auto; aspect-ratio: 16/9; }
+  .home-page .hero-panel-vid-side { display: none; }
+  .home-page .hero-panel-vid-main { width: 100%; object-fit: contain; }
+  .home-page .hero-panel-hdr { padding: 10px; gap: 6px; }
+  .home-page .hero-panel-footer { padding: 10px; font-size: 10px; }
+  .home-page .prod-card { padding: 22px; }
+  .home-page .prod-featured { padding: 0; }
+  .home-page .prod-title-lg { font-size: 28px; }
+  .home-page .sim-video-layout { height: auto; aspect-ratio: 16/9; }
+  .home-page .sim-video-main { object-fit: contain; }
+  .home-page .equation-card { padding: 20px 16px; }
+  .home-page .equation-display { font-size: 16px; }
+}
+
+/* Let reading layouts shrink around tables and long article titles. */
+.post-grid { grid-template-columns: repeat(auto-fill,minmax(min(100%,340px),1fr)); }
+.post-grid > * { min-width: 0; }
+.guide { width: 100%; min-width: 0; }
+.guide-table { max-width: 100%; }
