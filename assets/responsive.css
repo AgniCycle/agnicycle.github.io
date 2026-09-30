@@ -115,3 +115,50 @@
 .post-grid > * { min-width: 0; }
 .guide { width: 100%; min-width: 0; }
 .guide-table { max-width: 100%; }
+
+/* Large monitors: scale the composition as well as the available columns. */
+@media (min-width: 1600px) {
+  :root { --container-wide: clamp(1280px,78vw,1920px); }
+  .home-page { --container-wide: clamp(1280px,80vw,2240px); }
+  .home-page .hero {
+    min-height: 0;
+    padding: clamp(150px,11vh,190px) 48px 88px;
+  }
+  .home-page .hero-inner {
+    max-width: var(--container-wide);
+    grid-template-columns: minmax(0,0.9fr) minmax(0,1.1fr);
+    gap: clamp(48px,3vw,96px);
+  }
+  .home-page .hero-text { gap: 26px; }
+  .home-page .hero h1 { font-size: clamp(64px,3.2vw,104px); }
+  .home-page .hero-sub { font-size: clamp(20px,0.95vw,24px); max-width: 46ch; }
+  .home-page .hero-eyebrow { width: fit-content; font-size: 14px; }
+  .home-page .hero-ctas a { min-height: 56px; font-size: 16px; padding: 16px 28px; }
+  .home-page .hero-badge, .home-page .access-note { font-size: 15px; }
+  .home-page .hero-panel-videos { height: auto; aspect-ratio: 2/1; }
+  .home-page .hero-panel-vid-main { object-fit: contain; }
+  .home-page .hero-panel-vid-side { width: clamp(140px,7.5vw,210px); object-fit: contain; }
+  .home-page .hero-panel-title, .home-page .hero-panel-footer { font-size: 13px; }
+  .home-page .hero-scroll { display: none; }
+  .home-page .section, .home-page .product, .home-page .physics-inner,
+  .home-page .persona-inner, .home-page .divider-inner, .home-page .stat-bar-inner {
+    max-width: var(--container-wide);
+  }
+  .home-page .section-headline { font-size: clamp(40px,2.2vw,60px); }
+  .home-page .section-sub { font-size: 18px; }
+  .home-page .products-bento { gap: 24px; }
+  .home-page .prod-featured { grid-template-columns: minmax(0,0.85fr) minmax(0,1.15fr); }
+  .home-page .prod-card-body { padding: clamp(36px,2.4vw,64px); }
+  .home-page .prod-title-lg { font-size: clamp(36px,2vw,52px); }
+  .home-page .prod-title-sm { font-size: 24px; }
+  .home-page .prod-desc-lg { font-size: 18px; max-width: 55ch; }
+  .home-page .prod-desc-sm { font-size: 16px; }
+  .home-page .sim-video-layout { height: auto; aspect-ratio: 2/1; }
+  .home-page .sim-video-main { object-fit: contain; }
+  .home-page .sim-video-side { width: clamp(140px,7.5vw,210px); object-fit: contain; }
+  .home-page .model-limits-grid h3 { font-size: 20px; }
+  .home-page .model-limits-grid p, .home-page .equation-caption { font-size: 16px; max-width: 65ch; }
+  .home-page .equation-display { font-size: 24px; }
+  .home-page .physics-grid p { max-width: 70ch; }
+  .home-page .nav { padding-inline: max(40px,calc((100vw - 2240px)/2)); }
+}
