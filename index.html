@@ -1218,15 +1218,16 @@ document.addEventListener('DOMContentLoaded', function() {
       <p class="section-sub">See the AgniCycle Engine Simulator take a first engine estimate from setup to results in seconds, right in the browser.</p>
     </div>
     <div class="promo-film-frame reveal">
-      <video id="promo-film-video" controls playsinline preload="none"
+      <video id="promo-film-video" playsinline preload="none"
              poster="/assets/promo/agnicycle-engine-simulator-16x9-poster.jpg"
              aria-label="AgniCycle Engine Simulator film, 2 minutes">
         <source src="/assets/promo/agnicycle-engine-simulator-16x9.mp4" type="video/mp4">
         Your browser cannot play this video. <a href="/assets/promo/agnicycle-engine-simulator-16x9.mp4">Download the film</a>.
       </video>
-      <button class="promo-film-play" type="button" aria-label="Play the AgniCycle film"
-              onclick="var v=document.getElementById('promo-film-video');this.hidden=true;v.play();">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="7 4 20 12 7 20 7 4"/></svg>
+      <button class="promo-film-play" type="button"
+              onclick="var v=document.getElementById('promo-film-video');this.hidden=true;v.controls=true;v.play();">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="7 4 20 12 7 20 7 4"/></svg>
+        Watch the film <span class="promo-film-len">2:00</span>
       </button>
     </div>
   </div>

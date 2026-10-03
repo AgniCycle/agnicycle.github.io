@@ -403,25 +403,27 @@ footer {
 .promo-film { padding: 72px 24px 8px; background: var(--bg); }
 .promo-film-inner { max-width: var(--container-wide); margin: 0 auto; }
 .promo-film .section-center .section-sub { margin-bottom: 32px; }
+/* z-index keeps the page's particle overlay (z 50) off the film, below the nav (z 100) */
 .promo-film-frame {
-  position: relative; max-width: 960px; margin: 0 auto;
+  position: relative; z-index: 60; max-width: 960px; margin: 0 auto;
   aspect-ratio: 16 / 9; border-radius: var(--radius-lg); overflow: hidden;
   background: #0a0c12; border: 1px solid var(--border);
   box-shadow: 0 24px 60px rgba(0,0,0,0.35);
 }
 .promo-film-frame video { display: block; width: 100%; height: 100%; object-fit: cover; background: #0a0c12; }
 .promo-film-play {
-  position: absolute; inset: 0; margin: auto; width: 76px; height: 76px;
-  display: flex; align-items: center; justify-content: center;
-  border: 0; border-radius: 50%; cursor: pointer; color: #fff;
-  background: var(--fire); box-shadow: 0 0 0 10px rgba(249,115,22,0.22);
+  position: absolute; left: 50%; bottom: 7%; transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: 10px; white-space: nowrap;
+  padding: 12px 22px; border: 0; border-radius: 999px; cursor: pointer;
+  font: 600 15px/1 Inter, system-ui, sans-serif; color: #fff;
+  background: var(--fire); box-shadow: 0 0 0 8px rgba(249,115,22,0.2), 0 10px 30px rgba(0,0,0,0.4);
   transition: transform .2s ease, box-shadow .2s ease;
 }
-.promo-film-play:hover, .promo-film-play:focus-visible { transform: scale(1.06); box-shadow: 0 0 0 14px rgba(249,115,22,0.28); }
-.promo-film-play svg { margin-left: 4px; }
+.promo-film-play:hover, .promo-film-play:focus-visible { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 0 11px rgba(249,115,22,0.26), 0 10px 30px rgba(0,0,0,0.4); }
+.promo-film-len { font-weight: 500; opacity: 0.8; }
 .promo-film-play[hidden] { display: none; }
 @media (max-width: 640px) {
   .promo-film { padding: 48px 16px 0; }
   .promo-film-frame { border-radius: var(--radius); }
-  .promo-film-play { width: 60px; height: 60px; }
+  .promo-film-play { padding: 7px 14px; gap: 7px; font-size: 12px; bottom: 4%; box-shadow: 0 0 0 5px rgba(249,115,22,0.2); }
 }
