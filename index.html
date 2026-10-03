@@ -1209,6 +1209,29 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 </section>
 
+<!-- PROMO FILM -->
+<section class="promo-film" id="watch" aria-labelledby="promo-film-title">
+  <div class="promo-film-inner">
+    <div class="section-center reveal">
+      <div class="eyebrow">Watch · 2 min</div>
+      <h2 class="section-headline" id="promo-film-title">Simulate. Estimate. Accelerate.</h2>
+      <p class="section-sub">See the AgniCycle Engine Simulator take a first engine estimate from setup to results in seconds, right in the browser.</p>
+    </div>
+    <div class="promo-film-frame reveal">
+      <video id="promo-film-video" controls playsinline preload="none"
+             poster="/assets/promo/agnicycle-engine-simulator-16x9-poster.jpg"
+             aria-label="AgniCycle Engine Simulator film, 2 minutes">
+        <source src="/assets/promo/agnicycle-engine-simulator-16x9.mp4" type="video/mp4">
+        Your browser cannot play this video. <a href="/assets/promo/agnicycle-engine-simulator-16x9.mp4">Download the film</a>.
+      </video>
+      <button class="promo-film-play" type="button" aria-label="Play the AgniCycle film"
+              onclick="var v=document.getElementById('promo-film-video');this.hidden=true;v.play();">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="7 4 20 12 7 20 7 4"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
 <!-- PRODUCTS BENTO -->
 <section id="products" style="padding:72px 24px 80px;background:var(--bg)">
   <div style="max-width:var(--container-wide);margin:0 auto">
